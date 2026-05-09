@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import SearchBar from './components/SearchBar.vue'
 import MovieList from './components/MovieList.vue'
 import MovieDetail from './components/MovieDetail.vue'
+import AppFooter from './components/AppFooter.vue'
 import { searchMovies, getMovieDetail } from './api/movie'
 import type { MovieListItem, MovieDetail as MovieDetailType } from './types/movie'
 
@@ -132,6 +133,9 @@ function handleHintClick(kw: string) {
         @select="handleSelect"
       />
     </main>
+
+    <!-- 页脚 -->
+    <AppFooter />
 
     <!-- 电影详情弹窗 -->
     <MovieDetail

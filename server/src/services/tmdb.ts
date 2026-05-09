@@ -33,6 +33,15 @@ const doubanApi = axios.create({
 });
 
 /**
+ * 将豆瓣/OMDb 图片 URL 转为走本地代理（解决防盗链）
+ */
+function proxyImageUrl(url: string | null | undefined): string | null {
+  if (!url || url === 'N/A') return null;
+  // 通过后端图片代理加载
+  return `/api/image-proxy?url=${encodeURIComponent(url)}`;
+}
+
+/**
  * 判断关键词是否包含中文字符
  */
 function containsChinese(str: string): boolean {
@@ -179,7 +188,7 @@ async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
           results.push({
             id: movieId,
             title: item.title + (item.sub_title ? ` (${item.sub_title})` : ''),
-            poster: item.img || null,
+            poster: proxyImageUrl(item.img),
             year: item.year || '',
             rating: 0,
             overview: '',
@@ -206,7 +215,7 @@ async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
               results.push({
                 id: item.imdbID,
                 title: item.Title,
-                poster: item.Poster && item.Poster !== 'N/A' ? item.Poster : null,
+                poster: proxyImageUrl(item.Poster),
                 year: item.Year || '',
                 rating: 0,
                 overview: '',
@@ -242,7 +251,7 @@ export async function searchMovies(keyword: string, page: number = 1): Promise<M
   return res.data.Search.map((item) => ({
     id: item.imdbID,
     title: item.Title,
-    poster: item.Poster && item.Poster !== 'N/A' ? item.Poster : null,
+    poster: proxyImageUrl(item.Poster),
     year: item.Year || '',
     rating: 0,
     overview: '',
@@ -344,12 +353,11 @@ function buildDoubanDetail(
 ): MovieDetail {
   const rating = omdbDetail ? parseRating(omdbDetail.imdbRating) : parseRating(subject.rate);
   const title = cached.title + (cached.subTitle ? ` (${cached.subTitle})` : '');
-  const poster = cached.img || (omdbDetail ? cleanNA(omdbDetail.Poster) : '') || null;
 
   return {
     id: omdbDetail ? omdbDetail.imdbID : `douban_${cached.id}`,
     title: omdbDetail ? `${cached.title} (${omdbDetail.Title})` : title,
-    poster: poster === 'N/A' ? null : poster,
+    poster: proxyImageUrl(cached.img || (omdbDetail ? omdbDetail.Poster : '')),
     overview: omdbDetail ? (cleanNA(omdbDetail.Plot) || '暂无简介') : (subject.short_comment?.content || '暂无简介'),
     releaseDate: omdbDetail ? cleanNA(omdbDetail.Released) : (subject.release_year || ''),
     runtime: omdbDetail ? cleanNA(omdbDetail.Runtime) : (subject.duration || ''),
@@ -376,7 +384,7 @@ function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
   return {
     id: `douban_${cached.id}`,
     title: cached.title + (cached.subTitle ? ` (${cached.subTitle})` : ''),
-    poster: cached.img || null,
+    poster: proxyImageUrl(cached.img),
     overview: '暂无详细简介，该电影信息来自豆瓣，OMDb 暂无收录。',
     releaseDate: cached.year || '',
     runtime: '',
@@ -402,7 +410,7 @@ function formatOMDbDetail(d: OMDbMovieDetail, chineseTitle?: string): MovieDetai
   return {
     id: d.imdbID,
     title: chineseTitle ? `${chineseTitle} (${d.Title})` : d.Title,
-    poster: cleanNA(d.Poster) || null,
+    poster: proxyImageUrl(d.Poster),
     overview: cleanNA(d.Plot) || '暂无简介',
     releaseDate: cleanNA(d.Released),
     runtime: cleanNA(d.Runtime),

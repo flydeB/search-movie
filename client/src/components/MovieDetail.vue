@@ -30,7 +30,9 @@ function formatBoxOffice(value: string): string {
 
 function handlePosterError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.display = 'none'
+  if (!img.src.includes('/default-poster.png')) {
+    img.src = '/default-poster.png'
+  }
 }
 </script>
 
@@ -57,18 +59,10 @@ function handlePosterError(e: Event) {
       <div class="detail-hero">
         <div class="detail-poster">
           <img
-            v-if="movie.poster"
-            :src="movie.poster"
+            :src="movie.poster || '/default-poster.png'"
             :alt="movie.title"
             @error="handlePosterError"
           />
-          <div v-else class="poster-fallback">
-            <svg viewBox="0 0 48 48" fill="none">
-              <rect x="8" y="6" width="32" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="18" cy="18" r="4" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M10 38l10-12 6 6 8-10 8 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
         </div>
 
         <div class="detail-info">
@@ -191,6 +185,12 @@ function handlePosterError(e: Event) {
 
     <!-- 加载中 -->
     <div v-else class="detail-loading">
+      <div class="loading-overlay">
+        <div class="spinner">
+          <div class="spinner-ring"></div>
+        </div>
+        <p class="loading-text">正在加载电影详情...</p>
+      </div>
       <div class="skeleton-poster"></div>
       <div class="skeleton-info">
         <div class="skeleton-line w60"></div>
@@ -282,20 +282,6 @@ function handlePosterError(e: Event) {
 .detail-poster img {
   width: 100%;
   display: block;
-}
-
-.poster-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 390px;
-  color: var(--text-secondary);
-  opacity: 0.3;
-}
-
-.poster-fallback svg {
-  width: 64px;
-  height: 64px;
 }
 
 /* 信息 */
@@ -536,6 +522,7 @@ function handlePosterError(e: Event) {
 
 /* 加载骨架 */
 .detail-loading {
+  position: relative;
   display: flex;
   gap: 28px;
   padding: 32px;
@@ -575,6 +562,45 @@ function handlePosterError(e: Event) {
   0% { opacity: 0.5; }
   50% { opacity: 1; }
   100% { opacity: 0.5; }
+}
+
+/* loading 遮罩 */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 2;
+  background: rgba(12, 12, 20, 0.7);
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+}
+
+.spinner-ring {
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(232, 183, 74, 0.15);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
 }
 
 /* 响应式 */

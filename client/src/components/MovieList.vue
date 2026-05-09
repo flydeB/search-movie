@@ -13,9 +13,9 @@ const emit = defineEmits<{
 
 function handlePosterError(e: Event) {
   const img = e.target as HTMLImageElement
-  img.style.display = 'none'
-  const placeholder = img.parentElement?.querySelector('.poster-placeholder') as HTMLElement
-  if (placeholder) placeholder.style.display = 'flex'
+  if (!img.src.includes('/default-poster.png')) {
+    img.src = '/default-poster.png'
+  }
 }
 </script>
 
@@ -71,19 +71,11 @@ function handlePosterError(e: Event) {
       >
         <div class="card-poster">
           <img
-            v-if="movie.poster"
-            :src="movie.poster"
+            :src="movie.poster || '/default-poster.png'"
             :alt="movie.title"
             loading="lazy"
             @error="handlePosterError"
           />
-          <div class="poster-placeholder" :style="{ display: movie.poster ? 'none' : 'flex' }">
-            <svg viewBox="0 0 48 48" fill="none">
-              <rect x="8" y="6" width="32" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="18" cy="18" r="4" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M10 38l10-12 6 6 8-10 8 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
           <div class="card-overlay">
             <div class="play-icon">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -301,22 +293,6 @@ function handlePosterError(e: Event) {
 
 .movie-card:hover .card-poster img {
   transform: scale(1.08);
-}
-
-.poster-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 100%;
-  color: var(--text-secondary);
-  opacity: 0.3;
-}
-
-.poster-placeholder svg {
-  width: 48px;
-  height: 48px;
 }
 
 /* 悬浮遮罩 */

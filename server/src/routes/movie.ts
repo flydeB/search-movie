@@ -1,8 +1,46 @@
 import { Router, Request, Response } from 'express';
+import axios from 'axios';
 import { searchMovies, getMovieDetail } from '../services/tmdb';
 import type { ApiResponse, MovieListItem, MovieDetail } from '../types/movie';
 
 const router = Router();
+
+/**
+ * GET /api/image-proxy?url=xxx
+ * 图片代理，解决豆瓣等第三方图片防盗链问题
+ */
+router.get('/image-proxy', async (req: Request, res: Response) => {
+  const url = req.query.url as string;
+  if (!url) {
+    res.status(400).send('Missing url parameter');
+    return;
+  }
+
+  // 只允许代理豆瓣图片，防止被滥用
+  if (!url.includes('doubanio.com') && !url.includes('m.media-amazon.com') && !url.includes('image.tmdb.org')) {
+    res.status(403).send('Forbidden');
+    return;
+  }
+
+  try {
+    const imgRes = await axios.get(url, {
+      responseType: 'arraybuffer',
+      timeout: 10000,
+      headers: {
+        'Referer': 'https://movie.douban.com/',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
+    });
+
+    const contentType = imgRes.headers['content-type'] || 'image/jpeg';
+    res.set('Content-Type', contentType);
+    res.set('Cache-Control', 'public, max-age=86400'); // 缓存1天
+    res.send(Buffer.from(imgRes.data));
+  } catch (error: any) {
+    console.error('图片代理失败:', url, error.message);
+    res.status(404).send('Image not found');
+  }
+});
 
 /**
  * GET /api/search?keyword=xxx&page=1
