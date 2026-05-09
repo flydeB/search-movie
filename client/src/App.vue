@@ -62,66 +62,82 @@ function handleCloseDetail() {
   detailVisible.value = false
   currentMovie.value = null
 }
+
+function handleHintClick(kw: string) {
+  keyword.value = kw
+  handleSearch(kw)
+}
 </script>
 
 <template>
   <div class="app-container">
-    <!-- 顶部品牌区 -->
-    <header class="app-header">
-      <div class="header-content">
+    <!-- Hero 区域 -->
+    <header class="hero">
+      <div class="hero-bg">
+        <div class="hero-gradient"></div>
+        <div class="hero-grain"></div>
+      </div>
+      <div class="hero-content">
         <div class="brand">
-          <svg class="brand-icon" viewBox="0 0 36 36" fill="none">
-            <rect x="3" y="6" width="30" height="22" rx="5" stroke="currentColor" stroke-width="2"/>
-            <circle cx="14" cy="17" r="4" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M20 17l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M3 22l6-5 4 3 6-4 8 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <h1 class="brand-title">全球电影检索</h1>
-          <p class="brand-subtitle">输入电影名称，探索全球电影资讯</p>
+          <div class="brand-icon">
+            <svg viewBox="0 0 40 40" fill="none">
+              <rect x="4" y="7" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 14h32" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+              <circle cx="16" cy="22" r="5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M22 19l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4 26l8-6 5 4 7-5 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1 class="brand-title">CineSearch</h1>
+          <p class="brand-subtitle">探索全球电影 · 中英双语搜索</p>
+        </div>
+        <div class="search-wrapper">
+          <SearchBar
+            v-model="keyword"
+            :loading="loading"
+            @search="handleSearch"
+          />
+        </div>
+        <div class="quick-tags">
+          <button class="quick-tag" @click="handleHintClick('星际穿越')">星际穿越</button>
+          <button class="quick-tag" @click="handleHintClick('Inception')">Inception</button>
+          <button class="quick-tag" @click="handleHintClick('千与千寻')">千与千寻</button>
+          <button class="quick-tag" @click="handleHintClick('The Dark Knight')">The Dark Knight</button>
+          <button class="quick-tag" @click="handleHintClick('流浪地球')">流浪地球</button>
         </div>
       </div>
     </header>
 
-    <!-- 搜索区 -->
-    <main class="app-main">
-      <section class="search-section">
-        <SearchBar
-          v-model="keyword"
-          :loading="loading"
-          @search="handleSearch"
-        />
-      </section>
-
-      <!-- 错误提示 -->
-      <div v-if="error" class="error-bar">
-        <el-alert
-          :title="error"
-          type="error"
-          show-icon
-          closable
-          @close="error = ''"
-        />
+    <!-- 错误提示 -->
+    <div v-if="error" class="error-bar">
+      <div class="error-inner">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span>{{ error }}</span>
+        <button class="error-close" @click="error = ''">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
       </div>
+    </div>
 
-      <!-- 电影列表 -->
-      <section class="content-section">
-        <MovieList
-          :movies="movies"
-          :keyword="keyword"
-          @select="handleSelect"
-        />
-      </section>
+    <!-- 电影列表 -->
+    <main class="app-main">
+      <MovieList
+        :movies="movies"
+        :keyword="keyword"
+        :loading="loading"
+        @select="handleSelect"
+      />
     </main>
-
-    <!-- 页脚 -->
-    <footer class="app-footer">
-      <p>数据来源：The Movie Database (TMDb) &nbsp;·&nbsp; 仅供学习参考</p>
-    </footer>
 
     <!-- 电影详情弹窗 -->
     <MovieDetail
       :visible="detailVisible"
       :movie="currentMovie"
+      :loading="detailLoading"
       @update:visible="handleCloseDetail"
     />
   </div>
@@ -132,82 +148,169 @@ function handleCloseDetail() {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg-page);
 }
 
-/* 顶部 */
-.app-header {
-  padding: 48px 24px 0;
+/* Hero 区域 */
+.hero {
+  position: relative;
+  padding: 56px 24px 48px;
   text-align: center;
+  overflow: hidden;
 }
 
-.header-content {
-  max-width: 680px;
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(232, 183, 74, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 30% 20%, rgba(100, 60, 200, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 70% 30%, rgba(60, 120, 200, 0.04) 0%, transparent 50%);
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
   margin: 0 auto;
 }
 
+.brand {
+  margin-bottom: 36px;
+}
+
 .brand-icon {
-  width: 44px;
-  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
   color: var(--primary);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.brand-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .brand-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 36px;
+  font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 6px;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #e8b74a 0%, #f0d78c 50%, #e8b74a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .brand-subtitle {
   font-size: 15px;
   color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+.search-wrapper {
+  margin-bottom: 20px;
+}
+
+.quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.quick-tag {
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.quick-tag:hover {
+  background: var(--primary-dim);
+  border-color: rgba(232, 183, 74, 0.3);
+  color: var(--primary);
+}
+
+/* 错误 */
+.error-bar {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.error-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 77, 79, 0.1);
+  border: 1px solid rgba(255, 77, 79, 0.2);
+  border-radius: 10px;
+  color: #ff7875;
+  font-size: 14px;
+}
+
+.error-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #ff7875;
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.error-close:hover {
+  opacity: 1;
 }
 
 /* 主体 */
 .app-main {
   flex: 1;
-  padding: 32px 0 40px;
-}
-
-.search-section {
-  padding: 0 24px 32px;
-}
-
-.content-section {
-  padding-bottom: 20px;
-}
-
-/* 错误 */
-.error-bar {
-  max-width: 680px;
-  margin: 0 auto 20px;
-  padding: 0 24px;
-}
-
-/* 页脚 */
-.app-footer {
-  text-align: center;
-  padding: 20px 24px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  border-top: 1px solid #f0f0f0;
+  padding: 0 0 40px;
 }
 
 /* 响应式 */
 @media (max-width: 768px) {
-  .app-header {
-    padding: 32px 16px 0;
+  .hero {
+    padding: 36px 16px 32px;
   }
 
   .brand-title {
-    font-size: 22px;
+    font-size: 28px;
   }
 
-  .search-section {
-    padding: 0 16px 24px;
+  .quick-tags {
+    gap: 6px;
+  }
+
+  .quick-tag {
+    font-size: 12px;
+    padding: 4px 12px;
   }
 }
 </style>
-

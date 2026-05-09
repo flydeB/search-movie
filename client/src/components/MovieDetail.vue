@@ -5,13 +5,13 @@ import type { MovieDetail } from '../types/movie'
 const props = defineProps<{
   visible: boolean
   movie: MovieDetail | null
+  loading: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'update:visible', value: boolean): void
 }>()
 
-// 控制弹窗显隐
 const dialogVisible = ref(props.visible)
 
 watch(() => props.visible, (val) => {
@@ -23,213 +23,260 @@ function handleClose() {
   emit('update:visible', false)
 }
 
-function closeDialog() {
-  handleClose()
+function formatBoxOffice(value: string): string {
+  if (!value) return ''
+  return value
 }
 
-/**
- * 格式化金额（如 150000000 → "$150,000,000"）
- */
-function formatCurrency(amount: number | null | undefined): string {
-  if (!amount || amount <= 0) return ''
-  return '$' + amount.toLocaleString('en-US')
+function handlePosterError(e: Event) {
+  const img = e.target as HTMLImageElement
+  img.style.display = 'none'
 }
 </script>
 
 <template>
   <el-dialog
     v-model="dialogVisible"
-    :title="movie?.title || '电影详情'"
-    width="800px"
-    top="5vh"
+    :title="''"
+    width="860px"
+    top="4vh"
     class="movie-detail-dialog"
     :close-on-click-modal="true"
-    @close="closeDialog"
+    @close="handleClose"
+    :show-close="false"
   >
+    <!-- 自定义关闭按钮 -->
+    <button class="dialog-close" @click="handleClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+
     <div v-if="movie" class="detail-content">
-      <div class="detail-main">
-        <!-- 左栏：海报 -->
+      <!-- 顶部：海报+信息 -->
+      <div class="detail-hero">
         <div class="detail-poster">
           <img
             v-if="movie.poster"
             :src="movie.poster"
             :alt="movie.title"
+            @error="handlePosterError"
           />
           <div v-else class="poster-fallback">
             <svg viewBox="0 0 48 48" fill="none">
-              <rect x="8" y="6" width="32" height="36" rx="4" stroke="#d0d5dd" stroke-width="1.5"/>
-              <circle cx="18" cy="18" r="4" stroke="#d0d5dd" stroke-width="1.5"/>
-              <path d="M10 38l10-12 6 6 8-10 8 16" stroke="#d0d5dd" stroke-width="1.5" stroke-linecap="round"/>
+              <rect x="8" y="6" width="32" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="18" cy="18" r="4" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M10 38l10-12 6 6 8-10 8 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </div>
         </div>
 
-        <!-- 右栏：信息 -->
         <div class="detail-info">
+          <!-- 标题 -->
+          <h2 class="detail-title">{{ movie.title }}</h2>
+
           <!-- 标签行 -->
           <div class="info-tags">
-            <el-tag
+            <span
               v-for="genre in movie.genres"
               :key="genre"
-              size="small"
-              color="#f0f5ff"
-              style="color: #1890ff; border: 1px solid #d6e4ff;"
+              class="genre-tag"
             >
               {{ genre }}
-            </el-tag>
+            </span>
+            <span v-if="movie.rated" class="rated-tag">
+              {{ movie.rated }}
+            </span>
           </div>
 
-          <!-- 元数据 -->
-          <div class="info-meta">
-            <span v-if="movie.releaseDate" class="meta-item">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
-                <rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 7h12"/><path d="M5 1v4M11 1v4"/>
-              </svg>
-              {{ movie.releaseDate }}
-            </span>
-            <span v-if="movie.runtime" class="meta-item">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14">
-                <circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/>
-              </svg>
-              {{ movie.runtime }} 分钟
-            </span>
-            <span v-if="movie.rating > 0" class="meta-item rating">
-              <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14" style="color: #fadb14;">
+          <!-- 评分+元数据 -->
+          <div class="info-stats">
+            <div v-if="movie.rating > 0" class="stat-rating">
+              <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
                 <path d="M8 1l1.76 3.56 3.94.57-2.85 2.78.67 3.93L8 10.25l-3.52 1.59.67-3.93-2.85-2.78 3.94-.57z"/>
               </svg>
-              {{ movie.rating.toFixed(1) }}
-            </span>
-          </div>
-
-          <!-- 标语 -->
-          <p v-if="movie.tagline" class="info-tagline">"{{ movie.tagline }}"</p>
-
-          <!-- 剧情 -->
-          <div class="info-section">
-            <h4 class="section-title">剧情简介</h4>
-            <p class="section-text">{{ movie.overview }}</p>
-          </div>
-
-          <!-- 状态 -->
-          <div class="info-status">
-            <span class="status-label">状态：</span>
-            <span class="status-value">{{ movie.status || '未知' }}</span>
-          </div>
-
-          <!-- 财务数据 -->
-          <div v-if="movie.budget > 0 || movie.revenue > 0" class="info-finance">
-            <div v-if="movie.budget > 0" class="finance-item">
-              <span class="finance-label">投入资金</span>
-              <span class="finance-value">{{ formatCurrency(movie.budget) }}</span>
+              <span class="rating-num">{{ movie.rating.toFixed(1) }}</span>
+              <span class="rating-label">评分</span>
             </div>
-            <div v-if="movie.revenue > 0" class="finance-item">
-              <span class="finance-label">票房合计</span>
-              <span class="finance-value revenue">{{ formatCurrency(movie.revenue) }}</span>
+            <div v-if="movie.releaseDate" class="stat-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
+                <rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 7h12"/><path d="M5 1v4M11 1v4"/>
+              </svg>
+              <span>{{ movie.releaseDate }}</span>
             </div>
+            <div v-if="movie.runtime" class="stat-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
+                <circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/>
+              </svg>
+              <span>{{ movie.runtime }}</span>
+            </div>
+            <div v-if="movie.language" class="stat-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
+                <circle cx="8" cy="8" r="6"/><path d="M2 8h12"/><path d="M8 2c2 2 2 4 0 6M8 2c-2 2-2 4 0 6"/>
+              </svg>
+              <span>{{ movie.language }}</span>
+            </div>
+            <div v-if="movie.country" class="stat-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
+                <path d="M1 4h14M1 8h14M1 12h14"/>
+              </svg>
+              <span>{{ movie.country }}</span>
+            </div>
+          </div>
+
+          <!-- 导演 -->
+          <div v-if="movie.director" class="info-crew">
+            <span class="crew-label">导演</span>
+            <span class="crew-value">{{ movie.director }}</span>
+          </div>
+
+          <!-- 编剧 -->
+          <div v-if="movie.writers" class="info-crew">
+            <span class="crew-label">编剧</span>
+            <span class="crew-value">{{ movie.writers }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 剧情简介 -->
+      <div v-if="movie.overview" class="detail-section">
+        <h4 class="section-title">剧情简介</h4>
+        <p class="section-text">{{ movie.overview }}</p>
+      </div>
+
+      <!-- 获奖情况 -->
+      <div v-if="movie.awards" class="detail-section awards-section">
+        <div class="awards-inner">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18" style="color: #e8b74a;">
+            <path d="M10 1l2.2 4.44 4.9.72-3.55 3.46.84 4.88L10 12.12l-4.39 2.38.84-4.88L2.9 6.16l4.9-.72L10 1z"/>
+          </svg>
+          <span>{{ movie.awards }}</span>
+        </div>
+      </div>
+
+      <!-- 财务数据 -->
+      <div v-if="movie.budget || movie.revenue" class="detail-section finance-section">
+        <div class="finance-grid">
+          <div v-if="movie.budget" class="finance-item">
+            <span class="finance-label">投入资金</span>
+            <span class="finance-value">{{ movie.budget }}</span>
+          </div>
+          <div v-if="movie.revenue" class="finance-item">
+            <span class="finance-label">全球票房</span>
+            <span class="finance-value revenue">{{ formatBoxOffice(movie.revenue) }}</span>
           </div>
         </div>
       </div>
 
       <!-- 演员列表 -->
-      <div v-if="movie.actors.length > 0" class="detail-cast">
+      <div v-if="movie.actors.length > 0" class="detail-section">
         <h4 class="section-title">演员阵容</h4>
-        <div class="cast-scroll">
+        <div class="cast-grid">
           <div
-            v-for="actor in movie.actors"
-            :key="actor.id"
+            v-for="(actor, index) in movie.actors"
+            :key="index"
             class="cast-item"
           >
             <div class="cast-avatar">
-              <img
-                v-if="actor.avatar"
-                :src="actor.avatar"
-                :alt="actor.name"
-              />
-              <div v-else class="avatar-fallback">
-                {{ actor.name.charAt(0) }}
-              </div>
+              <span class="avatar-letter">{{ actor.name.charAt(0) }}</span>
             </div>
-            <span class="cast-name">{{ actor.name }}</span>
-            <span class="cast-char" v-if="actor.character">饰 {{ actor.character }}</span>
+            <div class="cast-info">
+              <span class="cast-name">{{ actor.name }}</span>
+              <span class="cast-char" v-if="actor.character">饰 {{ actor.character }}</span>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 截图轮播 -->
-      <div v-if="movie.images.length > 0" class="detail-images">
-        <h4 class="section-title">电影截图</h4>
-        <el-carousel
-          :interval="4000"
-          type="card"
-          height="280px"
-          arrow="always"
-          indicator-position="none"
-        >
-          <el-carousel-item
-            v-for="(img, index) in movie.images"
-            :key="index"
-          >
-            <div class="carousel-image">
-              <img :src="img" :alt="`截图 ${index + 1}`" />
-            </div>
-          </el-carousel-item>
-        </el-carousel>
+    <!-- 加载中 -->
+    <div v-else class="detail-loading">
+      <div class="skeleton-poster"></div>
+      <div class="skeleton-info">
+        <div class="skeleton-line w60"></div>
+        <div class="skeleton-line w40"></div>
+        <div class="skeleton-line w80"></div>
+        <div class="skeleton-line w70"></div>
+        <div class="skeleton-line w50"></div>
       </div>
     </div>
-
-    <!-- 无数据加载中 -->
-    <div v-else class="detail-loading">
-      <el-skeleton :rows="6" animated />
-    </div>
-
-    <template #footer>
-      <el-button @click="closeDialog" type="primary" plain>关闭</el-button>
-    </template>
   </el-dialog>
 </template>
 
 <style scoped>
+/* Dialog 样式覆盖 */
 .movie-detail-dialog :deep(.el-dialog) {
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
 }
 
 .movie-detail-dialog :deep(.el-dialog__header) {
-  padding: 20px 24px 0;
-  border-bottom: 1px solid #f0f0f0;
-  margin: 0;
-}
-
-.movie-detail-dialog :deep(.el-dialog__title) {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
+  display: none;
 }
 
 .movie-detail-dialog :deep(.el-dialog__body) {
-  padding: 24px;
-  max-height: 70vh;
+  padding: 0;
+  max-height: 88vh;
   overflow-y: auto;
+  background: var(--bg-elevated);
 }
 
 .movie-detail-dialog :deep(.el-dialog__footer) {
-  padding: 12px 24px 20px;
-  border-top: 1px solid #f0f0f0;
+  display: none;
+}
+
+/* 关闭按钮 */
+.dialog-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.dialog-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.dialog-close svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* 主区域 */
-.detail-main {
-  display: flex;
-  gap: 28px;
+.detail-content {
+  padding: 32px;
 }
 
+.detail-hero {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+/* 海报 */
 .detail-poster {
   flex-shrink: 0;
-  width: 240px;
+  width: 260px;
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .detail-poster img {
@@ -241,18 +288,30 @@ function formatCurrency(amount: number | null | undefined): string {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 360px;
+  height: 390px;
+  color: var(--text-secondary);
+  opacity: 0.3;
 }
 
 .poster-fallback svg {
   width: 64px;
   height: 64px;
-  opacity: 0.3;
 }
 
+/* 信息 */
 .detail-info {
   flex: 1;
   min-width: 0;
+  padding-top: 4px;
+}
+
+.detail-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
 }
 
 /* 标签 */
@@ -260,149 +319,205 @@ function formatCurrency(amount: number | null | undefined): string {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
-/* 元数据 */
-.info-meta {
+.genre-tag {
+  padding: 4px 12px;
+  background: var(--primary-dim);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.rated-tag {
+  padding: 4px 12px;
+  background: rgba(255, 120, 50, 0.12);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #ff964a;
+}
+
+/* 统计 */
+.info-stats {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
-.meta-item {
+.stat-rating {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(250, 219, 20, 0.08);
+  border-radius: 10px;
+  border: 1px solid rgba(250, 219, 20, 0.15);
+}
+
+.stat-rating svg {
+  color: #fadb14;
+}
+
+.rating-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fadb14;
+}
+
+.rating-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 13px;
   color: var(--text-secondary);
 }
 
-.meta-item.rating {
-  color: #faad14;
-  font-weight: 600;
+.stat-item svg {
+  opacity: 0.5;
 }
 
-.info-tagline {
-  font-style: italic;
-  color: var(--text-secondary);
+/* 导演/编剧 */
+.info-crew {
+  display: flex;
+  gap: 8px;
   font-size: 14px;
-  margin-bottom: 16px;
-  padding-left: 8px;
-  border-left: 3px solid var(--primary);
+  margin-bottom: 8px;
+  line-height: 1.6;
 }
 
-/* 简介 */
-.info-section {
-  margin-bottom: 16px;
+.crew-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
+.crew-value {
+  color: var(--text-body);
+}
+
+/* 分区 */
+.detail-section {
+  margin-bottom: 24px;
 }
 
 .section-title {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  border-left: 3px solid var(--primary);
 }
 
 .section-text {
   font-size: 14px;
   color: var(--text-body);
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
-/* 状态 */
-.info-status {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
-}
-
-.status-value {
-  color: var(--text-body);
-}
-
-/* 财务数据 */
-.info-finance {
+/* 获奖 */
+.awards-inner {
   display: flex;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(232, 183, 74, 0.06);
+  border: 1px solid rgba(232, 183, 74, 0.12);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.6;
+}
+
+/* 财务 */
+.finance-grid {
+  display: flex;
+  gap: 16px;
 }
 
 .finance-item {
   flex: 1;
-  padding: 12px 16px;
+  padding: 16px 20px;
   background: var(--bg-card);
-  border-radius: 10px;
-  text-align: center;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
 }
 
 .finance-label {
   display: block;
   font-size: 12px;
   color: var(--text-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .finance-value {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .finance-value.revenue {
   color: #52c41a;
 }
 
-/* 演员列表 */
-.detail-cast {
-  margin-top: 28px;
-}
-
-.cast-scroll {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 8px;
+/* 演员网格 */
+.cast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
 }
 
 .cast-item {
-  flex-shrink: 0;
-  width: 90px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  transition: border-color 0.2s;
+}
+
+.cast-item:hover {
+  border-color: rgba(232, 183, 74, 0.2);
 }
 
 .cast-avatar {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 6px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
-}
-
-.cast-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avatar-fallback {
-  width: 100%;
-  height: 100%;
+  flex-shrink: 0;
+  background: var(--primary-dim);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  font-weight: 600;
+}
+
+.avatar-letter {
+  font-size: 16px;
+  font-weight: 700;
   color: var(--primary);
-  background: #f0f5ff;
+}
+
+.cast-info {
+  min-width: 0;
 }
 
 .cast-name {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
   overflow: hidden;
@@ -419,48 +534,103 @@ function formatCurrency(amount: number | null | undefined): string {
   white-space: nowrap;
 }
 
-/* 截图轮播 */
-.detail-images {
-  margin-top: 28px;
-}
-
-.carousel-image {
-  height: 280px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.carousel-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.detail-images :deep(.el-carousel__arrow) {
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
-  font-size: 18px;
-}
-
-/* 加载中 */
+/* 加载骨架 */
 .detail-loading {
-  padding: 20px 0;
+  display: flex;
+  gap: 28px;
+  padding: 32px;
+}
+
+.skeleton-poster {
+  flex-shrink: 0;
+  width: 260px;
+  height: 390px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.skeleton-line {
+  height: 16px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w40 { width: 40%; }
+.skeleton-line.w80 { width: 80%; }
+.skeleton-line.w70 { width: 70%; }
+.skeleton-line.w50 { width: 50%; }
+
+@keyframes shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }
 
 /* 响应式 */
 @media (max-width: 768px) {
-  .detail-main {
+  .detail-content {
+    padding: 20px;
+  }
+
+  .detail-hero {
     flex-direction: column;
     align-items: center;
+    gap: 20px;
   }
 
   .detail-poster {
-    width: 180px;
+    width: 200px;
   }
 
-  .info-finance {
+  .detail-info {
+    text-align: center;
+  }
+
+  .info-tags {
+    justify-content: center;
+  }
+
+  .info-stats {
+    justify-content: center;
+  }
+
+  .info-crew {
+    justify-content: center;
+  }
+
+  .finance-grid {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .cast-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .detail-loading {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .skeleton-poster {
+    width: 200px;
+    height: 300px;
+  }
+
+  .skeleton-info {
+    width: 100%;
   }
 }
 </style>

@@ -4,6 +4,9 @@ import type { ApiResponse, MovieListItem, MovieDetail } from '../types/movie'
 const http = axios.create({
   baseURL: '/api', // 通过 Vite proxy 代理到后端
   timeout: 15000,
+  headers: {
+    'Cache-Control': 'no-cache',
+  },
 })
 
 /**
@@ -20,10 +23,10 @@ export async function searchMovies(keyword: string): Promise<MovieListItem[]> {
 
 /**
  * 获取电影详情
- * @param id 电影 ID
+ * @param id IMDb ID（如 tt0372784）
  * @returns 电影详情
  */
-export async function getMovieDetail(id: number): Promise<MovieDetail> {
+export async function getMovieDetail(id: string): Promise<MovieDetail> {
   const res = await http.get<ApiResponse<MovieDetail>>(`/movie/${id}`)
   return res.data.data
 }

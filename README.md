@@ -1,93 +1,114 @@
-# 🎬 全球电影检索
+# 全球电影检索
 
-一个基于 Vue3 + Vite + TypeScript + Express 的电影信息检索工具，通过 TMDb API 获取全球电影数据。
-
-## 功能特性
-
-- 🔍 **电影搜索**：输入电影名称关键词，模糊搜索全球电影
-- 🎥 **电影详情**：查看电影封面、演员阵容、上映时间、剧情描述、电影截图等完整信息
-- 💰 **财务数据**：显示电影的投入资金和票房合计（如果数据存在）
-- 🌐 **数据来源**：The Movie Database (TMDb) 全球最大免费电影数据库
+基于 OMDb API 的全球电影搜索工具，输入关键词即可模糊搜索全球电影信息。
 
 ## 技术栈
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | Vue 3 + Vite 5 + TypeScript |
-| UI | Element Plus |
-| 后端 | Node.js + Express + TypeScript |
-| 数据源 | TMDb API v3 |
+- **前端**：Vue 3 + Vite + TypeScript + Element Plus
+- **后端**：Node.js + Express + TypeScript
+- **数据源**：OMDb API（Open Movie Database，国内可直接访问）
+
+## 功能
+
+- 关键词模糊搜索全球电影
+- 查看电影详情：海报、演员、导演、编剧、时长、类型、剧情简介、评分、语言、国家、获奖、票房
+- 搜索防抖（300ms）
+- 明亮清爽 UI 风格
+- 响应式适配
 
 ## 快速开始
 
-### 1. 安装依赖
+### 1. 获取 OMDb API Key（免费）
 
-```bash
-# 安装根目录依赖（并发启动脚本）
-npm install
+访问 [omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx)，填写邮箱即可申请免费 API Key。
 
-# 安装前端依赖
-cd client && npm install
+> 当前已内置公共测试 Key `trilogy`，可直接启动体验。长期使用请申请自己的 Key。
 
-# 安装后端依赖
-cd ../server && npm install
+### 2. 配置环境变量
+
+编辑 `server/.env`，填入你的 API Key：
+
 ```
-
-### 2. 获取 TMDb API Key
-
-1. 访问 [https://www.themoviedb.org/](https://www.themoviedb.org/) 注册账号
-2. 进入 [API 设置页面](https://www.themoviedb.org/settings/api) 申请 API Key
-3. 将 Key 填入 `server/.env` 文件中
-
-### 3. 配置环境变量
-
-在 `server/` 目录下创建 `.env` 文件：
-
-```env
-TMDB_API_KEY=你的API_KEY
+OMDB_API_KEY=你的API_KEY
 PORT=3001
 ```
 
-### 4. 启动项目
+### 3. 安装依赖并启动
 
 ```bash
-# 在根目录执行，同时启动前后端
+# 安装根目录依赖（concurrently）
+npm install
+
+# 安装前端依赖
+cd client && npm install && cd ..
+
+# 安装后端依赖
+cd server && npm install && cd ..
+
+# 一键启动（前后端同时运行）
 npm run dev
 ```
 
-- 前端地址：http://localhost:5173
-- 后端地址：http://localhost:3001
-- 健康检查：http://localhost:3001/api/health
+访问 **http://localhost:5173** 即可使用。
+
+### 单独启动
+
+```bash
+# 后端
+npm run dev:server
+
+# 前端
+npm run dev:client
+```
 
 ## 项目结构
 
 ```
 mov/
-├── client/                 # Vue3 + Vite 前端
+├── client/                    # 前端 (Vue3 + Vite + TS)
 │   └── src/
-│       ├── api/             # API 请求封装
-│       ├── components/      # Vue 组件
-│       │   ├── SearchBar.vue    # 搜索栏
-│       │   ├── MovieList.vue    # 电影列表
-│       │   └── MovieDetail.vue  # 电影详情弹窗
-│       └── types/           # TypeScript 类型
-├── server/                 # Express 后端
+│       ├── api/movie.ts       # Axios 请求封装
+│       ├── components/
+│       │   ├── SearchBar.vue  # 搜索栏（300ms防抖）
+│       │   ├── MovieList.vue  # 电影卡片网格
+│       │   └── MovieDetail.vue# 详情弹窗
+│       ├── types/movie.ts     # TypeScript 类型定义
+│       ├── App.vue            # 主页面
+│       └── main.ts            # 入口
+├── server/                    # 后端 (Express + TS)
 │   └── src/
-│       ├── routes/          # API 路由
-│       ├── services/        # TMDb 服务层
-│       ├── types/           # 类型定义
-│       └── utils/           # 工具函数
-└── package.json            # 一键启动脚本
+│       ├── routes/movie.ts    # API 路由
+│       ├── services/tmdb.ts   # OMDb 服务层
+│       ├── types/movie.ts     # 类型定义
+│       └── index.ts           # Express 入口
+├── package.json               # 一键启动脚本
+└── README.md
 ```
 
 ## API 接口
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/search?keyword=xxx` | 搜索电影 |
-| GET | `/api/movie/:id` | 获取电影详情（聚合演员+截图） |
-| GET | `/api/health` | 健康检查 |
+| 接口 | 说明 |
+|------|------|
+| `GET /api/search?keyword=xxx` | 搜索电影列表 |
+| `GET /api/movie/:id` | 获取电影详情（id 为 IMDb ID） |
 
-## 许可
+## 数据说明
 
-仅供学习参考，数据版权归 TMDb 所有。
+OMDb API 提供的数据字段：
+
+| 字段 | 是否支持 |
+|------|---------|
+| 电影封面（海报） | ✅ |
+| 演员 | ✅（文本列表，无头像） |
+| 导演 / 编剧 | ✅ |
+| 上映时间 / 时长 | ✅ |
+| 描述（剧情简介） | ✅ |
+| 评分（IMDb） | ✅ |
+| 类型 / 分级 | ✅ |
+| 语言 / 国家 | ✅ |
+| 获奖情况 | ✅ |
+| 票房（BoxOffice） | ✅ |
+| 电影截图 | ❌ |
+| 投入资金（预算） | ❌ |
+
+> 仅供学习参考

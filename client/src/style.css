@@ -1,4 +1,4 @@
-/* 全局重置与基础样式 - 明亮清爽风格 */
+/* 全局重置与基础样式 - 影院暗色主题 */
 *,
 *::before,
 *::after {
@@ -8,27 +8,31 @@
 }
 
 :root {
-  /* 颜色系统 */
-  --primary: #1890ff;
-  --primary-hover: #40a9ff;
-  --primary-active: #096dd9;
-  --bg-page: #ffffff;
-  --bg-card: #f5f7fa;
-  --bg-hover: #fafafa;
-  --text-primary: #1a1a2e;
-  --text-body: #4a4a6a;
-  --text-secondary: #8c8ca1;
+  /* 暗色影院主题 */
+  --primary: #e8b74a;
+  --primary-hover: #f0c96e;
+  --primary-active: #d4a03a;
+  --primary-dim: rgba(232, 183, 74, 0.15);
+  --bg-page: #0c0c14;
+  --bg-card: #16162a;
+  --bg-elevated: #1e1e36;
+  --bg-hover: #222240;
+  --text-primary: #eaeaf0;
+  --text-body: #b8b8cc;
+  --text-secondary: #7a7a96;
   --text-white: #ffffff;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(232, 183, 74, 0.15);
   --radius: 12px;
   --radius-lg: 16px;
+  --border-color: rgba(255, 255, 255, 0.06);
 }
 
 html, body {
   height: 100%;
-  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   background: var(--bg-page);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
@@ -39,31 +43,27 @@ html, body {
   min-height: 100vh;
 }
 
-/* 滚动条美化 */
+/* 滚动条 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #d0d5dd;
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #b0b5bd;
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* 过渡动画 */
+/* 动画 */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
@@ -72,17 +72,35 @@ html, body {
 .slide-up-enter-active {
   transition: all 0.3s ease-out;
 }
-
 .slide-up-leave-active {
   transition: all 0.2s ease-in;
 }
-
 .slide-up-enter-from {
   opacity: 0;
   transform: translateY(20px);
 }
-
 .slide-up-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+/* 覆盖 Element Plus 暗色 */
+.el-dialog {
+  --el-dialog-bg-color: var(--bg-elevated) !important;
+  --el-dialog-title-font-size: 18px !important;
+}
+.el-input {
+  --el-input-bg-color: var(--bg-card) !important;
+  --el-input-border-color: var(--border-color) !important;
+  --el-input-hover-border-color: rgba(232, 183, 74, 0.3) !important;
+  --el-input-focus-border-color: var(--primary) !important;
+  --el-input-text-color: var(--text-primary) !important;
+  --el-input-placeholder-color: var(--text-secondary) !important;
+}
+.el-tag {
+  border: none !important;
+}
+.el-skeleton {
+  --el-skeleton-color: var(--bg-card) !important;
+  --el-skeleton-to-color: var(--bg-elevated) !important;
 }

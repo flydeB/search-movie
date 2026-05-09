@@ -22,10 +22,10 @@ watch(() => props.modelValue, (val) => {
   inputValue.value = val
 })
 
-// 300ms 防抖搜索
+// 400ms 防抖搜索
 const debouncedSearch = debounce((keyword: string) => {
   emit('search', keyword)
-}, 300)
+}, 400)
 
 function handleInput(value: string) {
   inputValue.value = value
@@ -39,6 +39,13 @@ function handleClear() {
   debouncedSearch('')
 }
 
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Enter') {
+    debouncedSearch.cancel()
+    emit('search', inputValue.value)
+  }
+}
+
 onUnmounted(() => {
   debouncedSearch.cancel()
 })
@@ -47,42 +54,30 @@ onUnmounted(() => {
 <template>
   <div class="search-bar">
     <div class="search-inner">
-      <el-input
-        v-model="inputValue"
-        placeholder="搜索全球电影，例如：Inception、星际穿越、千与千寻..."
-        :prefix-icon="null"
-        clearable
-        size="large"
-        @input="handleInput"
-        @clear="handleClear"
-      >
-        <template #prefix>
-          <svg
-            class="search-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
+      <div class="search-input-wrap" :class="{ focused: false }">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input
+          v-model="inputValue"
+          type="text"
+          class="search-input"
+          placeholder="搜索电影，支持中英文：Inception、星际穿越、千与千寻..."
+          @input="handleInput(inputValue)"
+          @keydown="handleKeydown"
+        />
+        <button v-if="inputValue" class="clear-btn" @click="handleClear">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
           </svg>
-        </template>
-        <template #suffix>
-          <svg
-            v-if="loading"
-            class="loading-spinner"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
+        </button>
+        <div v-if="loading" class="loading-spinner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
           </svg>
-        </template>
-      </el-input>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -90,55 +85,82 @@ onUnmounted(() => {
 <style scoped>
 .search-bar {
   width: 100%;
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
-.search-inner {
-  position: relative;
-}
-
-.search-inner :deep(.el-input) {
-  --el-input-height: 56px;
-  --el-input-border-radius: 16px;
-  --el-input-focus-border-color: var(--primary);
-  --el-input-border-color: #e2e6ed;
-  --el-input-hover-border-color: #c8cdd6;
-  --el-input-bg-color: #f8f9fb;
-  --el-input-focus-bg-color: #ffffff;
-  --el-input-text-color: var(--text-primary);
-  --el-input-placeholder-color: var(--text-secondary);
-  --el-font-size-base: 16px;
-}
-
-.search-inner :deep(.el-input__wrapper) {
-  padding: 0 20px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-}
-
-.search-inner :deep(.el-input__wrapper:hover) {
-  box-shadow: var(--shadow-md);
-}
-
-.search-inner :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.15), var(--shadow-md);
-}
-
-.search-inner :deep(.el-input__inner) {
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   height: 56px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
+  padding: 0 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.search-input-wrap:focus-within {
+  border-color: rgba(232, 183, 74, 0.4);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(232, 183, 74, 0.08);
+  background: var(--bg-elevated);
 }
 
 .search-icon {
   width: 22px;
   height: 22px;
   color: var(--text-secondary);
-  margin-top: -1px;
+  flex-shrink: 0;
+  transition: color 0.3s;
+}
+
+.search-input-wrap:focus-within .search-icon {
+  color: var(--primary);
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: #5a5a7a;
+  opacity: 0.7;
+}
+
+.clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.clear-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .loading-spinner {
+  flex-shrink: 0;
+}
+
+.loading-spinner svg {
   width: 20px;
   height: 20px;
   color: var(--primary);
@@ -148,5 +170,15 @@ onUnmounted(() => {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .search-input-wrap {
+    height: 50px;
+  }
+
+  .search-input {
+    font-size: 15px;
+  }
 }
 </style>

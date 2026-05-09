@@ -9,6 +9,8 @@ const router = Router();
  * 模糊搜索电影列表
  */
 router.get('/search', async (req: Request, res: Response) => {
+  // 禁用缓存，防止浏览器返回 304
+  res.set('Cache-Control', 'no-store');
   try {
     const keyword = (req.query.keyword as string || '').trim();
 
@@ -44,13 +46,15 @@ router.get('/search', async (req: Request, res: Response) => {
 
 /**
  * GET /api/movie/:id
- * 获取电影详情（聚合数据）
+ * 获取电影详情（id 为 IMDb ID，如 tt0372784）
  */
 router.get('/movie/:id', async (req: Request, res: Response) => {
+  // 禁用缓存，防止浏览器返回 304
+  res.set('Cache-Control', 'no-store');
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = req.params.id;
 
-    if (isNaN(id)) {
+    if (!id) {
       const response: ApiResponse<null> = {
         code: 400,
         message: '无效的电影ID',

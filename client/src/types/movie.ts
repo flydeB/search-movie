@@ -1,6 +1,6 @@
 /** 电影列表项（从后端获取） */
 export interface MovieListItem {
-  id: number
+  id: string       // IMDb ID（如 tt0372784）
   title: string
   poster: string | null
   year: string
@@ -8,31 +8,31 @@ export interface MovieListItem {
   overview: string
 }
 
-/** 演员 */
+/** 演员（OMDb 无头像，只有名字） */
 export interface Actor {
-  id: number
   name: string
   character: string
-  avatar: string | null
 }
 
-/** 电影详情（聚合数据） */
+/** 电影详情 */
 export interface MovieDetail {
-  id: number
+  id: string
   title: string
   poster: string | null
-  backdrop: string | null
   overview: string
   releaseDate: string
-  runtime: number | null
+  runtime: string
   rating: number
   genres: string[]
-  budget: number
-  revenue: number
-  tagline: string | null
-  status: string
+  budget: string       // OMDb 无预算数据，留空
+  revenue: string      // OMDb BoxOffice 字段
+  rated: string        // 分级（如 PG-13）
+  director: string
+  writers: string
   actors: Actor[]
-  images: string[]
+  language: string
+  country: string
+  awards: string
 }
 
 /** 后端统一 API 响应 */
