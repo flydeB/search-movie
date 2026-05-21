@@ -368,7 +368,7 @@ function handlePosterError(e: Event) {
 }
 
 .stat-item svg {
-  opacity: 0.5;
+  opacity: 0.65;
 }
 
 /* 导演/编剧 */

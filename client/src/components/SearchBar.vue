@@ -134,8 +134,8 @@ onUnmounted(() => {
 }
 
 .search-input::placeholder {
-  color: #5a5a7a;
-  opacity: 0.7;
+  color: var(--text-body);
+  opacity: 1;
 }
 
 .clear-btn {
