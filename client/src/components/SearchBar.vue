@@ -13,19 +13,21 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
   (e: 'search', keyword: string): void
+  (e: 'ai-search', keyword: string): void
 }>()
 
 const inputValue = ref(props.modelValue)
+const aiMode = ref(false)
 
 // 同步外部 modelValue
 watch(() => props.modelValue, (val) => {
   inputValue.value = val
 })
 
-// 400ms 防抖搜索
+// 600ms 防抖搜索（避免每输入一个字都发请求）
 const debouncedSearch = debounce((keyword: string) => {
   emit('search', keyword)
-}, 400)
+}, 600)
 
 function handleInput(value: string) {
   inputValue.value = value
@@ -42,8 +44,16 @@ function handleClear() {
 function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Enter') {
     debouncedSearch.cancel()
-    emit('search', inputValue.value)
+    if (aiMode.value) {
+      emit('ai-search', inputValue.value)
+    } else {
+      emit('search', inputValue.value)
+    }
   }
+}
+
+function toggleAiMode() {
+  aiMode.value = !aiMode.value
 }
 
 onUnmounted(() => {
@@ -63,10 +73,22 @@ onUnmounted(() => {
           v-model="inputValue"
           type="text"
           class="search-input"
-          placeholder="搜索电影，支持中英文：Inception、星际穿越、千与千寻..."
+          :placeholder="aiMode ? 'AI 智能搜索（即将上线）...' : '搜索电影，支持中英文：Inception、星际穿越、千与千寻...'"
           @input="handleInput(inputValue)"
           @keydown="handleKeydown"
+          :disabled="aiMode"
         />
+        <!-- AI 搜索切换按钮（预留入口，内嵌在输入框右侧） -->
+        <button
+          class="ai-toggle-inline"
+          title="AI 智能搜索即将上线"
+          disabled
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M12 2a4 4 0 014 4c0 2-2 3-2 5h-4c0-2-2-3-2-5a4 4 0 014-4z"/>
+            <path d="M9 18h6M10 22h4"/>
+          </svg>
+        </button>
         <button v-if="inputValue" class="clear-btn" @click="handleClear">
           <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -170,6 +192,29 @@ onUnmounted(() => {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* AI 搜索按钮（内嵌在输入框右侧，预留入口） */
+.ai-toggle-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: var(--text-body);
+  cursor: not-allowed;
+  opacity: 0.5;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.ai-toggle-inline svg {
+  width: 14px;
+  height: 14px;
 }
 
 @media (max-width: 768px) {

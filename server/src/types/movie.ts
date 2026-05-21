@@ -36,6 +36,7 @@ export interface OMDbMovieDetail {
   BoxOffice: string;
   Production: string;
   Response: string;
+  Error?: string;
 }
 
 /** 豆瓣搜索结果项 */
@@ -78,9 +79,66 @@ export interface DoubanSubjectAbstract {
   };
 }
 
+/** TMDB 搜索结果项 */
+export interface TMDBSearchResult {
+  id: number;
+  title: string;
+  original_title: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  release_date: string;
+  vote_average: number;
+  genre_ids: number[];
+}
+
+/** TMDB 搜索 API 响应 */
+export interface TMDBSearchResponse {
+  page: number;
+  results: TMDBSearchResult[];
+  total_pages: number;
+  total_results: number;
+}
+
+/** TMDB 演员信息 */
+export interface TMDBCastMember {
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+}
+
+/** TMDB 剧组信息 */
+export interface TMDBCrewMember {
+  name: string;
+  job: string;
+  department: string;
+}
+
+/** TMDB 电影详情 API 响应 */
+export interface TMDBMovieDetail {
+  id: number;
+  title: string;
+  original_title: string;
+  overview: string;
+  poster_path: string | null;
+  release_date: string;
+  runtime: number | null;
+  vote_average: number;
+  genres: { id: number; name: string }[];
+  budget: number;
+  revenue: number;
+  spoken_languages: { iso_639_1: string; name: string }[];
+  production_countries: { iso_3166_1: string; name: string }[];
+  credits: {
+    cast: TMDBCastMember[];
+    crew: TMDBCrewMember[];
+  };
+}
+
 /** 前端展示用的电影列表项 */
 export interface MovieListItem {
-  id: string;       // OMDb 使用 imdbID 作为唯一标识
+  id: string;       // tmdb_xxx（TMDB）或 ttxxx（OMDb）或 douban_xxx（豆瓣）
   title: string;
   poster: string | null;
   year: string;
@@ -88,10 +146,11 @@ export interface MovieListItem {
   overview: string;
 }
 
-/** 前端展示用的演员（OMDb 无头像，只有名字和角色） */
+/** 前端展示用的演员 */
 export interface Actor {
   name: string;
   character: string;
+  avatar?: string | null;  // TMDB 演员头像 URL（已代理）
 }
 
 /** 前端展示用的电影详情 */
@@ -104,8 +163,8 @@ export interface MovieDetail {
   runtime: string;
   rating: number;
   genres: string[];
-  budget: string;    // OMDb 无预算数据，留空
-  revenue: string;   // OMDb 的 BoxOffice 字段
+  budget: string;
+  revenue: string;
   rated: string;     // 分级（如 PG-13）
   director: string;
   writers: string;

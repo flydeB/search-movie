@@ -17,11 +17,21 @@ const detailVisible = ref(false)
 const currentMovie = ref<MovieDetailType | null>(null)
 const detailLoading = ref(false)
 
+/** 用于取消前一次搜索请求 */
+let searchAbort: AbortController | null = null
+
 /**
  * 搜索电影
  */
 async function handleSearch(kw: string) {
   keyword.value = kw
+
+  // 取消上一次还在飞的请求
+  if (searchAbort) {
+    searchAbort.abort()
+    searchAbort = null
+  }
+
   if (!kw) {
     movies.value = []
     error.value = ''
@@ -30,9 +40,15 @@ async function handleSearch(kw: string) {
 
   loading.value = true
   error.value = ''
+
+  // 创建新的 AbortController
+  searchAbort = new AbortController()
+
   try {
-    movies.value = await searchMovies(kw)
+    movies.value = await searchMovies(kw, searchAbort.signal)
   } catch (e: any) {
+    // 被取消的请求不报错
+    if (e.code === 'ERR_CANCELED' || e.name === 'CanceledError') return
     console.error('搜索失败:', e)
     error.value = '搜索失败，请检查网络后重试'
     movies.value = []
@@ -62,6 +78,13 @@ async function handleSelect(movie: MovieListItem) {
 function handleCloseDetail() {
   detailVisible.value = false
   currentMovie.value = null
+}
+
+/** AI 搜索（预留） */
+function handleAiSearch(_kw: string) {
+  // TODO: 后续接入 DeepSeek 等 AI 模型后实现
+  error.value = 'AI 智能搜索功能即将上线，敬请期待！'
+  setTimeout(() => { error.value = '' }, 3000)
 }
 
 function handleHintClick(kw: string) {
@@ -97,6 +120,7 @@ function handleHintClick(kw: string) {
             v-model="keyword"
             :loading="loading"
             @search="handleSearch"
+            @ai-search="handleAiSearch"
           />
         </div>
         <div class="quick-tags">

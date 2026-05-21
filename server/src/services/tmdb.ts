@@ -2,6 +2,8 @@ import axios from 'axios';
 import type {
   OMDbSearchResponse,
   OMDbMovieDetail,
+  TMDBSearchResponse,
+  TMDBMovieDetail,
   DoubanSearchResult,
   DoubanSubjectAbstract,
   MovieListItem,
@@ -9,22 +11,36 @@ import type {
   Actor,
 } from '../types/movie';
 
-/**
- * OMDb API 基础地址
- * 国内可直接访问 omdbapi.com，无需代理
- */
-const OMDB_API_BASE = 'https://www.omdbapi.com';
+// ============================================================
+// API 实例
+// ============================================================
 
-/** 创建带 API Key 的 axios 实例 */
+/** OMDb API */
+const OMDB_API_BASE = 'https://www.omdbapi.com';
 const omdbApi = axios.create({
   baseURL: OMDB_API_BASE,
-  params: {
-    apikey: process.env.OMDB_API_KEY,
-  },
-  timeout: 15000,
+  params: { apikey: process.env.OMDB_API_KEY },
+  timeout: 30000,
 });
 
-/** 豆瓣搜索 axios 实例 */
+/** TMDB API（主数据源）
+ *  默认使用 api.tmdb.org（国内可直连），也可通过 TMDB_BASE_URL 配置代理
+ */
+const TMDB_API_BASE = process.env.TMDB_BASE_URL || 'https://api.tmdb.org/3';
+const TMDB_IMAGE_BASE = process.env.TMDB_IMAGE_URL || 'https://image.tmdb.org/t/p';
+/** TMDB 始终启用（api.tmdb.org 国内可直接访问） */
+const isTMDBEnabled = true;
+const tmdbApi = axios.create({
+  baseURL: TMDB_API_BASE,
+  params: {
+    api_key: process.env.TMDB_API_KEY,
+    language: 'zh-CN',
+    region: 'CN',
+  },
+  timeout: 15000, // TMDB 响应快，15s 足够
+});
+
+/** 豆瓣 API（三级兜底） */
 const doubanApi = axios.create({
   timeout: 10000,
   headers: {
@@ -32,41 +48,54 @@ const doubanApi = axios.create({
   },
 });
 
+/** 翻译 API */
+const translateApi = axios.create({ timeout: 5000 });
+
+// ============================================================
+// 图片代理
+// ============================================================
+
 /**
- * 将豆瓣/OMDb 图片 URL 转为走本地代理（解决防盗链）
+ * 将第三方图片 URL 转为走本地代理（解决防盗链）
  */
 function proxyImageUrl(url: string | null | undefined): string | null {
-  if (!url || url === 'N/A') return null;
-  // 通过后端图片代理加载
+  if (!url || url === 'N/A' || url === '') return null;
   return `/api/image-proxy?url=${encodeURIComponent(url)}`;
 }
 
 /**
- * 判断关键词是否包含中文字符
+ * 将 TMDB 图片路径转为完整代理 URL
+ * @param path 图片路径（如 /abc123.jpg）
+ * @param size 图片尺寸，默认 w500
  */
+function tmdbImageUrl(path: string | null | undefined, size: string = 'w500'): string | null {
+  if (!path) return null;
+  const url = `${TMDB_IMAGE_BASE}/${size}${path}`;
+  return proxyImageUrl(url);
+}
+
+// ============================================================
+// 工具函数
+// ============================================================
+
 function containsChinese(str: string): boolean {
   return /[\u4e00-\u9fff]/.test(str);
 }
 
-/**
- * 解析 OMDb 返回的评分字符串为数字
- */
-function parseRating(rating: string): number {
-  const num = parseFloat(rating);
+function isEnglish(str: string): boolean {
+  return /^[a-zA-Z0-9\s\-:,.!?'"/()&]+$/.test(str);
+}
+
+function parseRating(rating: string | number): number {
+  const num = typeof rating === 'string' ? parseFloat(rating) : rating;
   return isNaN(num) ? 0 : num;
 }
 
-/**
- * 处理 OMDb 中的 "N/A" 值，转为空字符串
- */
 function cleanNA(value: string | undefined): string {
   if (!value || value === 'N/A') return '';
   return value;
 }
 
-/**
- * 解析 OMDb 演员字符串为 Actor 数组
- */
 function parseActors(actorsStr: string): Actor[] {
   if (!actorsStr || actorsStr === 'N/A') return [];
   return actorsStr
@@ -76,53 +105,31 @@ function parseActors(actorsStr: string): Actor[] {
     .map((name) => ({ name, character: '' }));
 }
 
-/**
- * 解析 OMDb Genre 字符串为数组
- */
 function parseGenres(genreStr: string): string[] {
   if (!genreStr || genreStr === 'N/A') return [];
   return genreStr.split(',').map((g) => g.trim()).filter(Boolean);
 }
 
-/**
- * 豆瓣搜索结果缓存项
- */
-interface DoubanCacheItem {
-  title: string;       // 中文标题
-  subTitle: string;    // 副标题（可能是英文/日文/中文）
-  year: string;
-  img: string;         // 海报URL
-  id: string;          // 豆瓣ID
+function formatBudget(amount: number): string {
+  if (!amount || amount <= 0) return '';
+  return '$' + amount.toLocaleString('en-US');
 }
 
-/**
- * 通过豆瓣搜索中文电影
- * 同时缓存豆瓣搜索结果，供后续详情查询使用
- */
-const doubanCache = new Map<string, DoubanCacheItem>();
-
-/**
- * 判断字符串是否为英文（只含拉丁字母、数字、空格和标点）
- */
-function isEnglish(str: string): boolean {
-  return /^[a-zA-Z0-9\s\-:,.!?'"/()&]+$/.test(str);
+function formatRuntime(minutes: number | null): string {
+  if (!minutes || minutes <= 0) return '';
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h > 0 && m > 0) return `${h}h ${m}min`;
+  if (h > 0) return `${h}h`;
+  return `${m}min`;
 }
 
-/** MyMemory 翻译 API axios 实例 */
-const translateApi = axios.create({
-  timeout: 5000,
-});
-
-/**
- * 翻译中文关键词为英文（使用免费 MyMemory API）
- */
 async function translateToEnglish(text: string): Promise<string> {
   try {
     const res = await translateApi.get('https://api.mymemory.translated.net/get', {
       params: { q: text, langpair: 'zh|en' },
     });
     const translated = res.data?.responseData?.translatedText || '';
-    // 翻译结果与原文相同时说明翻译失败，忽略
     if (translated && translated !== text && isEnglish(translated)) {
       return translated;
     }
@@ -130,11 +137,24 @@ async function translateToEnglish(text: string): Promise<string> {
   return '';
 }
 
+// ============================================================
+// 豆瓣缓存（三级兜底）
+// ============================================================
+
+interface DoubanCacheItem {
+  title: string;
+  subTitle: string;
+  year: string;
+  img: string;
+  id: string;
+}
+
+const doubanCache = new Map<string, DoubanCacheItem>();
+
 async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
   const results: MovieListItem[] = [];
   const seenIds = new Set<string>();
 
-  // 1. 豆瓣搜索
   try {
     const res = await doubanApi.get<DoubanSearchResult[]>(
       'https://movie.douban.com/j/subject_suggest',
@@ -145,7 +165,6 @@ async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
       const movies = res.data.filter((item) => item.type === 'movie');
 
       for (const item of movies) {
-        // 缓存完整的豆瓣搜索结果
         const cacheItem: DoubanCacheItem = {
           title: item.title,
           subTitle: item.sub_title || '',
@@ -156,8 +175,6 @@ async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
         doubanCache.set(item.id, cacheItem);
 
         let imdbId = '';
-
-        // 尝试用多种策略搜索 OMDb 获取 IMDb ID
         const searchTitles: string[] = [];
         if (cacheItem.subTitle && isEnglish(cacheItem.subTitle)) {
           searchTitles.push(cacheItem.subTitle);
@@ -170,16 +187,13 @@ async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
             const omdbRes = await omdbApi.get<OMDbSearchResponse>('/', {
               params: { s: searchTitle, type: 'movie', y: item.year || undefined },
             });
-
             if (omdbRes.data.Response === 'True' && omdbRes.data.Search?.length > 0) {
               const matched = omdbRes.data.Search.find(
                 (m) => item.year && m.Year.startsWith(item.year)
               ) || omdbRes.data.Search[0];
               imdbId = matched.imdbID;
             }
-          } catch {
-            // OMDb 查询失败不影响列表展示
-          }
+          } catch { /* ignore */ }
         }
 
         const movieId = imdbId || `douban_${item.id}`;
@@ -200,48 +214,114 @@ async function searchByDouban(keyword: string): Promise<MovieListItem[]> {
     console.error('豆瓣搜索失败:', error.message);
   }
 
-  // 2. 搜索增强：如果豆瓣结果不足5条，尝试翻译后搜 OMDb 补充
-  if (results.length < 5) {
-    const englishKeyword = await translateToEnglish(keyword);
-    if (englishKeyword) {
-      try {
-        const omdbRes = await omdbApi.get<OMDbSearchResponse>('/', {
-          params: { s: englishKeyword, type: 'movie' },
-        });
-        if (omdbRes.data.Response === 'True' && omdbRes.data.Search?.length > 0) {
-          for (const item of omdbRes.data.Search) {
-            if (!seenIds.has(item.imdbID)) {
-              seenIds.add(item.imdbID);
-              results.push({
-                id: item.imdbID,
-                title: item.Title,
-                poster: proxyImageUrl(item.Poster),
-                year: item.Year || '',
-                rating: 0,
-                overview: '',
-              });
-            }
-          }
-        }
-      } catch { /* ignore */ }
-    }
-  }
-
   return results;
 }
 
+// ============================================================
+// TMDB 搜索 & 详情（主数据源）
+// ============================================================
+
 /**
- * 搜索电影
- * 中文关键词 → 豆瓣搜索 + OMDb 补全
- * 英文关键词 → OMDb 直接搜索
+ * TMDB 搜索电影
  */
-export async function searchMovies(keyword: string, page: number = 1): Promise<MovieListItem[]> {
+async function searchByTMDB(keyword: string, page: number = 1): Promise<MovieListItem[]> {
+  const res = await tmdbApi.get<TMDBSearchResponse>('/search/movie', {
+    params: { query: keyword, page, include_adult: false },
+  });
+
+  if (!res.data.results || res.data.results.length === 0) {
+    return [];
+  }
+
+  return res.data.results.map((item) => ({
+    id: `tmdb_${item.id}`,
+    title: item.title,
+    poster: tmdbImageUrl(item.poster_path),
+    year: item.release_date ? item.release_date.substring(0, 4) : '',
+    rating: item.vote_average || 0,
+    overview: item.overview || '',
+  }));
+}
+
+/**
+ * 获取 TMDB 电影详情
+ */
+async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
+  const res = await tmdbApi.get<TMDBMovieDetail>(`/movie/${tmdbId}`, {
+    params: { append_to_response: 'credits' },
+  });
+
+  const d = res.data;
+
+  // 导演：从 crew 中提取 Director 岗位
+  const directors = d.credits?.crew
+    ?.filter((c) => c.job === 'Director')
+    .map((c) => c.name)
+    .join(', ') || '';
+
+  // 编剧：从 crew 中提取 Writer / Screenplay 岗位
+  const writers = d.credits?.crew
+    ?.filter((c) => c.department === 'Writing' || c.job === 'Writer' || c.job === 'Screenplay')
+    .map((c) => c.name)
+    .join(', ') || '';
+
+  // 演员：带头像
+  const actors: Actor[] = (d.credits?.cast || [])
+    .slice(0, 15) // 最多取前15位
+    .map((c) => ({
+      name: c.name,
+      character: c.character || '',
+      avatar: tmdbImageUrl(c.profile_path, 'w185'),
+    }));
+
+  // 语言
+  const language = (d.spoken_languages || [])
+    .map((l) => l.name)
+    .join(', ');
+
+  // 国家
+  const country = (d.production_countries || [])
+    .map((c) => c.name)
+    .join(', ');
+
+  return {
+    id: `tmdb_${d.id}`,
+    title: d.title,
+    poster: tmdbImageUrl(d.poster_path),
+    overview: d.overview || '暂无简介',
+    releaseDate: d.release_date || '',
+    runtime: formatRuntime(d.runtime),
+    rating: d.vote_average || 0,
+    genres: (d.genres || []).map((g) => g.name),
+    budget: formatBudget(d.budget),
+    revenue: formatBudget(d.revenue),
+    rated: '', // TMDB 基础接口不返回分级，需要单独查 release_dates
+    director: directors,
+    writers,
+    actors,
+    language,
+    country,
+    awards: '', // TMDB 不直接返回获奖信息
+  };
+}
+
+// ============================================================
+// OMDb 搜索 & 详情（兜底方案）
+// ============================================================
+
+/**
+ * OMDb 搜索电影
+ */
+async function searchByOMDb(keyword: string, page: number = 1): Promise<MovieListItem[]> {
+  // 中文关键词先翻译
+  let searchKeyword = keyword;
   if (containsChinese(keyword)) {
-    return searchByDouban(keyword);
+    const translated = await translateToEnglish(keyword);
+    if (translated) searchKeyword = translated;
   }
 
   const res = await omdbApi.get<OMDbSearchResponse>('/', {
-    params: { s: keyword, type: 'movie', page },
+    params: { s: searchKeyword, type: 'movie', page },
   });
 
   if (res.data.Response === 'False' || !res.data.Search) {
@@ -259,81 +339,11 @@ export async function searchMovies(keyword: string, page: number = 1): Promise<M
 }
 
 /**
- * 获取电影详情
- * @param id IMDb ID（如 tt0372784）或豆瓣ID（如 douban_36164706）
+ * 获取 OMDb 电影详情
  */
-export async function getMovieDetail(id: string): Promise<MovieDetail> {
-  // 豆瓣ID格式
-  if (id.startsWith('douban_')) {
-    const doubanId = id.replace('douban_', '');
-    const cached = doubanCache.get(doubanId);
-
-    // 策略1: 通过豆瓣 subject_abstract 获取丰富详情
-    try {
-      const abstractRes = await doubanApi.get<DoubanSubjectAbstract>(
-        'https://movie.douban.com/j/subject_abstract',
-        { params: { subject_id: doubanId } }
-      );
-
-      if (abstractRes.data?.subject) {
-        const s = abstractRes.data.subject;
-        const cachedItem = cached || { title: s.title, subTitle: '', year: s.release_year, img: '', id: doubanId };
-
-        // 尝试用 OMDb 补全更多信息（剧情简介、票房等）
-        let omdbDetail: OMDbMovieDetail | null = null;
-        const searchTitles: string[] = [];
-        if (cachedItem.subTitle && isEnglish(cachedItem.subTitle)) {
-          searchTitles.push(cachedItem.subTitle);
-        }
-        searchTitles.push(cachedItem.title);
-
-        for (const searchTitle of searchTitles) {
-          if (omdbDetail) break;
-          try {
-            const omdbRes = await omdbApi.get<OMDbSearchResponse>('/', {
-              params: { s: searchTitle, type: 'movie' },
-            });
-            if (omdbRes.data.Response === 'True' && omdbRes.data.Search?.length > 0) {
-              const matched = (cachedItem.year)
-                ? omdbRes.data.Search.find((m) => m.Year.startsWith(cachedItem.year))
-                : omdbRes.data.Search[0];
-              if (matched) {
-                const detailRes = await omdbApi.get<OMDbMovieDetail>('/', {
-                  params: { i: matched.imdbID, plot: 'full' },
-                });
-                if (detailRes.data.Response === 'True') {
-                  omdbDetail = detailRes.data;
-                }
-              }
-            }
-          } catch { /* ignore */ }
-        }
-
-        // 合并豆瓣 + OMDb 信息
-        return buildDoubanDetail(s, cachedItem, omdbDetail);
-      }
-    } catch (error: any) {
-      console.error('豆瓣 subject_abstract 获取失败:', error.message);
-    }
-
-    // 策略2: 缓存中有的话用兜底方案
-    if (cached) {
-      return buildDoubanFallbackDetail(cached);
-    }
-
-    // 策略3: 完全没有信息
-    return buildDoubanFallbackDetail({
-      title: '未知电影',
-      subTitle: '',
-      year: '',
-      img: '',
-      id: doubanId,
-    });
-  }
-
-  // IMDb ID 格式：直接查 OMDb
+async function getOMDbDetail(imdbId: string): Promise<MovieDetail> {
   const res = await omdbApi.get<OMDbMovieDetail>('/', {
-    params: { i: id, plot: 'full' },
+    params: { i: imdbId, plot: 'full' },
   });
 
   if (res.data.Response === 'False') {
@@ -343,69 +353,6 @@ export async function getMovieDetail(id: string): Promise<MovieDetail> {
   return formatOMDbDetail(res.data);
 }
 
-/**
- * 用豆瓣 subject_abstract + 可选 OMDb 信息构建详情
- */
-function buildDoubanDetail(
-  subject: DoubanSubjectAbstract['subject'],
-  cached: DoubanCacheItem,
-  omdbDetail: OMDbMovieDetail | null
-): MovieDetail {
-  const rating = omdbDetail ? parseRating(omdbDetail.imdbRating) : parseRating(subject.rate);
-  const title = cached.title + (cached.subTitle ? ` (${cached.subTitle})` : '');
-
-  return {
-    id: omdbDetail ? omdbDetail.imdbID : `douban_${cached.id}`,
-    title: omdbDetail ? `${cached.title} (${omdbDetail.Title})` : title,
-    poster: proxyImageUrl(cached.img || (omdbDetail ? omdbDetail.Poster : '')),
-    overview: omdbDetail ? (cleanNA(omdbDetail.Plot) || '暂无简介') : (subject.short_comment?.content || '暂无简介'),
-    releaseDate: omdbDetail ? cleanNA(omdbDetail.Released) : (subject.release_year || ''),
-    runtime: omdbDetail ? cleanNA(omdbDetail.Runtime) : (subject.duration || ''),
-    rating,
-    genres: omdbDetail ? parseGenres(omdbDetail.Genre) : (subject.types || []),
-    budget: '',
-    revenue: omdbDetail ? cleanNA(omdbDetail.BoxOffice) : '',
-    rated: omdbDetail ? cleanNA(omdbDetail.Rated) : '',
-    director: omdbDetail ? cleanNA(omdbDetail.Director) : (subject.directors?.join(', ') || ''),
-    writers: omdbDetail ? cleanNA(omdbDetail.Writer) : '',
-    actors: omdbDetail
-      ? parseActors(omdbDetail.Actors)
-      : (subject.actors?.map((name) => ({ name, character: '' })) || []),
-    language: omdbDetail ? cleanNA(omdbDetail.Language) : '',
-    country: omdbDetail ? cleanNA(omdbDetail.Country) : (subject.region || ''),
-    awards: omdbDetail ? cleanNA(omdbDetail.Awards) : '',
-  };
-}
-
-/**
- * 用豆瓣缓存信息构建基本详情（OMDb 查不到时的兜底方案）
- */
-function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
-  return {
-    id: `douban_${cached.id}`,
-    title: cached.title + (cached.subTitle ? ` (${cached.subTitle})` : ''),
-    poster: proxyImageUrl(cached.img),
-    overview: '暂无详细简介，该电影信息来自豆瓣，OMDb 暂无收录。',
-    releaseDate: cached.year || '',
-    runtime: '',
-    rating: 0,
-    genres: [],
-    budget: '',
-    revenue: '',
-    rated: '',
-    director: '',
-    writers: '',
-    actors: [],
-    language: '',
-    country: '',
-    awards: '',
-  };
-}
-
-/**
- * 格式化 OMDb 详情为前端格式
- * @param chineseTitle 可选的中文标题，用于替换英文标题显示
- */
 function formatOMDbDetail(d: OMDbMovieDetail, chineseTitle?: string): MovieDetail {
   return {
     id: d.imdbID,
@@ -426,4 +373,194 @@ function formatOMDbDetail(d: OMDbMovieDetail, chineseTitle?: string): MovieDetai
     country: cleanNA(d.Country),
     awards: cleanNA(d.Awards),
   };
+}
+
+// ============================================================
+// 豆瓣详情（三级兜底）
+// ============================================================
+
+async function getDoubanDetail(doubanId: string): Promise<MovieDetail> {
+  const cached = doubanCache.get(doubanId);
+
+  // 策略1: 通过豆瓣 subject_abstract 获取详情
+  try {
+    const abstractRes = await doubanApi.get<DoubanSubjectAbstract>(
+      'https://movie.douban.com/j/subject_abstract',
+      { params: { subject_id: doubanId } }
+    );
+
+    if (abstractRes.data?.subject) {
+      const s = abstractRes.data.subject;
+      const cachedItem = cached || { title: s.title, subTitle: '', year: s.release_year, img: '', id: doubanId };
+
+      // 尝试用 OMDb 补全
+      let omdbDetail: OMDbMovieDetail | null = null;
+      const searchTitles: string[] = [];
+      if (cachedItem.subTitle && isEnglish(cachedItem.subTitle)) {
+        searchTitles.push(cachedItem.subTitle);
+      }
+      searchTitles.push(cachedItem.title);
+
+      for (const searchTitle of searchTitles) {
+        if (omdbDetail) break;
+        try {
+          const omdbRes = await omdbApi.get<OMDbSearchResponse>('/', {
+            params: { s: searchTitle, type: 'movie' },
+          });
+          if (omdbRes.data.Response === 'True' && omdbRes.data.Search?.length > 0) {
+            const matched = cachedItem.year
+              ? omdbRes.data.Search.find((m) => m.Year.startsWith(cachedItem.year))
+              : omdbRes.data.Search[0];
+            if (matched) {
+              const detailRes = await omdbApi.get<OMDbMovieDetail>('/', {
+                params: { i: matched.imdbID, plot: 'full' },
+              });
+              if (detailRes.data.Response === 'True') {
+                omdbDetail = detailRes.data;
+              }
+            }
+          }
+        } catch { /* ignore */ }
+      }
+
+      return buildDoubanDetail(s, cachedItem, omdbDetail);
+    }
+  } catch (error: any) {
+    console.error('豆瓣 subject_abstract 获取失败:', error.message);
+  }
+
+  // 策略2: 缓存兜底
+  if (cached) {
+    return buildDoubanFallbackDetail(cached);
+  }
+
+  // 策略3: 空壳
+  return buildDoubanFallbackDetail({
+    title: '未知电影', subTitle: '', year: '', img: '', id: doubanId,
+  });
+}
+
+function buildDoubanDetail(
+  subject: DoubanSubjectAbstract['subject'],
+  cached: DoubanCacheItem,
+  omdbDetail: OMDbMovieDetail | null
+): MovieDetail {
+  const rating = omdbDetail ? parseRating(omdbDetail.imdbRating) : parseRating(subject.rate);
+
+  return {
+    id: omdbDetail ? omdbDetail.imdbID : `douban_${cached.id}`,
+    title: omdbDetail ? `${cached.title} (${omdbDetail.Title})` : (cached.title + (cached.subTitle ? ` (${cached.subTitle})` : '')),
+    poster: proxyImageUrl(cached.img || (omdbDetail ? omdbDetail.Poster : '')),
+    overview: omdbDetail ? (cleanNA(omdbDetail.Plot) || '暂无简介') : (subject.short_comment?.content || '暂无简介'),
+    releaseDate: omdbDetail ? cleanNA(omdbDetail.Released) : (subject.release_year || ''),
+    runtime: omdbDetail ? cleanNA(omdbDetail.Runtime) : (subject.duration || ''),
+    rating,
+    genres: omdbDetail ? parseGenres(omdbDetail.Genre) : (subject.types || []),
+    budget: '',
+    revenue: omdbDetail ? cleanNA(omdbDetail.BoxOffice) : '',
+    rated: omdbDetail ? cleanNA(omdbDetail.Rated) : '',
+    director: omdbDetail ? cleanNA(omdbDetail.Director) : (subject.directors?.join(', ') || ''),
+    writers: omdbDetail ? cleanNA(omdbDetail.Writer) : '',
+    actors: omdbDetail
+      ? parseActors(omdbDetail.Actors)
+      : (subject.actors?.map((name) => ({ name, character: '' })) || []),
+    language: omdbDetail ? cleanNA(omdbDetail.Language) : '',
+    country: omdbDetail ? cleanNA(omdbDetail.Country) : (subject.region || ''),
+    awards: omdbDetail ? cleanNA(omdbDetail.Awards) : '',
+  };
+}
+
+function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
+  return {
+    id: `douban_${cached.id}`,
+    title: cached.title + (cached.subTitle ? ` (${cached.subTitle})` : ''),
+    poster: proxyImageUrl(cached.img),
+    overview: '暂无详细简介，该电影信息来自豆瓣，TMDB 暂无收录。',
+    releaseDate: cached.year || '',
+    runtime: '',
+    rating: 0,
+    genres: [],
+    budget: '',
+    revenue: '',
+    rated: '',
+    director: '',
+    writers: '',
+    actors: [],
+    language: '',
+    country: '',
+    awards: '',
+  };
+}
+
+// ============================================================
+// 公开接口：搜索 & 详情（TMDB 优先 → OMDb 兜底 → 豆瓣三级兜底）
+// ============================================================
+
+/**
+ * 搜索电影
+ * 策略：配了代理 → TMDB 竞赛模式；没配 → 中文走 OMDb+豆瓣，英文走 OMDb
+ */
+export async function searchMovies(keyword: string, page: number = 1): Promise<MovieListItem[]> {
+  // TMDB 代理已配置 → 竞赛模式（TMDB 15s 内抢到了就用，抢不到走 OMDb）
+  if (isTMDBEnabled) {
+    const tmdbPromise = searchByTMDB(keyword, page).catch((err) => {
+      console.log('TMDB 异常:', err.message);
+      return [] as MovieListItem[];
+    });
+
+    const tmdbWithTimeout = Promise.race([
+      tmdbPromise,
+      new Promise<MovieListItem[]>((resolve) =>
+        setTimeout(() => { console.log('TMDB 超时，走 OMDb...'); resolve([]); }, 15000)
+      ),
+    ]);
+
+    const tmdbResults = await tmdbWithTimeout;
+    if (tmdbResults.length > 0) {
+      return tmdbResults;
+    }
+  }
+
+  // OMDb（没配代理时，OMDb 是主力。中文关键词翻译后搜）
+  try {
+    const omdbResults = await searchByOMDb(keyword, page);
+    if (omdbResults.length > 0) {
+      return omdbResults;
+    }
+  } catch (error: any) {
+    console.error('OMDb 搜索失败:', error.message);
+  }
+
+  // 中文关键词走豆瓣兜底（OMDb 中文数据少，豆瓣补全）
+  if (containsChinese(keyword)) {
+    try {
+      return await searchByDouban(keyword);
+    } catch (error: any) {
+      console.error('豆瓣搜索失败:', error.message);
+    }
+  }
+
+  return [];
+}
+
+/**
+ * 获取电影详情
+ * 根据 ID 前缀自动路由到对应数据源
+ * - tmdb_xxx → TMDB
+ * - douban_xxx → 豆瓣 → OMDb 补全
+ * - ttxxx → OMDb
+ */
+export async function getMovieDetail(id: string): Promise<MovieDetail> {
+  // TMDB 电影
+  if (id.startsWith('tmdb_')) {
+    return getTMDBDetail(id.replace('tmdb_', ''));
+  }
+
+  // 豆瓣电影 → 查询 OMDb 补全
+  if (id.startsWith('douban_')) {
+    return getDoubanDetail(id.replace('douban_', ''));
+  }
+
+  // 默认走 OMDb（IMDb ID）
+  return getOMDbDetail(id);
 }

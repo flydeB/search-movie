@@ -165,14 +165,21 @@ function handlePosterError(e: Event) {
       <!-- 演员列表 -->
       <div v-if="movie.actors.length > 0" class="detail-section">
         <h4 class="section-title">演员阵容</h4>
-        <div class="cast-grid">
+          <div class="cast-grid">
           <div
             v-for="(actor, index) in movie.actors"
             :key="index"
             class="cast-item"
           >
             <div class="cast-avatar">
-              <span class="avatar-letter">{{ actor.name.charAt(0) }}</span>
+              <img
+                v-if="actor.avatar"
+                :src="actor.avatar"
+                :alt="actor.name"
+                class="avatar-img"
+                @error="($event.target as HTMLImageElement).style.display='none'"
+              />
+              <span v-if="!actor.avatar" class="avatar-letter">{{ actor.name.charAt(0) }}</span>
             </div>
             <div class="cast-info">
               <span class="cast-name">{{ actor.name }}</span>
@@ -489,6 +496,13 @@ function handlePosterError(e: Event) {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .avatar-letter {

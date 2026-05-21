@@ -25,14 +25,14 @@ router.get('/image-proxy', async (req: Request, res: Response) => {
   try {
     const imgRes = await axios.get(url, {
       responseType: 'arraybuffer',
-      timeout: 10000,
+      timeout: 30000, // 图片加载给 30s
       headers: {
         'Referer': 'https://movie.douban.com/',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       },
     });
 
-    const contentType = imgRes.headers['content-type'] || 'image/jpeg';
+    const contentType = String(imgRes.headers['content-type'] || 'image/jpeg');
     res.set('Content-Type', contentType);
     res.set('Cache-Control', 'public, max-age=86400'); // 缓存1天
     res.send(Buffer.from(imgRes.data));
@@ -90,7 +90,7 @@ router.get('/movie/:id', async (req: Request, res: Response) => {
   // 禁用缓存，防止浏览器返回 304
   res.set('Cache-Control', 'no-store');
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
 
     if (!id) {
       const response: ApiResponse<null> = {
@@ -119,6 +119,21 @@ router.get('/movie/:id', async (req: Request, res: Response) => {
     };
     res.status(500).json(response);
   }
+});
+
+/**
+ * GET /api/ai-search?keyword=xxx
+ * AI 智能搜索（预留入口，DeepSeek 等模型接入后启用）
+ * 当前返回提示信息
+ */
+router.get('/ai-search', async (_req: Request, res: Response) => {
+  res.set('Cache-Control', 'no-store');
+  const response: ApiResponse<null> = {
+    code: 501,
+    message: 'AI 智能搜索功能即将上线，敬请期待！当前请使用普通搜索。',
+    data: null,
+  };
+  res.status(501).json(response);
 });
 
 export default router;

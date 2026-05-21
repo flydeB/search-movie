@@ -1,6 +1,6 @@
 /** 电影列表项（从后端获取） */
 export interface MovieListItem {
-  id: string       // IMDb ID（如 tt0372784）
+  id: string       // tmdb_xxx（TMDB）或 ttxxx（OMDb）或 douban_xxx（豆瓣）
   title: string
   poster: string | null
   year: string
@@ -8,10 +8,11 @@ export interface MovieListItem {
   overview: string
 }
 
-/** 演员（OMDb 无头像，只有名字） */
+/** 演员 */
 export interface Actor {
   name: string
   character: string
+  avatar?: string | null  // TMDB 演员头像 URL
 }
 
 /** 电影详情 */
@@ -24,8 +25,8 @@ export interface MovieDetail {
   runtime: string
   rating: number
   genres: string[]
-  budget: string       // OMDb 无预算数据，留空
-  revenue: string      // OMDb BoxOffice 字段
+  budget: string
+  revenue: string
   rated: string        // 分级（如 PG-13）
   director: string
   writers: string
