@@ -54,6 +54,8 @@ export interface MovieDetail {
   awards: string
   reviews: ReviewItem[]
   similarMovies: SimilarMovieItem[]
+  trailerKey?: string   // YouTube 预告片 key
+  backdrops?: string[]  // 电影剧照/背景图 URL 数组
 }
 
 /** 后端统一 API 响应 */

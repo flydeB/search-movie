@@ -141,6 +141,17 @@ export interface TMDBRecommendation {
   overview: string;
 }
 
+/** TMDB 预告片/视频 */
+export interface TMDBVideo {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;   // Trailer / Teaser / Clip / Featurette 等
+  official: boolean;
+  published_at: string;
+}
+
 /** TMDB 电影详情 API 响应 */
 export interface TMDBMovieDetail {
   id: number;
@@ -173,6 +184,24 @@ export interface TMDBMovieDetail {
     page: number;
     results: TMDBReview[];
   };
+  videos?: {
+    results: TMDBVideo[];
+  };
+  images?: {
+    backdrops: TMDBImage[];
+    logos: TMDBImage[];
+    posters: TMDBImage[];
+  };
+}
+
+/** TMDB 图片项 */
+export interface TMDBImage {
+  aspect_ratio: number;
+  height: number;
+  width: number;
+  file_path: string;
+  vote_average: number;
+  vote_count: number;
 }
 
 /** 前端展示用的电影列表项 */
@@ -231,6 +260,8 @@ export interface MovieDetail {
   awards: string;
   reviews: ReviewItem[];
   similarMovies: SimilarMovieItem[];
+  trailerKey: string;  // YouTube 预告片 key
+  backdrops: string[];  // 电影海报组图（已代理的 URL）
 }
 
 /** 通用 API 响应格式 */

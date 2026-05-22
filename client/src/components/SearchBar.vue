@@ -1,3 +1,46 @@
+<template>
+  <div class="search-bar">
+    <div class="search-inner">
+      <div class="search-input-wrap" :class="{ focused: false }">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input
+          v-model="inputValue"
+          type="text"
+          class="search-input"
+          :placeholder="aiMode ? 'AI 智能搜索（即将上线）...' : '搜索电影，支持中英文：Inception、星际穿越、千与千寻...'"
+          @input="handleInput(inputValue)"
+          @keydown="handleKeydown"
+          :disabled="aiMode"
+        />
+        <!-- AI 搜索切换按钮（预留入口，内嵌在输入框右侧） -->
+        <button
+          class="ai-toggle-inline"
+          title="AI 智能搜索即将上线"
+          disabled
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M12 2a4 4 0 014 4c0 2-2 3-2 5h-4c0-2-2-3-2-5a4 4 0 014-4z"/>
+            <path d="M9 18h6M10 22h4"/>
+          </svg>
+        </button>
+        <button v-if="inputValue" class="clear-btn" @click="handleClear">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <div v-if="loading" class="loading-spinner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
 import { debounce } from 'lodash-es'
@@ -60,49 +103,6 @@ onUnmounted(() => {
   debouncedSearch.cancel()
 })
 </script>
-
-<template>
-  <div class="search-bar">
-    <div class="search-inner">
-      <div class="search-input-wrap" :class="{ focused: false }">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-        <input
-          v-model="inputValue"
-          type="text"
-          class="search-input"
-          :placeholder="aiMode ? 'AI 智能搜索（即将上线）...' : '搜索电影，支持中英文：Inception、星际穿越、千与千寻...'"
-          @input="handleInput(inputValue)"
-          @keydown="handleKeydown"
-          :disabled="aiMode"
-        />
-        <!-- AI 搜索切换按钮（预留入口，内嵌在输入框右侧） -->
-        <button
-          class="ai-toggle-inline"
-          title="AI 智能搜索即将上线"
-          disabled
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M12 2a4 4 0 014 4c0 2-2 3-2 5h-4c0-2-2-3-2-5a4 4 0 014-4z"/>
-            <path d="M9 18h6M10 22h4"/>
-          </svg>
-        </button>
-        <button v-if="inputValue" class="clear-btn" @click="handleClear">
-          <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-        <div v-if="loading" class="loading-spinner">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .search-bar {

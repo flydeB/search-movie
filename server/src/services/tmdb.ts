@@ -250,7 +250,7 @@ async function searchByTMDB(keyword: string, page: number = 1): Promise<MovieLis
  */
 async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
   const res = await tmdbApi.get<TMDBMovieDetail>(`/movie/${tmdbId}`, {
-    params: { append_to_response: 'credits,recommendations,reviews' },
+    params: { append_to_response: 'credits,recommendations,reviews,videos,images' },
   });
 
   const d = res.data;
@@ -308,6 +308,26 @@ async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
       createdAt: r.created_at,
     }));
 
+  // 预告片：优先取 YouTube Official Trailer，否则取第一个 YouTube 视频
+  let trailerKey = '';
+  if (d.videos?.results?.length) {
+    const videos = d.videos.results;
+    const officialTrailer = videos.find(
+      (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+    );
+    const anyTrailer = videos.find(
+      (v) => v.site === 'YouTube' && v.type === 'Trailer'
+    );
+    const anyYouTube = videos.find((v) => v.site === 'YouTube');
+    trailerKey = officialTrailer?.key || anyTrailer?.key || anyYouTube?.key || '';
+  }
+
+  // 海报组图：取 posters 前 15 张，直接用 TMDB 原始 URL（无防盗链，无需代理）
+  const backdrops: string[] = (d.images?.posters || [])
+    .slice(0, 15)
+    .map((p) => p.file_path ? `${TMDB_IMAGE_BASE}/w342${p.file_path}` : null)
+    .filter((url): url is string => url !== null);
+
   return {
     id: `tmdb_${d.id}`,
     title: d.title,
@@ -328,6 +348,8 @@ async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
     awards: '', // TMDB 不直接返回获奖信息
     reviews,
     similarMovies,
+    trailerKey,
+    backdrops,
   };
 }
 
@@ -400,6 +422,8 @@ function formatOMDbDetail(d: OMDbMovieDetail, chineseTitle?: string): MovieDetai
     awards: cleanNA(d.Awards),
     reviews: [],
     similarMovies: [],
+    trailerKey: '',
+    backdrops: [],
   };
 }
 
@@ -497,6 +521,8 @@ function buildDoubanDetail(
     awards: omdbDetail ? cleanNA(omdbDetail.Awards) : '',
     reviews: [],
     similarMovies: [],
+    trailerKey: '',
+    backdrops: [],
   };
 }
 
@@ -521,6 +547,8 @@ function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
     awards: '',
     reviews: [],
     similarMovies: [],
+    trailerKey: '',
+    backdrops: [],
   };
 }
 

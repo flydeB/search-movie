@@ -1,71 +1,3 @@
-<script setup lang="ts">
-import { ref, watch } from 'vue'
-import type { MovieDetail, SimilarMovieItem } from '../types/movie'
-
-const props = defineProps<{
-  visible: boolean
-  movie: MovieDetail | null
-  loading: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: 'update:visible', value: boolean): void
-  (e: 'select-movie', movie: SimilarMovieItem): void
-}>()
-
-const dialogVisible = ref(props.visible)
-
-watch(() => props.visible, (val) => {
-  dialogVisible.value = val
-})
-
-function handleClose() {
-  dialogVisible.value = false
-  emit('update:visible', false)
-}
-
-function handlePosterError(e: Event) {
-  const img = e.target as HTMLImageElement
-  if (!img.src.includes('/default-poster.png')) {
-    img.src = '/default-poster.png'
-  }
-}
-
-function handleSimilarClick(m: SimilarMovieItem) {
-  emit('select-movie', m)
-}
-
-function truncateText(text: string, maxLen: number): string {
-  if (!text) return ''
-  return text.length > maxLen ? text.slice(0, maxLen) + '...' : text
-}
-
-function formatDate(dateStr: string): string {
-  if (!dateStr) return ''
-  return dateStr.slice(0, 10)
-}
-
-function formatRating(rating: number | null): string {
-  if (rating === null || rating === undefined) return ''
-  return rating.toFixed(1)
-}
-
-function formatBoxOffice(value: string): string {
-  if (!value) return ''
-  return value
-}
-
-function handleAvatarError(e: Event) {
-  const el = e.target as HTMLImageElement
-  el.style.display = 'none'
-  const parent = el.parentElement
-  if (parent) {
-    const letter = parent.querySelector('.avatar-letter') as HTMLElement
-    if (letter) letter.style.display = 'flex'
-  }
-}
-</script>
-
 <template>
   <el-dialog
     v-model="dialogVisible"
@@ -289,6 +221,70 @@ function handleAvatarError(e: Event) {
           </div>
         </div>
       </div>
+
+      <!-- 剧照画廊 -->
+      <div v-if="movie.backdrops && movie.backdrops.length > 0" class="detail-section">
+        <h4 class="section-title">剧照</h4>
+        <div class="backdrop-gallery">
+          <div
+            v-for="(url, index) in movie.backdrops"
+            :key="index"
+            class="backdrop-thumb"
+          >
+            <a-image
+              :src="url"
+              :fallback="'/default-poster.png'"
+              class="backdrop-img"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 预告片 -->
+      <div v-if="movie.trailerKey" class="detail-section">
+        <h4 class="section-title">预告片</h4>
+        <div class="trailer-area">
+          <a
+            :href="`https://www.youtube.com/watch?v=${movie.trailerKey}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="trailer-cta"
+          >
+            <div class="trailer-play-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <span>在 YouTube 观看预告片</span>
+            </div>
+            <p class="trailer-hint">点击跳转到 YouTube 播放（需要网络工具）</p>
+          </a>
+        </div>
+      </div>
+
+      <!-- 资源站外链 -->
+      <div class="detail-section">
+        <h4 class="section-title">在线观看 / 下载</h4>
+        <div class="resource-area">
+          <p class="resource-tip">以下链接跳转至第三方资源站，搜索结果仅供学习参考</p>
+          <div class="resource-btns">
+            <button
+              v-for="site in resourceSites"
+              :key="site.name"
+              class="resource-btn"
+              @click="openResourceSite(site)"
+            >
+              <span class="resource-icon">{{ site.icon }}</span>
+              <span>{{ site.name }}</span>
+            </button>
+            <button class="resource-btn all-btn" @click="openAllSites">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              <span>一键搜索全部</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 加载中 -->
@@ -311,681 +307,106 @@ function handleAvatarError(e: Event) {
   </el-dialog>
 </template>
 
-<style scoped>
-/* Dialog 样式覆盖 */
-.movie-detail-dialog :deep(.el-dialog) {
-  border-radius: 20px;
-  overflow: hidden;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
-}
-
-.movie-detail-dialog :deep(.el-dialog__header) {
-  display: none;
-}
-
-.movie-detail-dialog :deep(.el-dialog__body) {
-  padding: 0;
-  max-height: 88vh;
-  overflow-y: auto;
-  background: var(--bg-elevated);
-}
-
-.movie-detail-dialog :deep(.el-dialog__footer) {
-  display: none;
-}
-
-/* 关闭按钮 */
-.dialog-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 10;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  backdrop-filter: blur(8px);
-}
-
-.dialog-close:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-primary);
-}
-
-.dialog-close svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* 主区域 */
-.detail-content {
-  padding: 32px;
-}
-
-.detail-hero {
-  display: flex;
-  gap: 32px;
-  margin-bottom: 28px;
-}
-
-/* 海报 */
-.detail-poster {
-  flex-shrink: 0;
-  width: 260px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--bg-card);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-.detail-poster img {
-  width: 100%;
-  display: block;
-}
-
-/* 信息 */
-.detail-info {
-  flex: 1;
-  min-width: 0;
-  padding-top: 4px;
-}
-
-.detail-title {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.3;
-  margin-bottom: 14px;
-  letter-spacing: 0.3px;
-}
-
-/* 标签 */
-.info-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 18px;
-}
-
-.genre-tag {
-  padding: 4px 12px;
-  background: var(--primary-dim);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--primary);
-}
-
-.rated-tag {
-  padding: 4px 12px;
-  background: rgba(255, 120, 50, 0.12);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #ff964a;
-}
-
-/* 统计 */
-.info-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 18px;
-}
-
-.stat-rating {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: rgba(250, 219, 20, 0.08);
-  border-radius: 10px;
-  border: 1px solid rgba(250, 219, 20, 0.15);
-}
-
-.stat-rating svg {
-  color: #fadb14;
-}
-
-.rating-num {
-  font-size: 18px;
-  font-weight: 800;
-  color: #fadb14;
-}
-
-.rating-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.stat-item svg {
-  opacity: 0.65;
-}
-
-/* 导演/编剧 */
-.info-crew {
-  display: flex;
-  gap: 8px;
-  font-size: 14px;
-  margin-bottom: 8px;
-  line-height: 1.6;
-}
-
-.crew-label {
-  color: var(--text-secondary);
-  font-weight: 500;
-  flex-shrink: 0;
-  min-width: 32px;
-}
-
-.crew-value {
-  color: var(--text-body);
-}
-
-/* 分区 */
-.detail-section {
-  margin-bottom: 24px;
-}
-
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 10px;
-  padding-left: 10px;
-  border-left: 3px solid var(--primary);
-}
-
-.section-text {
-  font-size: 14px;
-  color: var(--text-body);
-  line-height: 1.8;
-}
-
-/* 获奖 */
-.awards-inner {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 14px 16px;
-  background: rgba(232, 183, 74, 0.06);
-  border: 1px solid rgba(232, 183, 74, 0.12);
-  border-radius: 10px;
-  font-size: 13px;
-  color: var(--text-body);
-  line-height: 1.6;
-}
-
-/* 财务 */
-.finance-grid {
-  display: flex;
-  gap: 16px;
-}
-
-.finance-item {
-  flex: 1;
-  padding: 16px 20px;
-  background: var(--bg-card);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-}
-
-.finance-label {
-  display: block;
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-}
-
-.finance-value {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--text-primary);
-  letter-spacing: 0.3px;
-}
-
-.finance-value.revenue {
-  color: #52c41a;
-}
-
-.section-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  margin-left: 8px;
-  background: var(--primary-dim);
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--primary);
-}
-
-/* 用户评论 */
-.reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.review-item {
-  padding: 14px 16px;
-  background: var(--bg-card);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-}
-
-.review-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.review-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: var(--primary-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.review-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.review-meta {
-  flex: 1;
-  min-width: 0;
-}
-
-.review-author {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.review-date {
-  display: block;
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-
-.review-rating {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  padding: 3px 8px;
-  background: rgba(250, 219, 20, 0.08);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #fadb14;
-}
-
-.review-rating svg {
-  opacity: 0.9;
-}
-
-.review-content {
-  font-size: 13px;
-  color: var(--text-body);
-  line-height: 1.7;
-  word-break: break-word;
-}
-
-/* 类似电影 */
-.similar-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 12px;
-}
-
-.similar-card {
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.similar-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(232, 183, 74, 0.25);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.similar-poster {
-  position: relative;
-  aspect-ratio: 2 / 3;
-  overflow: hidden;
-  background: var(--bg-elevated);
-}
-
-/* antd Image 组件覆盖 */
-
-.similar-poster-img {
-  width: 100%;
-  height: 100%;
-}
-
-.similar-poster-img :deep(.ant-image) {
-  width: 100%;
-  height: 100%;
-}
-
-.similar-poster-img :deep(.ant-image-img) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.similar-card:hover .similar-poster-img :deep(.ant-image-img) {
-  transform: scale(1.08);
-}
-
-/* 海报占位符背景色 */
-/* 海报占位符 */
-.similar-poster-img :deep(.ant-image-placeholder) {
-  background: var(--bg-elevated);
-}
-
-/* 头像占位符 */
-.avatar-image :deep(.ant-image-placeholder) {
-  background: var(--primary-dim);
-  border-radius: 50%;
-}
-
-.avatar-image {
-  width: 100%;
-  height: 100%;
-}
-
-.avatar-image :deep(.ant-image) {
-  width: 100%;
-  height: 100%;
-}
-
-.avatar-image :deep(.ant-image-img) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.similar-info {
-  padding: 8px 10px 10px;
-}
-
-.similar-title {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-bottom: 4px;
-}
-
-.similar-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.similar-year {
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-
-.similar-rating {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 10px;
-  font-weight: 600;
-  color: #fadb14;
-}
-
-/* 演员网格 */
-.cast-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
-}
-
-.cast-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: var(--bg-card);
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  transition: border-color 0.2s;
-}
-
-.cast-item:hover {
-  border-color: rgba(232, 183, 74, 0.2);
-}
-
-.cast-avatar {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: var(--primary-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* 兜底头像字母 */
-.avatar-letter {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.cast-info {
-  min-width: 0;
-}
-
-.cast-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cast-char {
-  display: block;
-  font-size: 11px;
-  color: var(--text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 加载骨架 */
-.detail-loading {
-  position: relative;
-  display: flex;
-  gap: 28px;
-  padding: 32px;
-}
-
-.skeleton-poster {
-  flex-shrink: 0;
-  width: 260px;
-  height: 390px;
-  border-radius: var(--radius);
-  background: var(--bg-card);
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-top: 8px;
-}
-
-.skeleton-line {
-  height: 16px;
-  border-radius: 8px;
-  background: var(--bg-card);
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton-line.w60 { width: 60%; }
-.skeleton-line.w40 { width: 40%; }
-.skeleton-line.w80 { width: 80%; }
-.skeleton-line.w70 { width: 70%; }
-.skeleton-line.w50 { width: 50%; }
-
-@keyframes shimmer {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
-}
-
-/* loading 遮罩 */
-.loading-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  z-index: 2;
-  background: rgba(12, 12, 20, 0.7);
-  backdrop-filter: blur(4px);
-  border-radius: 20px;
-}
-
-.spinner {
-  width: 48px;
-  height: 48px;
-}
-
-.spinner-ring {
-  width: 100%;
-  height: 100%;
-  border: 3px solid rgba(232, 183, 74, 0.15);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-text {
-  font-size: 14px;
-  color: var(--text-secondary);
-  letter-spacing: 0.5px;
-}
-
-/* 响应式 */
-@media (max-width: 768px) {
-  .detail-content {
-    padding: 20px;
-  }
-
-  .detail-hero {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .detail-poster {
-    width: 200px;
-  }
-
-  .detail-info {
-    text-align: center;
-  }
-
-  .info-tags {
-    justify-content: center;
-  }
-
-  .info-stats {
-    justify-content: center;
-  }
-
-  .info-crew {
-    justify-content: center;
-  }
-
-  .finance-grid {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .cast-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  .detail-loading {
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-
-  .skeleton-poster {
-    width: 200px;
-    height: 300px;
-  }
-
-  .skeleton-info {
-    width: 100%;
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import type { MovieDetail, SimilarMovieItem } from '../types/movie'
+
+const props = defineProps<{
+  visible: boolean
+  movie: MovieDetail | null
+  loading: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:visible', value: boolean): void
+  (e: 'select-movie', movie: SimilarMovieItem): void
+}>()
+
+const dialogVisible = ref(props.visible)
+
+watch(() => props.visible, (val) => {
+  dialogVisible.value = val
+})
+
+// 资源站配置
+interface ResourceSite {
+  name: string
+  url: string
+  icon: string
+}
+
+const resourceSites: ResourceSite[] = [
+  { name: '电影天堂', url: 'https://www.dy2018.com/e/search/result/?searchid={title}', icon: '🎬' },
+  { name: 'BT之家', url: 'https://www.btbtt.us/search-index-keyword-{title}.htm', icon: '📥' },
+  { name: '迅雷电影', url: 'https://www.dytt89.com/search.asp?searchword={title}', icon: '⚡' },
+]
+
+function openResourceSite(site: ResourceSite) {
+  if (!props.movie) return
+  const encodedTitle = encodeURIComponent(props.movie.title)
+  const url = site.url.replace('{title}', encodedTitle)
+  window.open(url, '_blank')
+}
+
+function openAllSites() {
+  if (!props.movie) return
+  const encodedTitle = encodeURIComponent(props.movie.title)
+  resourceSites.forEach((site) => {
+    const url = site.url.replace('{title}', encodedTitle)
+    window.open(url, '_blank')
+  })
+}
+
+function handleClose() {
+  dialogVisible.value = false
+  emit('update:visible', false)
+}
+
+function handlePosterError(e: Event) {
+  const img = e.target as HTMLImageElement
+  if (!img.src.includes('/default-poster.png')) {
+    img.src = '/default-poster.png'
   }
 }
-</style>
+
+function handleSimilarClick(m: SimilarMovieItem) {
+  emit('select-movie', m)
+}
+
+function truncateText(text: string, maxLen: number): string {
+  if (!text) return ''
+  return text.length > maxLen ? text.slice(0, maxLen) + '...' : text
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  return dateStr.slice(0, 10)
+}
+
+function formatRating(rating: number | null): string {
+  if (rating === null || rating === undefined) return ''
+  return rating.toFixed(1)
+}
+
+function formatBoxOffice(value: string): string {
+  if (!value) return ''
+  return value
+}
+
+function handleAvatarError(e: Event) {
+  const el = e.target as HTMLImageElement
+  el.style.display = 'none'
+  const parent = el.parentElement
+  if (parent) {
+    const letter = parent.querySelector('.avatar-letter') as HTMLElement
+    if (letter) letter.style.display = 'flex'
+  }
+}
+</script>
+
+<style scoped lang="less" src="./styles/movie-detail.less"></style>
 
 <style>
-/* antd Image 预览层提到 el-dialog 上面 */
 .ant-image-preview-wrap {
   z-index: 3000 !important;
 }
