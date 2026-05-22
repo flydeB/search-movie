@@ -1,35 +1,43 @@
 # 全球电影检索
 
-基于 OMDb API 的全球电影搜索工具，输入关键词即可模糊搜索全球电影信息。
+支持中英文搜索的全球电影信息查询工具，聚合 TMDB、OMDb、豆瓣三大数据源。
 
 ## 技术栈
 
 - **前端**：Vue 3 + Vite + TypeScript + Element Plus
 - **后端**：Node.js + Express + TypeScript
-- **数据源**：OMDb API（Open Movie Database，国内可直接访问）
+- **数据源**：TMDB（主，中英文皆可）→ OMDb（兜底）→ 豆瓣（中文三级兜底）
 
 ## 功能
 
-- 关键词模糊搜索全球电影
-- 查看电影详情：海报、演员、导演、编剧、时长、类型、剧情简介、评分、语言、国家、获奖、票房
-- 搜索防抖（300ms）
-- 明亮清爽 UI 风格
-- 响应式适配
+- 🔍 中英文关键词模糊搜索全球电影
+- 🎬 电影详情弹窗：海报、评分、类型、上映时间、时长、语言、国家
+- 👥 演员阵容（带头像）、导演、编剧
+- 💬 **用户评论**（TMDB 用户影评，最多 5 条）
+- 🎞️ **类似电影推荐**（最多 5 部，点击可跳转查看详情）
+- 💰 预算 / 票房数据
+- 🏆 获奖信息
+- 📱 响应式适配，深色主题 UI
+- ⚡ 搜索防抖（300ms），请求自动取消
 
 ## 快速开始
 
-### 1. 获取 OMDb API Key（免费）
+### 1. 获取 API Key
 
-访问 [omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx)，填写邮箱即可申请免费 API Key。
+| 数据源 | 申请地址 | 费用 |
+|--------|----------|------|
+| TMDB | [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) | 免费 |
+| OMDb | [omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx) | 免费 |
 
-> 当前已内置公共测试 Key `trilogy`，可直接启动体验。长期使用请申请自己的 Key。
+> TMDB 国内可直接访问，建议优先配置。
 
 ### 2. 配置环境变量
 
-编辑 `server/.env`，填入你的 API Key：
+复制 `server/.env.example` 为 `server/.env`，填入你的 API Key：
 
-```
-OMDB_API_KEY=你的API_KEY
+```env
+TMDB_API_KEY=你的TMDB_API_KEY
+OMDB_API_KEY=你的OMDB_API_KEY
 PORT=3001
 ```
 
@@ -39,10 +47,8 @@ PORT=3001
 # 安装根目录依赖（concurrently）
 npm install
 
-# 安装前端依赖
+# 安装前后端依赖
 cd client && npm install && cd ..
-
-# 安装后端依赖
 cd server && npm install && cd ..
 
 # 一键启动（前后端同时运行）
@@ -65,23 +71,24 @@ npm run dev:client
 
 ```
 mov/
-├── client/                    # 前端 (Vue3 + Vite + TS)
+├── client/                     # 前端 (Vue3 + Vite + TS)
 │   └── src/
-│       ├── api/movie.ts       # Axios 请求封装
+│       ├── api/movie.ts        # Axios 请求封装
 │       ├── components/
-│       │   ├── SearchBar.vue  # 搜索栏（300ms防抖）
-│       │   ├── MovieList.vue  # 电影卡片网格
-│       │   └── MovieDetail.vue# 详情弹窗
-│       ├── types/movie.ts     # TypeScript 类型定义
-│       ├── App.vue            # 主页面
-│       └── main.ts            # 入口
-├── server/                    # 后端 (Express + TS)
+│       │   ├── SearchBar.vue   # 搜索栏（300ms 防抖）
+│       │   ├── MovieList.vue   # 电影卡片网格
+│       │   ├── MovieDetail.vue # 详情弹窗（评论 + 类似电影）
+│       │   └── AppFooter.vue   # 页脚
+│       ├── types/movie.ts      # TypeScript 类型定义
+│       ├── App.vue             # 主页面
+│       └── main.ts             # 入口
+├── server/                     # 后端 (Express + TS)
 │   └── src/
-│       ├── routes/movie.ts    # API 路由
-│       ├── services/tmdb.ts   # OMDb 服务层
-│       ├── types/movie.ts     # 类型定义
-│       └── index.ts           # Express 入口
-├── package.json               # 一键启动脚本
+│       ├── routes/movie.ts     # API 路由 + 图片代理
+│       ├── services/tmdb.ts    # 数据源服务层（TMDB/OMDb/豆瓣）
+│       ├── types/movie.ts      # 类型定义
+│       └── index.ts            # Express 入口
+├── package.json                # 一键启动脚本
 └── README.md
 ```
 
@@ -89,26 +96,38 @@ mov/
 
 | 接口 | 说明 |
 |------|------|
-| `GET /api/search?keyword=xxx` | 搜索电影列表 |
-| `GET /api/movie/:id` | 获取电影详情（id 为 IMDb ID） |
+| `GET /api/search?keyword=xxx&page=1` | 搜索电影列表 |
+| `GET /api/movie/:id` | 获取电影详情（id 格式：`tmdb_xxx` / `ttxxx` / `douban_xxx`） |
+| `GET /api/image-proxy?url=xxx` | 图片代理（解决豆瓣防盗链） |
+| `GET /api/health` | 健康检查 |
+| `GET /api/ai-search?keyword=xxx` | AI 智能搜索（预留） |
 
-## 数据说明
+## 数据源策略
 
-OMDb API 提供的数据字段：
+搜索和详情采用**三级数据源策略**，自动路由：
 
-| 字段 | 是否支持 |
-|------|---------|
-| 电影封面（海报） | ✅ |
-| 演员 | ✅（文本列表，无头像） |
-| 导演 / 编剧 | ✅ |
-| 上映时间 / 时长 | ✅ |
-| 描述（剧情简介） | ✅ |
-| 评分（IMDb） | ✅ |
-| 类型 / 分级 | ✅ |
-| 语言 / 国家 | ✅ |
-| 获奖情况 | ✅ |
-| 票房（BoxOffice） | ✅ |
-| 电影截图 | ❌ |
-| 投入资金（预算） | ❌ |
+| 优先级 | 数据源 | ID 前缀 | 说明 |
+|--------|--------|---------|------|
+| 主 | **TMDB** | `tmdb_` | 数据最全，中英文均支持，国内可直连 |
+| 兜底 | **OMDb** | `tt` | IMDb 数据库，数据丰富但中文差 |
+| 兜底 | **豆瓣** | `douban_` | 中文电影补全 OMDb 不足，无预算/评论 |
+
+**详情字段覆盖**：
+
+| 字段 | TMDB | OMDb | 豆瓣 |
+|------|:----:|:----:|:----:|
+| 海报 | ✅（代理） | ✅（代理） | ✅（代理） |
+| 演员（头像） | ✅ | ❌ | ❌ |
+| 导演 / 编剧 | ✅ | ✅ | ✅ |
+| 上映时间 / 时长 | ✅ | ✅ | ✅ |
+| 剧情简介 | ✅ | ✅ | ✅ |
+| 评分 | ✅（TMDB） | ✅（IMDb） | ✅（豆瓣） |
+| 类型 / 分级 | ✅ | ✅ | ✅ |
+| 语言 / 国家 | ✅ | ✅ | ✅ |
+| 获奖情况 | ❌ | ✅ | ❌ |
+| 票房 | ✅ | ✅ | ❌ |
+| 预算 | ✅ | ❌ | ❌ |
+| **用户评论** | ✅ | ❌ | ❌ |
+| **类似电影** | ✅ | ❌ | ❌ |
 
 > 仅供学习参考
