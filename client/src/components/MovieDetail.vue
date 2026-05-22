@@ -244,7 +244,6 @@ function handleAvatarError(e: Event) {
               <a-image
                 v-if="actor.avatar"
                 :src="actor.avatar"
-                :preview="false"
                 class="avatar-image"
               />
               <span v-if="!actor.avatar" class="avatar-letter">{{ actor.name.charAt(0) }}</span>
@@ -982,5 +981,12 @@ function handleAvatarError(e: Event) {
   .skeleton-info {
     width: 100%;
   }
+}
+</style>
+
+<style>
+/* antd Image 预览层提到 el-dialog 上面 */
+.ant-image-preview-wrap {
+  z-index: 3000 !important;
 }
 </style>
