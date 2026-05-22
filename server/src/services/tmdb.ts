@@ -9,6 +9,8 @@ import type {
   MovieListItem,
   MovieDetail,
   Actor,
+  ReviewItem,
+  SimilarMovieItem,
 } from '../types/movie';
 
 // ============================================================
@@ -248,7 +250,7 @@ async function searchByTMDB(keyword: string, page: number = 1): Promise<MovieLis
  */
 async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
   const res = await tmdbApi.get<TMDBMovieDetail>(`/movie/${tmdbId}`, {
-    params: { append_to_response: 'credits' },
+    params: { append_to_response: 'credits,recommendations,reviews' },
   });
 
   const d = res.data;
@@ -284,6 +286,28 @@ async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
     .map((c) => c.name)
     .join(', ');
 
+  // 类似电影：取 recommendations 前5条
+  const similarMovies: SimilarMovieItem[] = (d.recommendations?.results || [])
+    .slice(0, 5)
+    .map((m) => ({
+      id: `tmdb_${m.id}`,
+      title: m.title,
+      poster: tmdbImageUrl(m.poster_path),
+      year: m.release_date ? m.release_date.substring(0, 4) : '',
+      rating: m.vote_average || 0,
+    }));
+
+  // 用户评论：取 reviews 前5条
+  const reviews: ReviewItem[] = (d.reviews?.results || [])
+    .slice(0, 5)
+    .map((r) => ({
+      author: r.author_details.name || r.author,
+      avatar: tmdbImageUrl(r.author_details.avatar_path, 'w185'),
+      rating: r.author_details.rating,
+      content: r.content,
+      createdAt: r.created_at,
+    }));
+
   return {
     id: `tmdb_${d.id}`,
     title: d.title,
@@ -302,6 +326,8 @@ async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
     language,
     country,
     awards: '', // TMDB 不直接返回获奖信息
+    reviews,
+    similarMovies,
   };
 }
 
@@ -372,6 +398,8 @@ function formatOMDbDetail(d: OMDbMovieDetail, chineseTitle?: string): MovieDetai
     language: cleanNA(d.Language),
     country: cleanNA(d.Country),
     awards: cleanNA(d.Awards),
+    reviews: [],
+    similarMovies: [],
   };
 }
 
@@ -467,6 +495,8 @@ function buildDoubanDetail(
     language: omdbDetail ? cleanNA(omdbDetail.Language) : '',
     country: omdbDetail ? cleanNA(omdbDetail.Country) : (subject.region || ''),
     awards: omdbDetail ? cleanNA(omdbDetail.Awards) : '',
+    reviews: [],
+    similarMovies: [],
   };
 }
 
@@ -489,6 +519,8 @@ function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
     language: '',
     country: '',
     awards: '',
+    reviews: [],
+    similarMovies: [],
   };
 }
 

@@ -1,0 +1,2214 @@
+{
+  "adult": false,
+  "backdrop_path": "/rLHFufd3gALwHay1Sxl3MjbGQ7E.jpg",
+  "belongs_to_collection": {
+    "id": 1281825,
+    "name": "飞驰人生（系列）",
+    "poster_path": "/htzrPoRQhqootSl6TSpk9I7aoMU.jpg",
+    "backdrop_path": "/cVKeyouKAxinG8EZymgHxCCFJNm.jpg"
+  },
+  "budget": 80000000,
+  "genres": [
+    {
+      "id": 18,
+      "name": "剧情"
+    },
+    {
+      "id": 35,
+      "name": "喜剧"
+    }
+  ],
+  "homepage": "",
+  "id": 1462229,
+  "imdb_id": "tt38035835",
+  "origin_country": [
+    "CN"
+  ],
+  "original_language": "zh",
+  "original_title": "飞驰人生3",
+  "overview": "巴音布鲁克最后一站收官后，张驰（沈腾 饰）受邀作为车队主教练征战全新赛事“沐尘100拉力赛”，“野生车手”走上国际舞台！面对高手如云的全新赛道，孙宇强（尹正 饰）、记星（张本煜 饰）一如既往协同作战，林臻东（黄景瑜 饰）等实力车手应邀强势集结，一支凝聚了顶配速度与信念的车队就此成立！然而，张驰发现真正的挑战仿佛并非来自比赛本身，赛场之外暗流涌动，让他们飞驰之路充满变数……",
+  "popularity": 5.8857,
+  "poster_path": "/fzkfI2LWgPEHiFOFW2JveqlAY3h.jpg",
+  "production_companies": [
+    {
+      "id": 113743,
+      "logo_path": "/r19r2HGaHljSOXYJroM4p6QAW2V.png",
+      "name": "Shanghai PMF Media",
+      "origin_country": "CN"
+    },
+    {
+      "id": 96956,
+      "logo_path": "/nMaeUdQwAhN69omhooaPDKCpEFO.png",
+      "name": "Maoyan Entertainment",
+      "origin_country": "CN"
+    },
+    {
+      "id": 285214,
+      "logo_path": "/giResdkrwFVCrjIta9pJTiPZJbX.png",
+      "name": "大麦娱乐",
+      "origin_country": "CN"
+    },
+    {
+      "id": 78952,
+      "logo_path": "/zRBHUxapVA1FLR3dSa0xcLvzn1D.png",
+      "name": "Wanda Pictures",
+      "origin_country": "CN"
+    },
+    {
+      "id": 30148,
+      "logo_path": "/zerhOenUD6CkH8SMgZUhrDkOs4w.png",
+      "name": "Bona Film Group",
+      "origin_country": "CN"
+    },
+    {
+      "id": 100127,
+      "logo_path": "/d65b4AlGT5tXW7zzNiSkqvXutQc.png",
+      "name": "Fun Age Pictures",
+      "origin_country": "CN"
+    },
+    {
+      "id": 131092,
+      "logo_path": "/dtsMvAgTenOlDWnqaa4pEovx6d5.png",
+      "name": "Zhejiang Hengdian Film Production",
+      "origin_country": "CN"
+    },
+    {
+      "id": 2270,
+      "logo_path": "/7osqu50JpFIh0klZU0s1CrnNqcc.png",
+      "name": "China Film Group Corporation",
+      "origin_country": "CN"
+    },
+    {
+      "id": 98983,
+      "logo_path": null,
+      "name": "Shanghai Ruyi Film & TV Production 上海儒意影视制作",
+      "origin_country": "CN"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "CN",
+      "name": "China"
+    }
+  ],
+  "release_date": "2026-02-17",
+  "revenue": 648729523,
+  "runtime": 126,
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "Mandarin",
+      "iso_639_1": "zh",
+      "name": "普通话"
+    }
+  ],
+  "status": "Released",
+  "tagline": "",
+  "title": "飞驰人生3",
+  "video": false,
+  "vote_average": 7.1,
+  "vote_count": 34,
+  "credits": {
+    "cast": [
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1519026,
+        "known_for_department": "Acting",
+        "name": "沈腾",
+        "original_name": "沈腾",
+        "popularity": 2.1324,
+        "profile_path": "/h9l1fHqty8EdCqDWNWjO5tp48xZ.jpg",
+        "cast_id": 3,
+        "character": "Zhang Chi",
+        "credit_id": "694dee5afe9cd98d4d8cdc8c",
+        "order": 0
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1519030,
+        "known_for_department": "Acting",
+        "name": "尹正",
+        "original_name": "尹正",
+        "popularity": 1.5587,
+        "profile_path": "/gRLIv5s4aQivkIFyx3K3ukTpICw.jpg",
+        "cast_id": 5,
+        "character": "Sun Yuqiang",
+        "credit_id": "694dee67b6e9ddb98efb0a14",
+        "order": 1
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1816461,
+        "known_for_department": "Acting",
+        "name": "黄景瑜",
+        "original_name": "黄景瑜",
+        "popularity": 3.0658,
+        "profile_path": "/mc7HlXJU0Sr5WkodEHS3csaxi6E.jpg",
+        "cast_id": 4,
+        "character": "Lin Zhendong",
+        "credit_id": "694dee6004eefa2d668eb033",
+        "order": 2
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1759993,
+        "known_for_department": "Acting",
+        "name": "张本煜",
+        "original_name": "张本煜",
+        "popularity": 0.9548,
+        "profile_path": "/6PI1v4TYN7lDFRzjL1iz8V45P2t.jpg",
+        "cast_id": 6,
+        "character": "Ji Xing",
+        "credit_id": "694dee717fc27ff3478cdd38",
+        "order": 3
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2093326,
+        "known_for_department": "Acting",
+        "name": "魏翔",
+        "original_name": "魏翔",
+        "popularity": 1.3964,
+        "profile_path": "/j1XqYkSGoRHfBOH59nTOnv7DcRn.jpg",
+        "cast_id": 7,
+        "character": "Manager Ye",
+        "credit_id": "694dee82cfea4b5521811c25",
+        "order": 4
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 235518,
+        "known_for_department": "Acting",
+        "name": "沙溢",
+        "original_name": "沙溢",
+        "popularity": 3.0662,
+        "profile_path": "/ip9GpE5RhxBzqlbbVX0DwktOlss.jpg",
+        "cast_id": 8,
+        "character": "Bai Qiang",
+        "credit_id": "694dee8d8b1e91a241fb088b",
+        "order": 5
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1948101,
+        "known_for_department": "Acting",
+        "name": "范丞丞",
+        "original_name": "范丞丞",
+        "popularity": 1.4928,
+        "profile_path": "/mmpJ9EcYweG9pr1iU5q5aqcsusG.jpg",
+        "cast_id": 9,
+        "character": "Li Xiaohai",
+        "credit_id": "694dee99b1a0c99a68b1c18b",
+        "order": 6
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1258617,
+        "known_for_department": "Acting",
+        "name": "孙艺洲",
+        "original_name": "孙艺洲",
+        "popularity": 1.2271,
+        "profile_path": "/7LrjgcfjklPW6AyC4sxaNx6z089.jpg",
+        "cast_id": 10,
+        "character": "Liu Xiande",
+        "credit_id": "694deea413742ae566811b6e",
+        "order": 7
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 126736,
+        "known_for_department": "Acting",
+        "name": "段奕宏",
+        "original_name": "段奕宏",
+        "popularity": 2.033,
+        "profile_path": "/id7h8vSCwcbpxpDAv8WnqOBg02X.jpg",
+        "cast_id": 11,
+        "character": "Mr. An",
+        "credit_id": "694deeacda04f43c218cda56",
+        "order": 8
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2027708,
+        "known_for_department": "Acting",
+        "name": "张新成",
+        "original_name": "張新成",
+        "popularity": 2.2917,
+        "profile_path": "/mpCVPsEvnMUkmMd1IN1xsBJpk7r.jpg",
+        "cast_id": 12,
+        "character": "Li Lun",
+        "credit_id": "694deeb2b762bfc0eb811c0e",
+        "order": 9
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1989460,
+        "known_for_department": "Acting",
+        "name": "胡先煦",
+        "original_name": "胡先煦",
+        "popularity": 1.496,
+        "profile_path": "/tvwi2L267zDUPfrnipgaxMMi2tm.jpg",
+        "cast_id": 13,
+        "character": "Liu Shihao",
+        "credit_id": "694deeb8ea775d1468b1dcb9",
+        "order": 10
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 148881,
+        "known_for_department": "Acting",
+        "name": "李治廷",
+        "original_name": "李治廷",
+        "popularity": 1.9892,
+        "profile_path": "/xIhutO65mdNEWKHusfvHZYTDITE.jpg",
+        "cast_id": 14,
+        "character": "Chi Haisheng",
+        "credit_id": "694deebf95089ddb5e7ab805",
+        "order": 11
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2973248,
+        "known_for_department": "Acting",
+        "name": "白宇帆",
+        "original_name": "白宇帆",
+        "popularity": 1.0002,
+        "profile_path": "/oYSpkzTHRirZUbSCrxgC0KfCd9g.jpg",
+        "cast_id": 15,
+        "character": "Zhang Hongbin",
+        "credit_id": "694deed3fe9cd98d4d8cdcad",
+        "order": 12
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1748885,
+        "known_for_department": "Acting",
+        "name": "高华阳",
+        "original_name": "高华阳",
+        "popularity": 0.1772,
+        "profile_path": "/o12WReZQI3C2ti6sns0uXKGoiDJ.jpg",
+        "cast_id": 17,
+        "character": "Ye Jinlong",
+        "credit_id": "694deee707d0c90f797ab8fa",
+        "order": 13
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2295882,
+        "known_for_department": "Acting",
+        "name": "贾冰",
+        "original_name": "贾冰",
+        "popularity": 1.4643,
+        "profile_path": "/pum0e3d2ZVq9XZyNohZSXt46bkH.jpg",
+        "cast_id": 18,
+        "character": "Director Xin",
+        "credit_id": "694deeefaa073435feb1c0cf",
+        "order": 14
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2482605,
+        "known_for_department": "Acting",
+        "name": "王安宇",
+        "original_name": "王安宇",
+        "popularity": 2.9033,
+        "profile_path": "/7ai55C0CoOdzOlkAOpfatW5xuh.jpg",
+        "cast_id": 19,
+        "character": "Zhang Chi (Youth)",
+        "credit_id": "694deefd2b8796a01f154b73",
+        "order": 15
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3091063,
+        "known_for_department": "Acting",
+        "name": "陈永胜",
+        "original_name": "陈永胜",
+        "popularity": 0.5131,
+        "profile_path": "/cXkWQssewwTcce6VrLi1XoNDd5D.jpg",
+        "cast_id": 20,
+        "character": "Sun Yuqiang (Youth)",
+        "credit_id": "694def047d4c4dfbeb07292b",
+        "order": 16
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 936431,
+        "known_for_department": "Acting",
+        "name": "冯绍峰",
+        "original_name": "冯绍峰",
+        "popularity": 1.3562,
+        "profile_path": "/tSn5BIRw3Xdj3XYKIycjyNTgl49.jpg",
+        "cast_id": 21,
+        "character": "Manager",
+        "credit_id": "694def0a2fa188aeda7ab74c",
+        "order": 17
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4062369,
+        "known_for_department": "Acting",
+        "name": "周政杰",
+        "original_name": "周政杰",
+        "popularity": 0.8541,
+        "profile_path": "/9n4vnXt6SIrfUfDDXxz4ewxhbSf.jpg",
+        "cast_id": 16,
+        "character": "Li Wei",
+        "credit_id": "694deedd37935bc522154b7a",
+        "order": 18
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 6085679,
+        "known_for_department": "Acting",
+        "name": "Marvin Bouvet",
+        "original_name": "Marvin Bouvet",
+        "popularity": 0.0645,
+        "profile_path": null,
+        "cast_id": 67,
+        "character": "Technical Director of FourWing Racing Team",
+        "credit_id": "69f42328bd3267b913bd0ec9",
+        "order": 19
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 945973,
+        "known_for_department": "Acting",
+        "name": "原岛大地",
+        "original_name": "Daichi Harashima",
+        "popularity": 0.4376,
+        "profile_path": "/v2t7UaEVHnDseceqXugob9Pvr1g.jpg",
+        "cast_id": 68,
+        "character": "Tetsuya Shirakawa",
+        "credit_id": "69f4237e44b310d7772372d4",
+        "order": 20
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4686906,
+        "known_for_department": "Acting",
+        "name": "郝瀚",
+        "original_name": "郝瀚",
+        "popularity": 0.166,
+        "profile_path": "/9NVwEibxPwCjFfd2zgqWLnpjiaP.jpg",
+        "cast_id": 33,
+        "character": "Lawyer",
+        "credit_id": "6992ebefa2452e12ef1248b4",
+        "order": 21
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2870320,
+        "known_for_department": "Acting",
+        "name": "刘巴特尔",
+        "original_name": "刘巴特尔",
+        "popularity": 0.1494,
+        "profile_path": "/1Bc7Eq6XkVyJaLpvpe05PrTELLD.jpg",
+        "cast_id": 69,
+        "character": "Gao Xing",
+        "credit_id": "69f423aaada3322d86fbd793",
+        "order": 22
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3159919,
+        "known_for_department": "Acting",
+        "name": "He Ao",
+        "original_name": "He Ao",
+        "popularity": 0.1278,
+        "profile_path": null,
+        "cast_id": 70,
+        "character": "Huang Liang",
+        "credit_id": "69f423e031878213dffbd747",
+        "order": 23
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3633206,
+        "known_for_department": "Acting",
+        "name": "周冠宇",
+        "original_name": "周冠宇",
+        "popularity": 0.23,
+        "profile_path": "/amuNWYnGcxdCgBscnbafvbnZPN4.jpg",
+        "cast_id": 71,
+        "character": "Zhou Guanyu",
+        "credit_id": "69f4249c328f249955f9fa6e",
+        "order": 24
+      }
+    ],
+    "crew": [
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1326036,
+        "known_for_department": "Writing",
+        "name": "韩寒",
+        "original_name": "韩寒",
+        "popularity": 0.6124,
+        "profile_path": "/uAYoUdcgLedCQASTsQ34joMeD9y.jpg",
+        "credit_id": "67f74d2ed81748ccff993060",
+        "department": "Directing",
+        "job": "Director"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3507496,
+        "known_for_department": "Camera",
+        "name": "白玉侠",
+        "original_name": "白玉侠",
+        "popularity": 0.1188,
+        "profile_path": "/ck370J5zuCBeeiCRYkPs4Pr8XkW.jpg",
+        "credit_id": "698195924a40174b2881c043",
+        "department": "Camera",
+        "job": "Director of Photography"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4847473,
+        "known_for_department": "Editing",
+        "name": "唐强",
+        "original_name": "Tang Qiang",
+        "popularity": 0.0261,
+        "profile_path": null,
+        "credit_id": "698195aaabf39b2e2281c051",
+        "department": "Editing",
+        "job": "Colorist"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4089284,
+        "known_for_department": "Directing",
+        "name": "罗义民",
+        "original_name": "羅義民",
+        "popularity": 0.0434,
+        "profile_path": null,
+        "credit_id": "6981965be2da39dfe331426a",
+        "department": "Directing",
+        "job": "Action Director"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1326036,
+        "known_for_department": "Writing",
+        "name": "韩寒",
+        "original_name": "韩寒",
+        "popularity": 0.6124,
+        "profile_path": "/uAYoUdcgLedCQASTsQ34joMeD9y.jpg",
+        "credit_id": "6992ecce2c5ae42082fa3571",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2512103,
+        "known_for_department": "Production",
+        "name": "郑志昊",
+        "original_name": "郑志昊",
+        "popularity": 0.3552,
+        "profile_path": "/QMVc7lyQ1dpwTzQhVQtAOakEEh.jpg",
+        "credit_id": "6992ecd615b7cf79836f6c6d",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4219720,
+        "known_for_department": "Production",
+        "name": "李捷",
+        "original_name": "李捷",
+        "popularity": 0.5197,
+        "profile_path": "/PDE1mqcqZdPXBPuPjZshNFegZt.jpg",
+        "credit_id": "6992ece6cff3ff79e206574d",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 2161822,
+        "known_for_department": "Production",
+        "name": "陈祉希",
+        "original_name": "陈祉希",
+        "popularity": 0.6837,
+        "profile_path": "/9NzYAWv1kYjwM5ZN1iYk6zWI9Uc.jpg",
+        "credit_id": "6992ecf275ecea1d7f850722",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 71067,
+        "known_for_department": "Production",
+        "name": "于冬",
+        "original_name": "于冬",
+        "popularity": 0.6546,
+        "profile_path": "/xaUpj7EoLoWPtEmNl2RRnQSEafj.jpg",
+        "credit_id": "6992ecfc1519eceeb8287b60",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2463885,
+        "known_for_department": "Production",
+        "name": "傅若清",
+        "original_name": "Fu Ruoqing",
+        "popularity": 0.5467,
+        "profile_path": "/pD9zTm9bB4gZCYUIjYPoC4NTfAL.jpg",
+        "credit_id": "6992ed06d05d821d721af346",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 3685484,
+        "known_for_department": "Production",
+        "name": "张博",
+        "original_name": "张博",
+        "popularity": 0.1703,
+        "profile_path": null,
+        "credit_id": "6992ed104fbedd07461af48f",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3905632,
+        "known_for_department": "Production",
+        "name": "徐天福",
+        "original_name": "徐天福",
+        "popularity": 0.104,
+        "profile_path": null,
+        "credit_id": "6992ed1ab37ca66b9d1247cc",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3267724,
+        "known_for_department": "Production",
+        "name": "柯利明",
+        "original_name": "Ke Liming",
+        "popularity": 0.1804,
+        "profile_path": null,
+        "credit_id": "6992ed230450aa73e9065674",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1519030,
+        "known_for_department": "Acting",
+        "name": "尹正",
+        "original_name": "尹正",
+        "popularity": 1.5587,
+        "profile_path": "/gRLIv5s4aQivkIFyx3K3ukTpICw.jpg",
+        "credit_id": "6992ed2c26984a5163124786",
+        "department": "Crew",
+        "job": "Presenter"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 2463890,
+        "known_for_department": "Production",
+        "name": "章慧霞",
+        "original_name": "章慧霞",
+        "popularity": 0.1364,
+        "profile_path": null,
+        "credit_id": "6992ed77788561978c124908",
+        "department": "Production",
+        "job": "Associate Producer"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 4584492,
+        "known_for_department": "Production",
+        "name": "葛丹丹",
+        "original_name": "Dandan Ge",
+        "popularity": 0.0143,
+        "profile_path": null,
+        "credit_id": "6992ed95451955ec64287d17",
+        "department": "Production",
+        "job": "Producer"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2640891,
+        "known_for_department": "Directing",
+        "name": "黄曾鸿辰",
+        "original_name": "黄曾鸿辰",
+        "popularity": 0.223,
+        "profile_path": "/2WUBQf6OpvNvBpEkZepMV6vNpOP.jpg",
+        "credit_id": "6992ee1527123675de959267",
+        "department": "Editing",
+        "job": "Supervising Editor"
+      },
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 6010805,
+        "known_for_department": "Directing",
+        "name": "Dai Jingjing",
+        "original_name": "Dai Jingjing",
+        "popularity": 0.0143,
+        "profile_path": null,
+        "credit_id": "6992ee4827123675de959278",
+        "department": "Directing",
+        "job": "First Assistant Director"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 5576947,
+        "known_for_department": "Directing",
+        "name": "马林",
+        "original_name": "马林",
+        "popularity": 0.0429,
+        "profile_path": "/p8N806RK5PDsvjtSocb8CRE9I0D.jpg",
+        "credit_id": "6992ee60beda484cea287bb6",
+        "department": "Directing",
+        "job": "Second Assistant Director"
+      },
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 6010806,
+        "known_for_department": "Directing",
+        "name": "Chen Yulin",
+        "original_name": "Chen Yulin",
+        "popularity": 0.0261,
+        "profile_path": null,
+        "credit_id": "6992ee7aa454af46091248a2",
+        "department": "Directing",
+        "job": "Second Unit Director"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1323173,
+        "known_for_department": "Sound",
+        "name": "阿鲲",
+        "original_name": "阿鲲",
+        "popularity": 0.535,
+        "profile_path": "/zaAmLbksc4bxTr21dhveZ6I7WRr.jpg",
+        "credit_id": "69a484b90bdf624752418686",
+        "department": "Sound",
+        "job": "Original Music Composer"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2409436,
+        "known_for_department": "Art",
+        "name": "赵学昊",
+        "original_name": "赵学昊",
+        "popularity": 0.2282,
+        "profile_path": "/qu49pfye0NiI1cRShMrQ5BAJDpk.jpg",
+        "credit_id": "69f41cced0688c838f2372e8",
+        "department": "Production",
+        "job": "Production Designer"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4686914,
+        "known_for_department": "Visual Effects",
+        "name": "乔乐",
+        "original_name": "乔乐",
+        "popularity": 0.1077,
+        "profile_path": null,
+        "credit_id": "69f41d1c6568934110d58900",
+        "department": "Visual Effects",
+        "job": "Visual Effects Supervisor"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 4771368,
+        "known_for_department": "Costume & Make-Up",
+        "name": "唐宁",
+        "original_name": "唐宁",
+        "popularity": 0.1567,
+        "profile_path": "/lciDuLQ7haeqKs7RRTGeFXAeQoI.jpg",
+        "credit_id": "69f41d87520ab52897e7cf55",
+        "department": "Costume & Make-Up",
+        "job": "Costume Designer"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 5561959,
+        "known_for_department": "Sound",
+        "name": "刘晓莎",
+        "original_name": "刘晓莎",
+        "popularity": 0.0362,
+        "profile_path": null,
+        "credit_id": "69f41dc005cc6c7744e7cf82",
+        "department": "Sound",
+        "job": "Sound Supervisor"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2161827,
+        "known_for_department": "Sound",
+        "name": "王钢",
+        "original_name": "Gang Wang",
+        "popularity": 0.0732,
+        "profile_path": "/y3UWUPPNB6aFVVrQx1YhUX5sfUu.jpg",
+        "credit_id": "69f41ddbb9ad214e9af7e014",
+        "department": "Sound",
+        "job": "Sound Supervisor"
+      },
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 6010804,
+        "known_for_department": "Lighting",
+        "name": "刘坤朋",
+        "original_name": "Liu Kunpeng",
+        "popularity": 0.0546,
+        "profile_path": null,
+        "credit_id": "69f41e33670664108e2373e1",
+        "department": "Lighting",
+        "job": "Lighting Director"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1326036,
+        "known_for_department": "Writing",
+        "name": "韩寒",
+        "original_name": "韩寒",
+        "popularity": 0.6124,
+        "profile_path": "/uAYoUdcgLedCQASTsQ34joMeD9y.jpg",
+        "credit_id": "69f41ec8520ab52897e7cf5f",
+        "department": "Writing",
+        "job": "Screenplay"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2780089,
+        "known_for_department": "Writing",
+        "name": "周运海",
+        "original_name": "周运海",
+        "popularity": 0.3196,
+        "profile_path": "/eQi4vK5kWAb4gXO1uSjlfwlh0dC.jpg",
+        "credit_id": "69f41ed87a8466131dbd0f1a",
+        "department": "Writing",
+        "job": "Screenplay"
+      },
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 6010797,
+        "known_for_department": "Writing",
+        "name": "蒙问雨",
+        "original_name": "蒙问雨",
+        "popularity": 0.1368,
+        "profile_path": null,
+        "credit_id": "69f41ef26a09a546e6d58a05",
+        "department": "Writing",
+        "job": "Screenplay"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 6180811,
+        "known_for_department": "Production",
+        "name": "马国志",
+        "original_name": "马国志",
+        "popularity": 0.0286,
+        "profile_path": null,
+        "credit_id": "69f41f2a22fe52e2df57e182",
+        "department": "Production",
+        "job": "Line Producer"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 6180812,
+        "known_for_department": "Production",
+        "name": "于晓雪",
+        "original_name": "于晓雪",
+        "popularity": 0.0143,
+        "profile_path": null,
+        "credit_id": "69f41f7a4731ea1cd1f9fb9e",
+        "department": "Production",
+        "job": "Producer"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 5316182,
+        "known_for_department": "Production",
+        "name": "陈敏敏",
+        "original_name": "陈敏敏",
+        "popularity": 0.0261,
+        "profile_path": null,
+        "credit_id": "69f4208e5dbcdec705f7e08c",
+        "department": "Production",
+        "job": "Co-Producer"
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 3962204,
+        "known_for_department": "Production",
+        "name": "李雯雯",
+        "original_name": "李雯雯",
+        "popularity": 0.0908,
+        "profile_path": "/3JKzWdxmC2fFDxbZKWIZE6UEVGG.jpg",
+        "credit_id": "69f421033ef34420c5bd0f38",
+        "department": "Production",
+        "job": "Executive Producer"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 3633206,
+        "known_for_department": "Acting",
+        "name": "周冠宇",
+        "original_name": "周冠宇",
+        "popularity": 0.23,
+        "profile_path": "/amuNWYnGcxdCgBscnbafvbnZPN4.jpg",
+        "credit_id": "69f4259a6be640b1edbd0f05",
+        "department": "Crew",
+        "job": "Thanks"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 118748,
+        "known_for_department": "Acting",
+        "name": "罗礼贤",
+        "original_name": "羅禮賢",
+        "popularity": 0.4815,
+        "profile_path": "/z4mmyxgxE4SBnAKEsJnQTbjhZyW.jpg",
+        "credit_id": "69f4261020bd7a9abcf7e00e",
+        "department": "Crew",
+        "job": "Thanks"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1100748,
+        "known_for_department": "Directing",
+        "name": "郭帆",
+        "original_name": "郭帆",
+        "popularity": 0.8752,
+        "profile_path": "/wvRKczLxlqeDRMsJilWZpbHM9QA.jpg",
+        "credit_id": "69f42620399f85feb28164fd",
+        "department": "Crew",
+        "job": "Thanks"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 2282170,
+        "known_for_department": "Acting",
+        "name": "罗永浩",
+        "original_name": "罗永浩",
+        "popularity": 0.5591,
+        "profile_path": "/3iqhFqvfAXJOzGLM8PmMJDOBFv2.jpg",
+        "credit_id": "69f426319d85b731c7fbd6a0",
+        "department": "Crew",
+        "job": "Thanks"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1627281,
+        "known_for_department": "Acting",
+        "name": "白客",
+        "original_name": "白客",
+        "popularity": 1.5592,
+        "profile_path": "/t7Hi7qYnXPaeehR7K5rbf0hHX0B.jpg",
+        "credit_id": "69f42652d006c91bb0237203",
+        "department": "Crew",
+        "job": "Thanks"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 5708146,
+        "known_for_department": "Acting",
+        "name": "李想",
+        "original_name": "李想",
+        "popularity": 0.0256,
+        "profile_path": "/xp3xzvnkFTYjvsqcCOd3ZGRXxg8.jpg",
+        "credit_id": "69f42664695571e5e1f9fac6",
+        "department": "Crew",
+        "job": "Thanks"
+      }
+    ]
+  },
+  "recommendations": {
+    "page": 1,
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/PsyMMWKOyMVjTZBiyhNebyHDsQ.jpg",
+        "id": 1147596,
+        "title": "第二十条",
+        "original_title": "第二十条",
+        "overview": "人过中年的检察官韩明（雷佳音 饰）早已没了往日的锋芒，每日里柴米油盐，鸡毛蒜皮，尽快从挂职转正是他最为关心的问题。在此期间，康村村民王永强（潘斌龙 饰）为保护哑巴妻子（赵丽颖 饰）捅伤村霸刘文经（阿如那 饰）的案件甚嚣尘上，刘的家人纠集村匪恶霸上访闹事，要求判处王死刑，韩明的初恋女友——女检察官吕玲玲（高叶 饰）顶住各方压力，执意要找到关系案件走向的重要证据；另一方面，韩的儿子韩雨辰（刘耀文 饰）为制止校园霸凌将学校张主任（张译 饰）儿子打伤，关于是否应该道歉，双方展开了拉锯战。为了左右案件走向，康村人试图强迫王的妻子就范，矛盾逐渐升级…",
+        "poster_path": "/nTKeuNKbnUgiZZ4vEZWpUds3DYP.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          18,
+          35
+        ],
+        "popularity": 2.0799,
+        "release_date": "2024-02-10",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7,
+        "vote_count": 55
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/xFYpUmB01nswPgbzi8EOCT1ZYFu.jpg",
+        "id": 980489,
+        "title": "GT赛车：极速狂飙",
+        "original_title": "Gran Turismo",
+        "overview": "影片讲述了一位平民游戏少年热血逐梦，成为职业赛车手的真实励志故事。从小怀揣赛车梦想的詹恩·马登伯勒被GT赛车学院挖掘，他凭借出色的游戏经验和自身的努力一次次打破外界质疑，彻底改写赛车运动是“富人专属”的规则。全球九大顶级赛道实地取景，豪华赛车齐聚，金牌导演尼尔·布洛姆坎普执导，用一场场令人屏息的纯正赛车对决，带你沉浸式感受生死一瞬的极速狂飙。",
+        "poster_path": "/qXuLcCt9fSQOuEKeXgMwnpN2Ox2.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          12,
+          18,
+          28
+        ],
+        "popularity": 9.2995,
+        "release_date": "2023-08-09",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.706,
+        "vote_count": 3382
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/f4OCzvS3HvisHEkxq5596jg21UJ.jpg",
+        "id": 1173076,
+        "title": "年会不能停！",
+        "original_title": "年会不能停！",
+        "overview": "集团裁员风波之下，人心惶惶，底层钳工胡建林（大鹏 饰）却被阴差阳错调入集团总部！裹挟在“错调”事件中的人事经理马杰（白客 饰）诚惶诚恐，为保饭碗被迫为其周旋隐瞒。从“工厂”到“大厂”，从“蓝领”变“金领”，胡建林因与大厂环境格格不入而笑料百出，也像一面“职场照妖镜”照出众生相……胡建林为何能在裁员之际一路升职加薪制霸大厂？马杰又能否在“错调”事件中全身而退？这对“天选打工双侠”会引发怎样轰轰烈烈的职场大整顿？",
+        "poster_path": "/nhsi6kfqwlfAdzaeZOocnUqMlH2.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          18,
+          35
+        ],
+        "popularity": 1.7388,
+        "release_date": "2023-12-29",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.485,
+        "vote_count": 101
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/323R1b3D2WS17JXgdAfmPGNpMkJ.jpg",
+        "id": 400114,
+        "title": "我不是潘金莲",
+        "original_title": "我不是潘金莲",
+        "overview": "一个普通的农村妇女李雪莲，为了纠正一句话，与上上下下、方方面面打了十年交道。打交道的过程中，她没想到一件事变成了另一件事，接着变成了第三件事。十年过去，她没有把这句话纠正过来，但她饱尝了世间的人情冷暖，悟明白了另外一个道理。李雪莲要纠正的这句话是她前夫说的。她前夫说：你是李雪莲吗？我咋觉得你是潘金莲呢？李雪莲要告诉大家的是：我不是潘金莲。",
+        "poster_path": "/qdSHfMmjccYneB4pnD6uUMDzqPA.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          35,
+          18
+        ],
+        "popularity": 1.9104,
+        "release_date": "2016-09-29",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.8,
+        "vote_count": 98
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg",
+        "id": 385687,
+        "title": "速度与激情10",
+        "original_title": "Fast X",
+        "overview": "昔日的死对头塞弗主动找上门来告知多米尼克和整个飞车家族都将遭遇危险。随后，多米尼克从“小无名氏”先生处得知飞车家族的几位朋友接到了假任务。为了拯救众人，多米尼克和莱蒂前往罗马救人，而把小儿子托给米娅和雅各布照顾。在罗马的交锋中，唐老大发现对手叫但丁，是毒枭赫南·雷耶斯的儿子；而他却并不想让多米尼克和飞车家族立刻消失，而是要慢慢折磨他们，就连曾经帮助过飞车家族或是有关联的人也不会放过......",
+        "poster_path": "/7BOzdJavykpnCZ5oTYvmtTTbK9O.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          80,
+          53
+        ],
+        "popularity": 22.0089,
+        "release_date": "2023-05-17",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.995,
+        "vote_count": 6306
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/gHBBnrXdx1rvcnnYHUWJulBDCVZ.jpg",
+        "id": 151743,
+        "title": "人再囧途之泰囧",
+        "original_title": "人再囧途之泰囧",
+        "overview": "商业成功人士徐朗（徐峥 饰）用了五年时间发明了一种叫“油霸”的神奇产品——每次汽车加油只需加到三分之二，再滴入2滴“油霸”，油箱的汽油就会变成满满一箱。徐朗的同学，兼商业竞争对手高博（黄渤 饰）想把这个发明一次性卖给法国人。但徐朗坚决不同意，他希望深入开发研究， 把“油霸”发扬光大，得到更远的收益。两个人各抒己见，争论不休，一直无果。由于两人股份相同，唯有得到公司最大股东周扬的授权书，方可达到各自目的。当得知周扬在泰国后，徐朗立刻启程寻找。而高博获悉后将一枚跟踪器放在徐朗身上一起去了泰国。飞机上，徐朗遇到了王宝（王宝强 饰），别有心机地想利用他来摆脱对手高博的追赶，可他不仅没甩掉王宝，还成了他的“贴身保姆”…",
+        "poster_path": "/fTN7asKKrD5dc99t3t0raWV1jFT.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          35,
+          12,
+          18
+        ],
+        "popularity": 2.4449,
+        "release_date": "2012-12-12",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.434,
+        "vote_count": 136
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/x8zprGIgH2pExKCyNdwfANcbnlG.jpg",
+        "id": 55156,
+        "title": "九品芝麻官",
+        "original_title": "九品芝麻官",
+        "overview": "包龙星（周星驰 饰）用钱买了一个候补知县，可是他为人贪婪，乡亲都对他痛恨之极。在他代职知县的时候，戚家媳妇（张敏 饰）遭到了常威（邹兆龙 饰）的强暴，后来常威杀了他们全家，更嫁祸于戚秦氏。",
+        "poster_path": "/mdOdl9NDHuNH6V1YDfxwTjSPmdI.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          35,
+          18
+        ],
+        "popularity": 4.4058,
+        "release_date": "1994-03-31",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.457,
+        "vote_count": 151
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/f1EyhhFCXDw1aTlBzrLRrbBcCTb.jpg",
+        "id": 36113,
+        "title": "落叶归根",
+        "original_title": "落叶归根",
+        "overview": "该片讲述了民工老赵为使好友老刘死后“落叶归根”，一路上历尽艰难将老刘尸体运回老家的故事。 老赵（赵本山饰）是个五十多岁的农民，他南下到深圳打工，却因好友老刘（洪启文饰）死在工地上，决定展开回乡安葬老刘之旅。老赵先把老刘伪装成醉鬼，混上了长途车，却在途中遇上劫匪（郭德纲饰）。老赵誓死保护老刘的补偿金，赢得劫匪敬重之余，还救了一车人的财物。但他因为暴露了尸体，结果反而被乘客赶下了车。于是，老赵只得在路上拦车，把老刘假装成急救病人，并遇上好心人把他们送到医院。晚上住店时，同寝的人趁老赵睡着时，把钱偷走了。于是，他又把老刘装成乞丐；要吃饭，他到别人的葬礼哭丧；要掩盖尸斑，他请发廊妹为老刘化妆。家乡在望之际，他遇上泥石流，只能靠意志力战胜大自然。 当老赵带着老刘回到故乡时，却发现故乡已经被摧毁，村民们也都搬走了。",
+        "poster_path": "/zoGE3nrXNKyVkyejhzjZVxECgJd.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          18,
+          35
+        ],
+        "popularity": 2.3048,
+        "release_date": "2007-12-31",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.373,
+        "vote_count": 63
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/mBa8hfCXiiMcguuOHojqotOH7IO.jpg",
+        "id": 1356587,
+        "title": "长安的荔枝",
+        "original_title": "长安的荔枝",
+        "overview": "唐天宝年间，人到中年的李善德（大鹏 饰）骂骂咧咧干了很多活，抠抠搜搜花了不少钱，到头来却还是个无名小吏。然而这一切随着一次召见似乎有了转机，某天有人安排给他一个“荔枝使”的肥差，只要办成，那就是荣华富贵人生逆袭，但要是办不成……",
+        "poster_path": "/S8XM9nknYxBHCp1AO1TNpqwRzo.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          18,
+          36,
+          35
+        ],
+        "popularity": 2.5315,
+        "release_date": "2025-07-12",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.279,
+        "vote_count": 43
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/4mlS1MitcOqdPLhxEFyk9Qwf5rr.jpg",
+        "id": 260514,
+        "title": "赛车总动员3",
+        "original_title": "Cars 3",
+        "overview": "闪电麦坤（欧文·威尔逊配音）走到了赛车生涯的十字路口，他刚刚在与一位年轻选手黑风暴杰克逊（艾米·汉莫配音）的较量后失去了冠军头衔。  在被风暴打败后，麦坤打算在训练最后一个赛季后就退休。他的合作伙伴是顶尖训练基地的老板斯特林（内森·菲利安配音），和他的王牌教练科鲁兹拉米雷斯（克里丝特拉·阿隆佐配音）。最后麦坤意识到，斯特林之所以对他感兴趣，不是想让其复出，而是希望他退休，以便能在产品中获得授权使用闪电麦坤的形象。麦坤拒绝退出，跟斯特林定下协议，如果他能赢得本赛季的第一场比赛，他便可以等到自己想要时再退休，但如果他没有取胜，就必须立即退休，老实去当斯特林的品牌代言人  。",
+        "poster_path": "/8dYJvDZLbmvoEORCjEBRvPKmbNp.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          16,
+          18,
+          10751
+        ],
+        "popularity": 12.8415,
+        "release_date": "2017-06-15",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.858,
+        "vote_count": 6374
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/be8kbUlVP90TbjTWfDzNpqfKwlH.jpg",
+        "id": 480823,
+        "title": "尘埃",
+        "original_title": "Dirt",
+        "overview": "剧情是俗套的，但是看着4✖️4越野卡车短道竞速，是很爽的。影片最后那段结尾独白不错，美国人喜欢赛车，大家喜欢英雄，然后就有了各色的冠军，就了故事。",
+        "poster_path": "/vaZgso4P0wW9IsXTzpOtfU0UxbD.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          18,
+          28
+        ],
+        "popularity": 1.0884,
+        "release_date": "2018-03-07",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.1,
+        "vote_count": 76
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/39f8uDnF3O7njJPaTQYnKubp4Ug.jpg",
+        "id": 305937,
+        "title": "自行车赛手",
+        "original_title": "The Racer",
+        "overview": "Summer 1998 - the opening stages of Le Tour de France are relocated to Ireland. Belgian rider Dom Chabol (late 30s) has been one of the best “Domestiques” (support riders) on the Tour for the last 20 years. It’s a sacrificial role – setting pace, blocking wind, and providing support to enable the team’s sprinter to victory - winning is not an option. But Dom secretly harbours a desire to wear the yellow jersey - just once before his career is over. At the start of what will likely be his last Tour, Dom is unceremoniously dropped from the Team he has dedicated his life to. His best mate Sonny, the team masseur, fails to reassure him about his future. But a chance liaison with Lynn, a young Irish doctor, softens the blow, and Dom starts to accept - and even enjoy - the idea of civilian life. But as he gears up to go home and to face his estranged sister, a massive doping error knocks another teammate off the Tour and Dom is thrown back in the saddle…",
+        "poster_path": "/rwhlCAW285XyDdN0PRlKYxzp68g.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          18,
+          35
+        ],
+        "popularity": 0.5996,
+        "release_date": "2020-09-09",
+        "softcore": false,
+        "video": false,
+        "vote_average": 5.947,
+        "vote_count": 47
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/57JIik4WQJ4SFUgRm7q6X6USlSF.jpg",
+        "id": 213927,
+        "title": "为赛车而生2",
+        "original_title": "Born to Race: Fast Track",
+        "overview": "Danny Krueger is a twenty-year old drag racer who plays by his own rules. After winning a scholarship to the prestigious Fast Lane Racing Academy, Danny finds himself competing against some of the fiercest young drivers in the world. Tension soars on and off the track, and a terrible incident leaves Danny without a racing partner. Facing dismissal from the academy, Danny is forced to team up with an old rival. The pair must learn to set aside their differences as they vie for rookie spots on a professional racing team.",
+        "poster_path": "/sYYQ9kS6Twvt0UcjxGLmBcq5k11.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28
+        ],
+        "popularity": 1.1531,
+        "release_date": "2014-03-20",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.6,
+        "vote_count": 104
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/94QHrTXnxdmIyXWGUpOPe7PU8DL.jpg",
+        "id": 897192,
+        "title": "小屁孩日记：罗德里克规则",
+        "original_title": "Diary of a Wimpy Kid: Rodrick Rules",
+        "overview": "格雷·赫夫利是一名焦虑迷茫且惹事不断的中学生，不断上演一些滑稽行为。这次闹剧的焦点在于他与哥哥罗德里克的复杂关系。如今格雷接受了他迄今为止最大的挑战之一：与他的哥哥罗德里克单独共度一个周末，还要服从哥哥越来越多的条条框框。",
+        "poster_path": "/th3zmILhPBKVCaNVKyApQdmeQMW.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          16,
+          35,
+          10751
+        ],
+        "popularity": 2.667,
+        "release_date": "2022-12-01",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.777,
+        "vote_count": 191
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/gKDuRB6Uj3gzF8Dd85DOtkxi7KC.jpg",
+        "id": 497984,
+        "title": "捉妖记2",
+        "original_title": "捉妖记2",
+        "overview": "上一集与胡巴分别后，天荫（井柏然 饰）带着小岚（白百何 饰）踏上寻父之路，在义薄云天的天师堂堂主云大哥（杨祐宁 饰）的帮助下，二人得知天荫父亲宋戴天的护妖轨迹；而重回永宁村的胡巴再度被妖王追杀，颠沛流离逃亡时结识大赌徒屠四谷（梁朝伟 饰）和一只妖怪，三人一起过着相依为命的生活，但又因屠四谷欠下的巨额赌债横生诸多波折。与此同时 ，江湖盛传小妖王胡巴的重金悬赏令，妖界大军、天师精英、绿林草莽闻风而动，多方势力为抢夺胡巴在清水镇掀起腥风血雨。千钧一发之际，念子心切的天荫和小岚通过天师堂找到胡巴并一起逃离险境。岂料，一场更大的惊天阴谋尾随而至，伺机而动……",
+        "poster_path": "/dSDCl3izcPLfJtjnjZmidqLMvSp.jpg",
+        "media_type": "movie",
+        "original_language": "zh",
+        "genre_ids": [
+          12,
+          35,
+          14
+        ],
+        "popularity": 2.9888,
+        "release_date": "2018-02-16",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.6,
+        "vote_count": 143
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/xXHZeb1yhJvnSHPzZDqee0zfMb6.jpg",
+        "id": 385128,
+        "title": "速度与激情9",
+        "original_title": "F9",
+        "overview": "多米尼克·托莱多（范·迪塞尔 饰）与莱蒂（米歇尔·罗德里格兹 饰）和他的儿子小布莱恩，过上了远离纷扰的平静生活。然而他们也知道，安宁之下总潜藏着危机。这一次，为了保护他所爱的人，托莱多不得不直面过去。他和伙伴们面临的是一场足以引起世界动荡的阴谋，以及一个前所未遇的一流杀手和高能车手。而这个名叫雅各布（约翰·塞纳 饰）的人，恰巧是多姆遗落在外的亲弟弟。",
+        "poster_path": "/3Jl6fuwsoTjk9svpmanLWr8IxeG.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          80
+        ],
+        "popularity": 7.8505,
+        "release_date": "2021-05-19",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.004,
+        "vote_count": 7696
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/7nAVXGHHtaNcdsqvDXmY6R9N0fG.jpg",
+        "id": 1363123,
+        "title": "家庭计划2",
+        "original_title": "The Family Plan 2",
+        "overview": "告别杀手生涯的丹，这次圣诞节只想陪孩子们共度美好时光。当发现女儿另有计划时，他安排全家去伦敦旅行，此时却有一名意外的敌人盯上他们一家。",
+        "poster_path": "/xtPU8fNLmU0nBnozC1OcOLzvSnB.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          35
+        ],
+        "popularity": 14.6841,
+        "release_date": "2025-11-11",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.563,
+        "vote_count": 565
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/kzeBfhXMRWiykBsqoL3UbfaM0S.jpg",
+        "id": 1035259,
+        "title": "白头神探：智斗灭世狂人",
+        "original_title": "The Naked Gun",
+        "overview": "白头神探的儿子小弗兰克（连姆·尼森 Liam Neeson 饰）即将上演最无厘头的一次“营救”行动。",
+        "poster_path": "/yBVCTgMvc2sxKQdAGjUe2sCBBOu.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          35,
+          80
+        ],
+        "popularity": 13.8365,
+        "release_date": "2025-07-30",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.367,
+        "vote_count": 1695
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/1WoPau7XK17cWQGAOxmyisud0Iq.jpg",
+        "id": 113294,
+        "title": "女飞人",
+        "original_title": "Fast Girls",
+        "overview": "《女飞人》讲述了一个田径选手的成长史：Shania Andrews是个成长在街头的平民田径选手，她很有天赋，是个天生的健将，她的人生和比赛一样，都要和那些拥有优渥体格和家庭的富家子弟们竞争，而年轻的女飞人，需要一个机会，证明自己。",
+        "poster_path": "/wrsIUs4esWv3oncNpRI4ERon4bF.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          18
+        ],
+        "popularity": 0.7423,
+        "release_date": "2012-06-15",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.1,
+        "vote_count": 109
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/xDp29MSWa7O3ROC13r6dPTFnREJ.jpg",
+        "id": 82992,
+        "title": "速度与激情6",
+        "original_title": "Fast & Furious 6",
+        "overview": "俄罗斯莫斯科闹市中央，执行押送任务的军方部队遭到一伙训练有素的匪徒袭击，大战过后的现场惨不忍睹，重要的卫星元件遭到劫持。国际刑警霍布斯（道恩·强森 Dwayne Johnson 饰）查明，包括此案在内的一系列案件均系前特种部队军人欧文·肖（卢克·伊万斯 Luke Evans 饰）所为。为了将这群训练有素、老练凶狠的匪徒绳之于法，他辗转找到隐居世外桃源的多米尼克·托莱多（范·迪塞尔 Vin Diesel 饰）助拳。霍布斯开出的条件令人难以拒绝，他不仅可以将托雷多和布莱恩（保罗·沃克 Paul Walker 饰）一伙从前的犯罪记录一笔勾销，此外欧文一伙中竟然还有本该死去的莱蒂……",
+        "poster_path": "/gXDcFWLIfNXSnYYvv0xYCIVMOTh.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          53,
+          80
+        ],
+        "popularity": 1.2863,
+        "release_date": "2013-05-21",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.814,
+        "vote_count": 11154
+      }
+    ],
+    "total_pages": 48,
+    "total_results": 960
+  },
+  "reviews": {
+    "page": 1,
+    "results": [],
+    "total_pages": 0,
+    "total_results": 0
+  },
+  "videos": {
+    "results": [
+      {
+        "iso_639_1": "zh",
+        "iso_3166_1": "CN",
+        "name": "Pegasus 3 Official Trailer｜ 飞驰人生3",
+        "key": "tNgliTdGA3w",
+        "site": "YouTube",
+        "size": 1080,
+        "type": "Trailer",
+        "official": false,
+        "id": "698acc01509edd18034214a2",
+        "published_at": "2026-01-23T02:38:12.000Z"
+      }
+    ]
+  },
+  "keywords": {
+    "keywords": [
+      {
+        "id": 9663,
+        "name": "sequel"
+      },
+      {
+        "id": 10039,
+        "name": "racing"
+      }
+    ]
+  },
+  "images": {
+    "backdrops": [
+      {
+        "aspect_ratio": 1.778,
+        "height": 2160,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/h6tGwt2luW8keksY677qCxyFxTZ.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 3840
+      }
+    ],
+    "logos": [
+      {
+        "aspect_ratio": 3.403,
+        "height": 1930,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/xCS48NC8LwKcQeZUOaZc7BZFnfF.png",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 6568
+      },
+      {
+        "aspect_ratio": 3.03,
+        "height": 1445,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/k9q2EHu6MQzs7kJH1SnkFwqgMZm.png",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 4379
+      },
+      {
+        "aspect_ratio": 3.333,
+        "height": 360,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/v2Ft7xOiO7v3vYzhyEdBmZ4gXJK.png",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1200
+      },
+      {
+        "aspect_ratio": 3.04,
+        "height": 329,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/ruMwc1bGUP1kPvAJrpeEqnIrE0r.png",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1000
+      },
+      {
+        "aspect_ratio": 2.874,
+        "height": 293,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/AlRPnicW6l6JGH6RvKzJ21Z4NLj.png",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 842
+      }
+    ],
+    "posters": [
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/fzkfI2LWgPEHiFOFW2JveqlAY3h.jpg",
+        "vote_average": 1.75,
+        "vote_count": 2,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/cL5vAK6bUHYWTOnypi34mzzWI8X.jpg",
+        "vote_average": 1.75,
+        "vote_count": 2,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/4AHYWDA0HQQNT65pCpr7mLaZ6et.jpg",
+        "vote_average": 0,
+        "vote_count": 1,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/b0Ctw1BslLZeWRCaYjT9LK9IH9O.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.657,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/koZgbzPpJwAQH7QGlkMEfRbin1k.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1970
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/m6ygotJuBY3qsK85QBVfGnR4nSV.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/6CXCHkbEQVZIpZYH1L2RwFyQ21i.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/iCJkKJQsCCUxF5NkmcfCoCn5bEf.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/blRYklPBE8u4DjcsIztSYlzTISi.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/2r4Z5xZreRrjxl9wu4fik4EuzQq.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/qEEN1W7VO42br4fFFKyQ1Ne5eiJ.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/gMNCmiL1IO2HMVRluMnd8I2XK8q.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/90TFToBr1XtAZXlrqDaJelrW3Z8.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/9HzGAoCPmo5UXNnuzkqH8j3QoHr.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/rH2M6o0vgYAopYsmpfkye2SJcdx.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 1920,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/mi4HmL2oQXwbESaBgti76mNc8Qm.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1280
+      },
+      {
+        "aspect_ratio": 0.71,
+        "height": 1803,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/uvD9Hv1JIVHF48ks2jOmQXo6X8O.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1280
+      },
+      {
+        "aspect_ratio": 0.709,
+        "height": 2820,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/85FnNBdIGDn1QwBsOeAtUFaFmse.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.707,
+        "height": 2828,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/1iHOCGrivXHWSw8OiMjazG2sn3x.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/gXDbwYx1S48me4N5pH9sjcfokHb.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.679,
+        "height": 2947,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/oYdcrLoXIlWr8bxPYNtAD9g9iwC.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/MCIisdFUqmdyV96EWZEVqFxcKE.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/bUy6CJTimJcBPYfk83SJ75lnZuU.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/212K1FzDRDiDe8hwaMhjFxstDls.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.677,
+        "height": 1595,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/zhhnVr9wE0BTjI3gtj6AWCWJGGR.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1080
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/8Abm8DhSTnRXQEmCGH2fnlpvnXH.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/m7e2PmqHLSJGtQxOrr5nHLZ9fxg.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      },
+      {
+        "aspect_ratio": 0.667,
+        "height": 3000,
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "file_path": "/iGnN48vm4dFg4XnUyh0WT1fVEiK.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 2000
+      }
+    ]
+  },
+  "release_dates": {
+    "results": [
+      {
+        "iso_3166_1": "AU",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-25T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-26T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "BE",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "CA",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-23T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "CN",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-17T00:00:00.000Z",
+            "type": 3
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "zh",
+            "note": "",
+            "release_date": "2026-04-30T00:00:00.000Z",
+            "type": 4
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "FJ",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-25T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-26T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "GB",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "London,BFI IMAX ",
+            "release_date": "2026-02-25T00:00:00.000Z",
+            "type": 1
+          },
+          {
+            "certification": "PG",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-26T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "PG",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "HK",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-04-09T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "ID",
+        "release_dates": [
+          {
+            "certification": "13+",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-05-20T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "IE",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-26T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "LU",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "MO",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-20T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "NL",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "NZ",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-25T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-26T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "PG",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-25T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-26T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "SG",
+        "release_dates": [
+          {
+            "certification": "PG13",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-03-26T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "TH",
+        "release_dates": [
+          {
+            "certification": "13",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-05-07T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      },
+      {
+        "iso_3166_1": "US",
+        "release_dates": [
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "IMAX CINEMA",
+            "release_date": "2026-02-23T00:00:00.000Z",
+            "type": 2
+          },
+          {
+            "certification": "",
+            "descriptors": [],
+            "iso_639_1": "",
+            "note": "",
+            "release_date": "2026-02-27T00:00:00.000Z",
+            "type": 3
+          }
+        ]
+      }
+    ]
+  },
+  "external_ids": {
+    "imdb_id": "tt38035835",
+    "wikidata_id": "Q138315492",
+    "facebook_id": null,
+    "instagram_id": null,
+    "twitter_id": null
+  },
+  "translations": {
+    "translations": [
+      {
+        "iso_3166_1": "US",
+        "iso_639_1": "en",
+        "name": "English",
+        "english_name": "English",
+        "data": {
+          "homepage": "",
+          "overview": "Bearing the glory of being the 'King of Bayanbulak', Zhang Chi once again embarks on his racing journey, aiming not only to win the race but also to achieve something beyond the competition itself.",
+          "runtime": 126,
+          "tagline": "Let's lay out the road and race ahead.",
+          "title": "Pegasus 3"
+        }
+      },
+      {
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "巴音布鲁克最后一站收官后，张驰（沈腾 饰）受邀作为车队主教练征战全新赛事“沐尘100拉力赛”，“野生车手”走上国际舞台！面对高手如云的全新赛道，孙宇强（尹正 饰）、记星（张本煜 饰）一如既往协同作战，林臻东（黄景瑜 饰）等实力车手应邀强势集结，一支凝聚了顶配速度与信念的车队就此成立！然而，张驰发现真正的挑战仿佛并非来自比赛本身，赛场之外暗流涌动，让他们飞驰之路充满变数……",
+          "runtime": 126,
+          "tagline": "",
+          "title": "飞驰人生3"
+        }
+      },
+      {
+        "iso_3166_1": "HK",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "巴音布魯克最後一站收官後，張馳（沈騰 飾）受邀作為車隊主教練征戰全新賽事“沐塵 100 拉力賽”，“野生車手”走上國際舞台！面對高手如雲的全新賽道，孫宇強（尹正 飾）、記星（張本煜 飾）一如既往協同作戰，林臻東（黃景瑜 飾）等實力車手應邀強勢集結，一支凝聚了頂配速度與信念的車隊就此成立！然而，張馳發現真正的挑戰仿佛並非來自比賽本身，賽場之外暗流湧動，讓他們飛馳之路充滿變數……",
+          "runtime": 0,
+          "tagline": "",
+          "title": "飛馳人生 3"
+        }
+      },
+      {
+        "iso_3166_1": "DE",
+        "iso_639_1": "de",
+        "name": "Deutsch",
+        "english_name": "German",
+        "data": {
+          "homepage": "",
+          "overview": "Mit dem Ruhm, der „König von Bayanbulak” zu sein, begibt sich Zhang Chi erneut auf seine Rennreise, mit dem Ziel, nicht nur das Rennen zu gewinnen, sondern auch etwas zu erreichen, das über den Wettbewerb selbst hinausgeht.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Pegasus 3"
+        }
+      },
+      {
+        "iso_3166_1": "TW",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "巴音布魯克最後一站收官後，張馳（沈騰 飾）受邀作為車隊主教練征戰全新賽事“沐塵100拉力賽”，“野生車手”走上國際舞台！面對高手如雲的全新賽道，孫宇強（尹正 飾）、記星（張本煜 飾）一如既往協同作戰，林臻東（黃景瑜 飾）等實力車手應邀強勢集結，一支凝聚了頂配速度與信念的車隊就此成立！然而，張馳發現真正的挑戰仿佛並非來自比賽本身，賽場之外暗流湧動，讓他們飛馳之路充滿變數……",
+          "runtime": 126,
+          "tagline": "",
+          "title": "飛馳人生3"
+        }
+      },
+      {
+        "iso_3166_1": "BR",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Pegasus 3"
+        }
+      },
+      {
+        "iso_3166_1": "SE",
+        "iso_639_1": "sv",
+        "name": "svenska",
+        "english_name": "Swedish",
+        "data": {
+          "homepage": "",
+          "overview": "Med äran att vara \"Kung av Bayanbulak\" ger sig Zhang Chi återigen ut på sin racingresa, med målet att inte bara vinna loppet utan också att uppnå något utöver själva tävlingen.",
+          "runtime": 126,
+          "tagline": "",
+          "title": "Pegasus 3"
+        }
+      }
+    ]
+  },
+  "watch/providers": {
+    "results": {}
+  }
+}

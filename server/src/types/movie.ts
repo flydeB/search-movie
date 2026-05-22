@@ -115,6 +115,32 @@ export interface TMDBCrewMember {
   department: string;
 }
 
+/** TMDB 评论项 */
+export interface TMDBReview {
+  id: string;
+  author: string;
+  author_details: {
+    name: string;
+    username: string;
+    avatar_path: string | null;
+    rating: number | null;
+  };
+  content: string;
+  created_at: string;
+  updated_at: string;
+  url: string;
+}
+
+/** TMDB 推荐电影项 */
+export interface TMDBRecommendation {
+  id: number;
+  title: string;
+  poster_path: string | null;
+  release_date: string;
+  vote_average: number;
+  overview: string;
+}
+
 /** TMDB 电影详情 API 响应 */
 export interface TMDBMovieDetail {
   id: number;
@@ -122,17 +148,30 @@ export interface TMDBMovieDetail {
   original_title: string;
   overview: string;
   poster_path: string | null;
+  backdrop_path: string | null;
   release_date: string;
   runtime: number | null;
   vote_average: number;
+  vote_count: number;
   genres: { id: number; name: string }[];
   budget: number;
   revenue: number;
-  spoken_languages: { iso_639_1: string; name: string }[];
+  status: string;
+  tagline: string;
+  spoken_languages: { iso_639_1: string; name: string; english_name: string }[];
   production_countries: { iso_3166_1: string; name: string }[];
+  production_companies: { id: number; name: string; logo_path: string | null; origin_country: string }[];
   credits: {
     cast: TMDBCastMember[];
     crew: TMDBCrewMember[];
+  };
+  recommendations?: {
+    page: number;
+    results: TMDBRecommendation[];
+  };
+  reviews?: {
+    page: number;
+    results: TMDBReview[];
   };
 }
 
@@ -151,6 +190,24 @@ export interface Actor {
   name: string;
   character: string;
   avatar?: string | null;  // TMDB 演员头像 URL（已代理）
+}
+
+/** 评论项（前端展示） */
+export interface ReviewItem {
+  author: string;
+  avatar: string | null;
+  rating: number | null;
+  content: string;
+  createdAt: string;
+}
+
+/** 类似电影项（前端展示） */
+export interface SimilarMovieItem {
+  id: string;
+  title: string;
+  poster: string | null;
+  year: string;
+  rating: number;
 }
 
 /** 前端展示用的电影详情 */
@@ -172,6 +229,8 @@ export interface MovieDetail {
   language: string;
   country: string;
   awards: string;
+  reviews: ReviewItem[];
+  similarMovies: SimilarMovieItem[];
 }
 
 /** 通用 API 响应格式 */

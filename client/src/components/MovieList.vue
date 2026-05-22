@@ -76,13 +76,7 @@ function handlePosterError(e: Event) {
             loading="lazy"
             @error="handlePosterError"
           />
-          <div class="card-overlay">
-            <div class="play-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            </div>
-          </div>
+          
           <div class="card-year-badge" v-if="movie.year">
             {{ movie.year }}
           </div>
@@ -293,45 +287,6 @@ function handlePosterError(e: Event) {
 
 .movie-card:hover .card-poster img {
   transform: scale(1.08);
-}
-
-/* 悬浮遮罩 */
-.card-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.movie-card:hover .card-overlay {
-  opacity: 1;
-}
-
-.play-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(232, 183, 74, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(0.8);
-  transition: transform 0.3s ease;
-}
-
-.movie-card:hover .play-icon {
-  transform: scale(1);
-}
-
-.play-icon svg {
-  width: 20px;
-  height: 20px;
-  color: #0c0c14;
-  margin-left: 2px;
 }
 
 /* 年份徽章 */

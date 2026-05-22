@@ -5,7 +5,7 @@ import MovieList from './components/MovieList.vue'
 import MovieDetail from './components/MovieDetail.vue'
 import AppFooter from './components/AppFooter.vue'
 import { searchMovies, getMovieDetail } from './api/movie'
-import type { MovieListItem, MovieDetail as MovieDetailType } from './types/movie'
+import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem } from './types/movie'
 
 const keyword = ref('')
 const movies = ref<MovieListItem[]>([])
@@ -78,6 +78,22 @@ async function handleSelect(movie: MovieListItem) {
 function handleCloseDetail() {
   detailVisible.value = false
   currentMovie.value = null
+}
+
+/** 从类似电影点击跳转 */
+async function handleSelectSimilar(movie: SimilarMovieItem) {
+  detailLoading.value = true
+  detailVisible.value = true
+  currentMovie.value = null
+
+  try {
+    currentMovie.value = await getMovieDetail(movie.id)
+  } catch (e: any) {
+    console.error('获取类似电影详情失败:', e)
+    currentMovie.value = null
+  } finally {
+    detailLoading.value = false
+  }
 }
 
 /** AI 搜索（预留） */
@@ -167,6 +183,7 @@ function handleHintClick(kw: string) {
       :movie="currentMovie"
       :loading="detailLoading"
       @update:visible="handleCloseDetail"
+      @select-movie="handleSelectSimilar"
     />
   </div>
 </template>

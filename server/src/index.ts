@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config(); // 必须在最顶部加载环境变量
+import 'dotenv/config'; // 必须在最顶部通过副作用import加载环境变量
 
 import express from 'express';
 import cors from 'cors';

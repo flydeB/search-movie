@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { MovieDetail } from '../types/movie'
+import type { MovieDetail, SimilarMovieItem } from '../types/movie'
 
 const props = defineProps<{
   visible: boolean
@@ -10,6 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:visible', value: boolean): void
+  (e: 'select-movie', movie: SimilarMovieItem): void
 }>()
 
 const dialogVisible = ref(props.visible)
@@ -23,15 +24,46 @@ function handleClose() {
   emit('update:visible', false)
 }
 
+function handlePosterError(e: Event) {
+  const img = e.target as HTMLImageElement
+  if (!img.src.includes('/default-poster.png')) {
+    img.src = '/default-poster.png'
+  }
+}
+
+function handleSimilarClick(m: SimilarMovieItem) {
+  dialogVisible.value = false
+  emit('update:visible', false)
+  emit('select-movie', m)
+}
+
+function truncateText(text: string, maxLen: number): string {
+  if (!text) return ''
+  return text.length > maxLen ? text.slice(0, maxLen) + '...' : text
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  return dateStr.slice(0, 10)
+}
+
+function formatRating(rating: number | null): string {
+  if (rating === null || rating === undefined) return ''
+  return rating.toFixed(1)
+}
+
 function formatBoxOffice(value: string): string {
   if (!value) return ''
   return value
 }
 
-function handlePosterError(e: Event) {
-  const img = e.target as HTMLImageElement
-  if (!img.src.includes('/default-poster.png')) {
-    img.src = '/default-poster.png'
+function handleAvatarError(e: Event) {
+  const el = e.target as HTMLImageElement
+  el.style.display = 'none'
+  const parent = el.parentElement
+  if (parent) {
+    const letter = parent.querySelector('.avatar-letter') as HTMLElement
+    if (letter) letter.style.display = 'flex'
   }
 }
 </script>
@@ -162,6 +194,45 @@ function handlePosterError(e: Event) {
         </div>
       </div>
 
+      <!-- 用户评论 -->
+      <div v-if="movie.reviews.length > 0" class="detail-section">
+        <h4 class="section-title">
+          用户评论
+          <span class="section-count">{{ movie.reviews.length }}</span>
+        </h4>
+        <div class="reviews-list">
+          <div
+            v-for="(review, index) in movie.reviews"
+            :key="index"
+            class="review-item"
+          >
+            <div class="review-header">
+              <div class="review-avatar">
+                <img
+                  v-if="review.avatar"
+                  :src="review.avatar"
+                  :alt="review.author"
+                  class="review-avatar-img"
+                  @error="handleAvatarError"
+                />
+                <span class="avatar-letter">{{ review.author.charAt(0).toUpperCase() }}</span>
+              </div>
+              <div class="review-meta">
+                <span class="review-author">{{ review.author }}</span>
+                <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+              </div>
+              <div v-if="review.rating" class="review-rating">
+                <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
+                  <path d="M8 1l1.76 3.56 3.94.57-2.85 2.78.67 3.93L8 10.25l-3.52 1.59.67-3.93-2.85-2.78 3.94-.57z"/>
+                </svg>
+                <span>{{ formatRating(review.rating) }}</span>
+              </div>
+            </div>
+            <p class="review-content">{{ truncateText(review.content, 200) }}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- 演员列表 -->
       <div v-if="movie.actors.length > 0" class="detail-section">
         <h4 class="section-title">演员阵容</h4>
@@ -184,6 +255,46 @@ function handlePosterError(e: Event) {
             <div class="cast-info">
               <span class="cast-name">{{ actor.name }}</span>
               <span class="cast-char" v-if="actor.character">饰 {{ actor.character }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 类似电影 -->
+      <div v-if="movie.similarMovies.length > 0" class="detail-section">
+        <h4 class="section-title">类似电影</h4>
+        <div class="similar-grid">
+          <div
+            v-for="(m, index) in movie.similarMovies"
+            :key="index"
+            class="similar-card"
+            @click="handleSimilarClick(m)"
+          >
+            <div class="similar-poster">
+              <img
+                :src="m.poster || '/default-poster.png'"
+                :alt="m.title"
+                loading="lazy"
+                @error="($event.target as HTMLImageElement).src = '/default-poster.png'"
+              />
+              <div class="similar-overlay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
+                </svg>
+              </div>
+            </div>
+            <div class="similar-info">
+              <span class="similar-title">{{ m.title }}</span>
+              <div class="similar-meta">
+                <span v-if="m.year" class="similar-year">{{ m.year }}</span>
+                <span v-if="m.rating > 0" class="similar-rating">
+                  <svg viewBox="0 0 16 16" fill="currentColor" width="10" height="10">
+                    <path d="M8 1l1.76 3.56 3.94.57-2.85 2.78.67 3.93L8 10.25l-3.52 1.59.67-3.93-2.85-2.78 3.94-.57z"/>
+                  </svg>
+                  {{ m.rating.toFixed(1) }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -462,6 +573,193 @@ function handlePosterError(e: Event) {
 
 .finance-value.revenue {
   color: #52c41a;
+}
+
+.section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  background: var(--primary-dim);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* 用户评论 */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-item {
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.review-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--primary-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.review-author {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.review-date {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.review-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: rgba(250, 219, 20, 0.08);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fadb14;
+}
+
+.review-rating svg {
+  opacity: 0.9;
+}
+
+.review-content {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+/* 类似电影 */
+.similar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+}
+
+.similar-card {
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.similar-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(232, 183, 74, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.similar-poster {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.similar-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.similar-card:hover .similar-poster img {
+  transform: scale(1.08);
+}
+
+.similar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  color: rgba(232, 183, 74, 0.9);
+}
+
+.similar-card:hover .similar-overlay {
+  opacity: 1;
+}
+
+.similar-info {
+  padding: 8px 10px 10px;
+}
+
+.similar-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+.similar-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.similar-year {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.similar-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fadb14;
 }
 
 /* 演员网格 */

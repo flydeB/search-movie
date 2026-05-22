@@ -15,6 +15,24 @@ export interface Actor {
   avatar?: string | null  // TMDB 演员头像 URL
 }
 
+/** 评论项 */
+export interface ReviewItem {
+  author: string
+  avatar: string | null
+  rating: number | null
+  content: string
+  createdAt: string
+}
+
+/** 类似电影项 */
+export interface SimilarMovieItem {
+  id: string
+  title: string
+  poster: string | null
+  year: string
+  rating: number
+}
+
 /** 电影详情 */
 export interface MovieDetail {
   id: string
@@ -34,6 +52,8 @@ export interface MovieDetail {
   language: string
   country: string
   awards: string
+  reviews: ReviewItem[]
+  similarMovies: SimilarMovieItem[]
 }
 
 /** 后端统一 API 响应 */
