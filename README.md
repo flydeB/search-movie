@@ -1,24 +1,17 @@
-# 全球电影检索
+# Search Movie / 搜电影
 
-支持中英文搜索的全球电影信息查询工具，聚合 TMDB、OMDb、豆瓣三大数据源。
+**中英双语**全球电影检索工具，聚合 TMDB、OMDb、豆瓣三大数据源，无论输入中文还是英文，都能精准找到电影。
 
-## 技术栈
+*A bilingual movie search engine supporting both Chinese and English queries, aggregating data from TMDB, OMDb, and Douban.*
 
-- **前端**：Vue 3 + Vite + TypeScript + Element Plus
-- **后端**：Node.js + Express + TypeScript
-- **数据源**：TMDB（主，中英文皆可）→ OMDb（兜底）→ 豆瓣（中文三级兜底）
+## 特性
 
-## 功能
+- 🔍 **中英文混合搜索** — 输入「Inception」或「盗梦空间」都能找到同一部电影，中文关键词自动翻译兜底
+- 🎬 电影详情：海报、评分、演员阵容、预告片（YouTube 跳转）、剧照画廊
+- 📥 资源站快捷搜索（电影天堂 / BT之家 / 迅雷电影）
+- 🎞️ 类似电影推荐、用户评论
 
-- 🔍 中英文关键词模糊搜索全球电影
-- 🎬 电影详情弹窗：海报、评分、类型、上映时间、时长、语言、国家
-- 👥 演员阵容（带头像）、导演、编剧
-- 💬 **用户评论**（TMDB 用户影评，最多 5 条）
-- 🎞️ **类似电影推荐**（最多 5 部，点击可跳转查看详情）
-- 💰 预算 / 票房数据
-- 🏆 获奖信息
-- 📱 响应式适配，深色主题 UI
-- ⚡ 搜索防抖（300ms），请求自动取消
+
 
 ## 快速开始
 
