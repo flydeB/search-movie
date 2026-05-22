@@ -32,8 +32,6 @@ function handlePosterError(e: Event) {
 }
 
 function handleSimilarClick(m: SimilarMovieItem) {
-  dialogVisible.value = false
-  emit('update:visible', false)
   emit('select-movie', m)
 }
 
@@ -243,12 +241,11 @@ function handleAvatarError(e: Event) {
             class="cast-item"
           >
             <div class="cast-avatar">
-              <img
+              <a-image
                 v-if="actor.avatar"
                 :src="actor.avatar"
-                :alt="actor.name"
-                class="avatar-img"
-                @error="($event.target as HTMLImageElement).style.display='none'"
+                :preview="false"
+                class="avatar-image"
               />
               <span v-if="!actor.avatar" class="avatar-letter">{{ actor.name.charAt(0) }}</span>
             </div>
@@ -271,18 +268,12 @@ function handleAvatarError(e: Event) {
             @click="handleSimilarClick(m)"
           >
             <div class="similar-poster">
-              <img
-                :src="m.poster || '/default-poster.png'"
-                :alt="m.title"
-                loading="lazy"
-                @error="($event.target as HTMLImageElement).src = '/default-poster.png'"
+              <a-image
+                :src="m.poster || ''"
+                :fallback="'/default-poster.png'"
+                :preview="false"
+                class="similar-poster-img"
               />
-              <div class="similar-overlay">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
-                </svg>
-              </div>
             </div>
             <div class="similar-info">
               <span class="similar-title">{{ m.title }}</span>
@@ -700,31 +691,56 @@ function handleAvatarError(e: Event) {
   background: var(--bg-elevated);
 }
 
-.similar-poster img {
+/* antd Image 组件覆盖 */
+
+.similar-poster-img {
+  width: 100%;
+  height: 100%;
+}
+
+.similar-poster-img :deep(.ant-image) {
+  width: 100%;
+  height: 100%;
+}
+
+.similar-poster-img :deep(.ant-image-img) {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
 }
 
-.similar-card:hover .similar-poster img {
+.similar-card:hover .similar-poster-img :deep(.ant-image-img) {
   transform: scale(1.08);
 }
 
-.similar-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  color: rgba(232, 183, 74, 0.9);
+/* 海报占位符背景色 */
+/* 海报占位符 */
+.similar-poster-img :deep(.ant-image-placeholder) {
+  background: var(--bg-elevated);
 }
 
-.similar-card:hover .similar-overlay {
-  opacity: 1;
+/* 头像占位符 */
+.avatar-image :deep(.ant-image-placeholder) {
+  background: var(--primary-dim);
+  border-radius: 50%;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-image :deep(.ant-image) {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-image :deep(.ant-image-img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .similar-info {
@@ -785,6 +801,7 @@ function handleAvatarError(e: Event) {
 }
 
 .cast-avatar {
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -797,12 +814,7 @@ function handleAvatarError(e: Event) {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
+/* 兜底头像字母 */
 .avatar-letter {
   font-size: 16px;
   font-weight: 700;

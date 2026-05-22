@@ -80,10 +80,9 @@ function handleCloseDetail() {
   currentMovie.value = null
 }
 
-/** 从类似电影点击跳转 */
+/** 从类似电影点击跳转（弹窗保持打开，仅更新内容） */
 async function handleSelectSimilar(movie: SimilarMovieItem) {
   detailLoading.value = true
-  detailVisible.value = true
   currentMovie.value = null
 
   try {
