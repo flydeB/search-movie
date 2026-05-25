@@ -269,4 +269,5 @@ export interface ApiResponse<T> {
   code: number;
   message: string;
   data: T;
+  source?: string; // 搜索数据来源：TMDB / OMDb / 豆瓣
 }

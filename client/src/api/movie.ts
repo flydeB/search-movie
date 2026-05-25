@@ -15,12 +15,12 @@ const http = axios.create({
  * @param signal 用于取消前一次请求的 AbortSignal
  * @returns 电影列表
  */
-export async function searchMovies(keyword: string, signal?: AbortSignal): Promise<MovieListItem[]> {
+export async function searchMovies(keyword: string, signal?: AbortSignal): Promise<{ movies: MovieListItem[]; source: string }> {
   const res = await http.get<ApiResponse<MovieListItem[]>>('/search', {
     params: { keyword },
     signal,
   })
-  return res.data.data
+  return { movies: res.data.data, source: res.data.source || '' }
 }
 
 /**

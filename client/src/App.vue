@@ -9,6 +9,7 @@ import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem } 
 
 const keyword = ref('')
 const movies = ref<MovieListItem[]>([])
+const source = ref('')
 const loading = ref(false)
 const error = ref('')
 
@@ -45,7 +46,9 @@ async function handleSearch(kw: string) {
   searchAbort = new AbortController()
 
   try {
-    movies.value = await searchMovies(kw, searchAbort.signal)
+    const result = await searchMovies(kw, searchAbort.signal)
+    movies.value = result.movies
+    source.value = result.source
   } catch (e: any) {
     // 被取消的请求不报错
     if (e.code === 'ERR_CANCELED' || e.name === 'CanceledError') return
@@ -169,6 +172,7 @@ function handleHintClick(kw: string) {
         :movies="movies"
         :keyword="keyword"
         :loading="loading"
+        :source="source"
         @select="handleSelect"
       />
     </main>

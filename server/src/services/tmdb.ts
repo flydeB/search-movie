@@ -558,20 +558,25 @@ function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
 
 /**
  * 搜索电影
- * 策略：配了代理 → TMDB 竞赛模式；没配 → 中文走 OMDb+豆瓣，英文走 OMDb
+ * 策略：
+ *   中文关键词 → TMDB(8s) → 豆瓣（跳过 OMDb，因为 OMDb 不支持中文）
+ *   英文关键词 → TMDB(15s) → OMDb → 豆瓣
  */
 export async function searchMovies(keyword: string, page: number = 1): Promise<MovieListItem[]> {
-  // TMDB 代理已配置 → 竞赛模式（TMDB 15s 内抢到了就用，抢不到走 OMDb）
+  const isChinese = containsChinese(keyword);
+
+  // TMDB 主搜索（中文 8s / 英文 15s 超时）
   if (isTMDBEnabled) {
     const tmdbPromise = searchByTMDB(keyword, page).catch((err) => {
       console.log('TMDB 异常:', err.message);
       return [] as MovieListItem[];
     });
 
+    const tmdbTimeout = isChinese ? 8000 : 15000;
     const tmdbWithTimeout = Promise.race([
       tmdbPromise,
       new Promise<MovieListItem[]>((resolve) =>
-        setTimeout(() => { console.log('TMDB 超时，走 OMDb...'); resolve([]); }, 15000)
+        setTimeout(() => { console.log('TMDB 超时，走兜底...'); resolve([]); }, tmdbTimeout)
       ),
     ]);
 
@@ -581,7 +586,20 @@ export async function searchMovies(keyword: string, page: number = 1): Promise<M
     }
   }
 
-  // OMDb（没配代理时，OMDb 是主力。中文关键词翻译后搜）
+  // 中文关键词：直接走豆瓣（OMDb 不支持中文，跳过）
+  if (isChinese) {
+    try {
+      const doubanResults = await searchByDouban(keyword);
+      if (doubanResults.length > 0) {
+        return doubanResults;
+      }
+    } catch (error: any) {
+      console.error('豆瓣搜索失败:', error.message);
+    }
+    return [];
+  }
+
+  // 英文关键词：OMDb 兜底
   try {
     const omdbResults = await searchByOMDb(keyword, page);
     if (omdbResults.length > 0) {
@@ -589,15 +607,6 @@ export async function searchMovies(keyword: string, page: number = 1): Promise<M
     }
   } catch (error: any) {
     console.error('OMDb 搜索失败:', error.message);
-  }
-
-  // 中文关键词走豆瓣兜底（OMDb 中文数据少，豆瓣补全）
-  if (containsChinese(keyword)) {
-    try {
-      return await searchByDouban(keyword);
-    } catch (error: any) {
-      console.error('豆瓣搜索失败:', error.message);
-    }
   }
 
   return [];

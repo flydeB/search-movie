@@ -4,6 +4,7 @@
     <div v-if="keyword && movies.length > 0" class="result-meta">
       <span class="result-label">搜索 <em>"{{ keyword }}"</em></span>
       <span class="result-count">{{ movies.length }} 部电影</span>
+      <span v-if="source" class="result-source">数据来源：{{ source }}</span>
     </div>
 
     <!-- 搜索前的引导提示 -->
@@ -83,6 +84,7 @@ defineProps<{
   movies: MovieListItem[]
   keyword: string
   loading: boolean
+  source?: string
 }>()
 
 const emit = defineEmits<{

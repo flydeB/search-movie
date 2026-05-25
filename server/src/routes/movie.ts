@@ -65,10 +65,20 @@ router.get('/search', async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string || '1', 10);
     const movies = await searchMovies(keyword, page);
 
+    // 根据第一条结果的 ID 前缀判断数据来源
+    let source = '';
+    if (movies.length > 0) {
+      const firstId = movies[0].id;
+      if (firstId.startsWith('tmdb_')) source = 'TMDB';
+      else if (firstId.startsWith('douban_')) source = '豆瓣';
+      else source = 'OMDb';
+    }
+
     const response: ApiResponse<MovieListItem[]> = {
       code: 200,
       message: 'success',
       data: movies,
+      source,
     };
     res.json(response);
   } catch (error: any) {
