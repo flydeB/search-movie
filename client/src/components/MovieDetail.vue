@@ -28,8 +28,19 @@
         </div>
 
         <div class="detail-info">
+          <!-- 系列标签 -->
+          <div v-if="movie.collectionName" class="collection-badge">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
+              <rect x="1" y="2" width="14" height="12" rx="1"/><path d="M5 2v12M11 2v12" stroke="currentColor" opacity="0.3"/>
+            </svg>
+            {{ movie.collectionName }}
+          </div>
+
           <!-- 标题 -->
           <h2 class="detail-title">{{ movie.title }}</h2>
+
+          <!-- 标语 -->
+          <p v-if="movie.tagline" class="detail-tagline">{{ movie.tagline }}</p>
 
           <!-- 标签行 -->
           <div class="info-tags">
@@ -52,7 +63,8 @@
                 <path d="M8 1l1.76 3.56 3.94.57-2.85 2.78.67 3.93L8 10.25l-3.52 1.59.67-3.93-2.85-2.78 3.94-.57z"/>
               </svg>
               <span class="rating-num">{{ movie.rating.toFixed(1) }}</span>
-              <span class="rating-label">评分</span>
+              <span v-if="movie.voteCount" class="rating-label">{{ movie.voteCount }}人评分</span>
+              <span v-else class="rating-label">评分</span>
             </div>
             <div v-if="movie.releaseDate" class="stat-item">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">

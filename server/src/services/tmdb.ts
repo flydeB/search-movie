@@ -250,7 +250,7 @@ async function searchByTMDB(keyword: string, page: number = 1): Promise<MovieLis
  */
 async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
   const res = await tmdbApi.get<TMDBMovieDetail>(`/movie/${tmdbId}`, {
-    params: { append_to_response: 'credits,recommendations,reviews,videos,images' },
+    params: { append_to_response: 'credits,recommendations,reviews,videos,images,release_dates' },
   });
 
   const d = res.data;
@@ -328,6 +328,22 @@ async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
     .map((p) => p.file_path ? `${TMDB_IMAGE_BASE}/w342${p.file_path}` : null)
     .filter((url): url is string => url !== null);
 
+  // 系列合集
+  const collectionName = d.belongs_to_collection?.name || '';
+  const collectionId = d.belongs_to_collection?.id ? `tmdb_collection_${d.belongs_to_collection.id}` : '';
+
+  // 分级：从 release_dates 取 CN 地区分级，否则取 US
+  let rated = '';
+  if (d.release_dates?.results?.length) {
+    const cnRelease = d.release_dates.results.find((r) => r.iso_3166_1 === 'CN');
+    const usRelease = d.release_dates.results.find((r) => r.iso_3166_1 === 'US');
+    const target = cnRelease || usRelease;
+    if (target?.release_dates?.length) {
+      const cert = target.release_dates.find((rd) => rd.certification);
+      rated = cert?.certification || '';
+    }
+  }
+
   return {
     id: `tmdb_${d.id}`,
     title: d.title,
@@ -336,10 +352,14 @@ async function getTMDBDetail(tmdbId: string): Promise<MovieDetail> {
     releaseDate: d.release_date || '',
     runtime: formatRuntime(d.runtime),
     rating: d.vote_average || 0,
+    voteCount: d.vote_count || 0,
     genres: (d.genres || []).map((g) => g.name),
     budget: formatBudget(d.budget),
     revenue: formatBudget(d.revenue),
-    rated: '', // TMDB 基础接口不返回分级，需要单独查 release_dates
+    rated,
+    tagline: d.tagline || '',
+    collectionName,
+    collectionId,
     director: directors,
     writers,
     actors,
@@ -424,6 +444,10 @@ function formatOMDbDetail(d: OMDbMovieDetail, chineseTitle?: string): MovieDetai
     similarMovies: [],
     trailerKey: '',
     backdrops: [],
+    voteCount: 0,
+    tagline: '',
+    collectionName: '',
+    collectionId: '',
   };
 }
 
@@ -523,6 +547,10 @@ function buildDoubanDetail(
     similarMovies: [],
     trailerKey: '',
     backdrops: [],
+    voteCount: 0,
+    tagline: '',
+    collectionName: '',
+    collectionId: '',
   };
 }
 
@@ -549,6 +577,10 @@ function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
     similarMovies: [],
     trailerKey: '',
     backdrops: [],
+    voteCount: 0,
+    tagline: '',
+    collectionName: '',
+    collectionId: '',
   };
 }
 

@@ -11,7 +11,19 @@
 - 📥 资源站快捷搜索（电影天堂 / BT之家 / 迅雷电影）
 - 🎞️ 类似电影推荐、用户评论
 
+## 截图
 
+### 搜索列表
+
+![搜索列表](screenshots/搜索列表.png)
+
+### 电影详情
+
+![电影详情](screenshots/搜索详情-电影信息.png)
+
+### 类似电影推荐
+
+![类似电影](screenshots/搜索详情-类似电影.png)
 
 ## 快速开始
 
@@ -81,6 +93,7 @@ mov/
 │       ├── services/tmdb.ts    # 数据源服务层（TMDB/OMDb/豆瓣）
 │       ├── types/movie.ts      # 类型定义
 │       └── index.ts            # Express 入口
+├── screenshots/                # 项目截图
 ├── package.json                # 一键启动脚本
 └── README.md
 ```

@@ -262,6 +262,10 @@ export interface MovieDetail {
   similarMovies: SimilarMovieItem[];
   trailerKey: string;  // YouTube 预告片 key
   backdrops: string[];  // 电影海报组图（已代理的 URL）
+  voteCount: number;    // 评分人数
+  tagline: string;      // 电影标语
+  collectionName: string; // 所属系列名称
+  collectionId: string;   // 所属系列 ID
 }
 
 /** 通用 API 响应格式 */
