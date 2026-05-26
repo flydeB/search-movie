@@ -4,7 +4,7 @@ import SearchBar from './components/SearchBar.vue'
 import MovieList from './components/MovieList.vue'
 import MovieDetail from './components/MovieDetail.vue'
 import AppFooter from './components/AppFooter.vue'
-import { searchMovies, getMovieDetail } from './api/movie'
+import { searchMovies, getMovieDetail, aiSearchMovies } from './api/movie'
 import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem } from './types/movie'
 
 const keyword = ref('')
@@ -98,11 +98,42 @@ async function handleSelectSimilar(movie: SimilarMovieItem) {
   }
 }
 
-/** AI 搜索（预留） */
-function handleAiSearch(_kw: string) {
-  // TODO: 后续接入 DeepSeek 等 AI 模型后实现
-  error.value = 'AI 智能搜索功能即将上线，敬请期待！'
-  setTimeout(() => { error.value = '' }, 3000)
+/** AI 智能搜索 */
+async function handleAiSearch(kw: string) {
+  keyword.value = kw
+
+  if (!kw) {
+    movies.value = []
+    error.value = ''
+    return
+  }
+
+  // AI 搜索时取消可能存在的普通搜索请求
+  if (searchAbort) {
+    searchAbort.abort()
+    searchAbort = null
+  }
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    const result = await aiSearchMovies(kw)
+    movies.value = result.movies
+    source.value = result.source
+    // 用 AI 的搜索说明作为信息展示
+    if (result.message && result.message !== 'success') {
+      error.value = result.message
+      setTimeout(() => { error.value = '' }, 5000)
+    }
+  } catch (e: any) {
+    if (e.code === 'ERR_CANCELED' || e.name === 'CanceledError') return
+    console.error('AI 搜索失败:', e)
+    error.value = 'AI 搜索失败，请检查网络后重试'
+    movies.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
 function handleHintClick(kw: string) {

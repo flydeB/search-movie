@@ -32,3 +32,19 @@ export async function getMovieDetail(id: string): Promise<MovieDetail> {
   const res = await http.get<ApiResponse<MovieDetail>>(`/movie/${id}`)
   return res.data.data
 }
+
+/**
+ * AI 智能搜索（自然语言理解）
+ * @param keyword 自然语言查询
+ * @returns 电影列表 + 搜索说明
+ */
+export async function aiSearchMovies(keyword: string): Promise<{ movies: MovieListItem[]; source: string; message: string }> {
+  const res = await http.get<ApiResponse<MovieListItem[]>>('/ai-search', {
+    params: { keyword },
+  })
+  return {
+    movies: res.data.data,
+    source: res.data.source || 'AI',
+    message: res.data.message,
+  }
+}

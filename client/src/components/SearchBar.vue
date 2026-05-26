@@ -10,22 +10,10 @@
           v-model="inputValue"
           type="text"
           class="search-input"
-          :placeholder="aiMode ? 'AI 智能搜索（即将上线）...' : '搜索电影，支持中英文：Inception、星际穿越、千与千寻...'"
+          :placeholder="aiMode ? 'AI 智能搜索，输入自然语言描述...' : '搜索电影，支持中英文：Inception、星际穿越、千与千寻...'"
           @input="handleInput(inputValue)"
           @keydown="handleKeydown"
-          :disabled="aiMode"
         />
-        <!-- AI 搜索切换按钮（预留入口，内嵌在输入框右侧） -->
-        <button
-          class="ai-toggle-inline"
-          title="AI 智能搜索即将上线"
-          disabled
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M12 2a4 4 0 014 4c0 2-2 3-2 5h-4c0-2-2-3-2-5a4 4 0 014-4z"/>
-            <path d="M9 18h6M10 22h4"/>
-          </svg>
-        </button>
         <button v-if="inputValue" class="clear-btn" @click="handleClear">
           <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -37,6 +25,18 @@
           </svg>
         </div>
       </div>
+      <!-- AI 搜索切换按钮（输入框右侧独立） -->
+      <button
+        class="ai-toggle-btn"
+        :class="{ active: aiMode }"
+        @click="toggleAiMode"
+      >
+        <svg class="ai-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M12 2a4 4 0 014 4c0 2-2 3-2 5h-4c0-2-2-3-2-5a4 4 0 014-4z"/>
+          <path d="M9 18h6M10 22h4"/>
+        </svg>
+        <span>{{ aiMode ? '联网搜索' : 'AI搜索' }}</span>
+      </button>
     </div>
   </div>
 </template>
@@ -75,7 +75,10 @@ const debouncedSearch = debounce((keyword: string) => {
 function handleInput(value: string) {
   inputValue.value = value
   emit('update:modelValue', value)
-  debouncedSearch(value)
+  // AI 模式下不自动搜索，等回车触发
+  if (!aiMode.value) {
+    debouncedSearch(value)
+  }
 }
 
 function handleClear() {
@@ -97,6 +100,10 @@ function handleKeydown(e: KeyboardEvent) {
 
 function toggleAiMode() {
   aiMode.value = !aiMode.value
+  // 切换模式时清空输入框
+  inputValue.value = ''
+  emit('update:modelValue', '')
+  debouncedSearch.cancel()
 }
 
 onUnmounted(() => {
@@ -107,7 +114,7 @@ onUnmounted(() => {
 <style scoped>
 .search-bar {
   width: 100%;
-  max-width: 720px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -115,6 +122,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
+  min-width: 0;
   height: 56px;
   padding: 0 20px;
   background: var(--bg-card);
@@ -194,27 +203,49 @@ onUnmounted(() => {
   to { transform: rotate(360deg); }
 }
 
-/* AI 搜索按钮（内嵌在输入框右侧，预留入口） */
-.ai-toggle-inline {
+/* search-inner 横向布局：输入框 + 按钮 */
+.search-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: var(--text-body);
-  cursor: not-allowed;
-  opacity: 0.5;
-  flex-shrink: 0;
-  transition: all 0.2s;
+  gap: 12px;
 }
 
-.ai-toggle-inline svg {
-  width: 14px;
-  height: 14px;
+/* AI 搜索切换按钮（输入框右侧独立） */
+.ai-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 56px;
+  padding: 0 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  color: var(--text-body);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.ai-toggle-btn:hover {
+  background: rgba(232, 183, 74, 0.08);
+  border-color: rgba(232, 183, 74, 0.3);
+  color: var(--primary);
+}
+
+.ai-toggle-btn.active {
+  background: rgba(232, 183, 74, 0.12);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 16px rgba(232, 183, 74, 0.15);
+}
+
+.ai-toggle-icon {
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -224,6 +255,12 @@ onUnmounted(() => {
 
   .search-input {
     font-size: 15px;
+  }
+
+  .ai-toggle-btn {
+    height: 50px;
+    padding: 0 14px;
+    font-size: 13px;
   }
 }
 </style>

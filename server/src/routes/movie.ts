@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import axios from 'axios';
 import { searchMovies, getMovieDetail } from '../services/tmdb';
+import { aiExtractKeywords } from '../services/deepseek';
 import type { ApiResponse, MovieListItem, MovieDetail } from '../types/movie';
 
 const router = Router();
@@ -133,17 +134,69 @@ router.get('/movie/:id', async (req: Request, res: Response) => {
 
 /**
  * GET /api/ai-search?keyword=xxx
- * AI 智能搜索（预留入口，DeepSeek 等模型接入后启用）
- * 当前返回提示信息
+ * AI 智能搜索：DeepSeek 理解自然语言 → 提取关键词 → TMDB 搜索
  */
-router.get('/ai-search', async (_req: Request, res: Response) => {
+router.get('/ai-search', async (req: Request, res: Response) => {
   res.set('Cache-Control', 'no-store');
-  const response: ApiResponse<null> = {
-    code: 501,
-    message: 'AI 智能搜索功能即将上线，敬请期待！当前请使用普通搜索。',
-    data: null,
-  };
-  res.status(501).json(response);
+  try {
+    const keyword = (req.query.keyword as string || '').trim();
+
+    if (!keyword) {
+      const response: ApiResponse<MovieListItem[]> = {
+        code: 400,
+        message: '请输入搜索内容',
+        data: [],
+      };
+      res.status(400).json(response);
+      return;
+    }
+
+    // 1. 调用 DeepSeek 理解自然语言，提取搜索关键词
+    console.log('[AI-Search] 收到查询:', keyword);
+    const result = await aiExtractKeywords(keyword);
+    console.log('[AI-Search] DeepSeek 返回关键词:', result.keywords, '| 说明:', result.explanation);
+
+    // 2. 用提取到的关键词并行搜索 TMDB
+    const searchPromises = result.keywords.map((kw) =>
+      searchMovies(kw).then((movies) => {
+        console.log(`[AI-Search] 关键词 "${kw}" → ${movies.length} 条结果`);
+        return movies;
+      }).catch((err) => {
+        console.warn('[AI-Search] 关键词搜索失败:', kw, err.message);
+        return [] as MovieListItem[];
+      })
+    );
+
+    const resultsArrays = await Promise.all(searchPromises);
+
+    // 3. 合并去重（按 id 去重，保留第一个出现的）
+    const seenIds = new Set<string>();
+    const mergedMovies: MovieListItem[] = [];
+    for (const movies of resultsArrays) {
+      for (const movie of movies) {
+        if (!seenIds.has(movie.id)) {
+          seenIds.add(movie.id);
+          mergedMovies.push(movie);
+        }
+      }
+    }
+
+    const response: ApiResponse<MovieListItem[]> = {
+      code: 200,
+      message: result.explanation,
+      data: mergedMovies,
+      source: 'AI',
+    };
+    res.json(response);
+  } catch (error: any) {
+    console.error('[AI-Search] 错误:', error.message, error.stack);
+    const response: ApiResponse<MovieListItem[]> = {
+      code: 500,
+      message: `AI 搜索失败: ${error.message}`,
+      data: [],
+    };
+    res.status(500).json(response);
+  }
 });
 
 export default router;
