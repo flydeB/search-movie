@@ -156,6 +156,19 @@ router.get('/ai-search', async (req: Request, res: Response) => {
     const result = await aiExtractKeywords(keyword);
     console.log('[AI-Search] DeepSeek 返回关键词:', result.keywords, '| 说明:', result.explanation);
 
+    // 1.5 从 explanation 中提取《xxx》格式的电影名，作为额外搜索关键词
+    const movieNames: string[] = [];
+    const nameRegex = /《([^》]+)》/g;
+    let match;
+    while ((match = nameRegex.exec(result.explanation)) !== null) {
+      movieNames.push(match[1]);
+    }
+    if (movieNames.length > 0) {
+      console.log('[AI-Search] 从说明中提取电影名:', movieNames);
+      // 用电影名精确搜索TMDB（排到关键词列表前面优先搜索）
+      result.keywords = [...movieNames, ...result.keywords];
+    }
+
     // 2. 用提取到的关键词并行搜索 TMDB
     const searchPromises = result.keywords.map((kw) =>
       searchMovies(kw).then((movies) => {
@@ -169,9 +182,9 @@ router.get('/ai-search', async (req: Request, res: Response) => {
 
     const resultsArrays = await Promise.all(searchPromises);
 
-    // 3. 合并去重（按 id 去重，保留第一个出现的）
+    // 3. 合并去重（按 id 去重）
     const seenIds = new Set<string>();
-    const mergedMovies: MovieListItem[] = [];
+    let mergedMovies: MovieListItem[] = [];
     for (const movies of resultsArrays) {
       for (const movie of movies) {
         if (!seenIds.has(movie.id)) {
@@ -180,6 +193,17 @@ router.get('/ai-search', async (req: Request, res: Response) => {
         }
       }
     }
+
+    // 4. 按评分降序排列（评分 = 0 表示无数据，排在有评分之后）
+    mergedMovies.sort((a, b) => {
+      if (a.rating === 0 && b.rating > 0) return 1;
+      if (b.rating === 0 && a.rating > 0) return -1;
+      return b.rating - a.rating;
+    });
+    // 最多返回 20 条
+    mergedMovies = mergedMovies.slice(0, 20);
+
+    console.log(`[AI-Search] 最终结果: ${mergedMovies.length} 条 | 关键词: ${result.keywords.join(', ')}`);
 
     const response: ApiResponse<MovieListItem[]> = {
       code: 200,
