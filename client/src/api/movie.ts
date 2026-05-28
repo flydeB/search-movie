@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { ApiResponse, MovieListItem, MovieDetail } from '../types/movie'
+import type { ApiResponse, MovieListItem, MovieDetail, DiscoverParams, DiscoverResponse } from '../types/movie'
 
 const http = axios.create({
   baseURL: '/api', // 通过 Vite proxy 代理到后端
@@ -47,4 +47,14 @@ export async function aiSearchMovies(keyword: string): Promise<{ movies: MovieLi
     source: res.data.source || 'AI',
     message: res.data.message,
   }
+}
+
+/**
+ * Discover 发现电影（筛选 + 分页）
+ * @param params 筛选参数
+ * @returns 电影列表 + 分页信息
+ */
+export async function discoverMovies(params: DiscoverParams): Promise<DiscoverResponse> {
+  const res = await http.get<ApiResponse<DiscoverResponse>>('/discover', { params })
+  return res.data.data
 }

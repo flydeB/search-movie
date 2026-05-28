@@ -69,3 +69,19 @@ export interface ApiResponse<T> {
   data: T
   source?: string
 }
+
+/** Discover 筛选参数 */
+export interface DiscoverParams {
+  genre?: string
+  region?: string
+  sortBy?: string
+  page?: number
+}
+
+/** Discover API 响应 */
+export interface DiscoverResponse {
+  movies: MovieListItem[]
+  page: number
+  totalPages: number
+  totalResults: number
+}

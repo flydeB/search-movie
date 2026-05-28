@@ -585,6 +585,70 @@ function buildDoubanFallbackDetail(cached: DoubanCacheItem): MovieDetail {
 }
 
 // ============================================================
+// TMDB Discover（电影筛选探索）
+// ============================================================
+
+/** Discover 筛选参数 */
+export interface DiscoverParams {
+  genre?: string;
+  region?: string;
+  sortBy?: string;
+  page?: number;
+}
+
+/** Discover 结果 */
+export interface DiscoverResult {
+  movies: MovieListItem[];
+  page: number;
+  totalPages: number;
+  totalResults: number;
+}
+
+/**
+ * TMDB Discover 电影筛选查询
+ */
+export async function discoverByTMDB(params: DiscoverParams): Promise<DiscoverResult> {
+  const queryParams: Record<string, any> = {
+    include_adult: false,
+    include_video: false,
+    'vote_count.gte': 50, // 至少有 50 票，保证质量
+    page: params.page || 1,
+  };
+
+  if (params.genre) {
+    queryParams.with_genres = params.genre;
+  }
+
+  if (params.region) {
+    queryParams.with_origin_country = params.region;
+  }
+
+  if (params.sortBy) {
+    queryParams.sort_by = params.sortBy;
+  } else {
+    queryParams.sort_by = 'popularity.desc';
+  }
+
+  const res = await tmdbApi.get('/discover/movie', { params: queryParams });
+
+  const movies: MovieListItem[] = (res.data.results || []).map((item: any) => ({
+    id: `tmdb_${item.id}`,
+    title: item.title,
+    poster: tmdbImageUrl(item.poster_path),
+    year: item.release_date ? item.release_date.substring(0, 4) : '',
+    rating: item.vote_average || 0,
+    overview: item.overview || '',
+  }));
+
+  return {
+    movies,
+    page: res.data.page || 1,
+    totalPages: Math.min(res.data.total_pages || 0, 500), // TMDB 最多 500 页
+    totalResults: Math.min(res.data.total_results || 0, 10000), // TMDB 最多 10000 条
+  };
+}
+
+// ============================================================
 // 公开接口：搜索 & 详情（TMDB 优先 → OMDb 兜底 → 豆瓣三级兜底）
 // ============================================================
 

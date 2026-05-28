@@ -3,6 +3,7 @@ import 'dotenv/config'; // 必须在最顶部通过副作用import加载环境�
 import express from 'express';
 import cors from 'cors';
 import movieRoutes from './routes/movie';
+import discoverRoutes from './routes/discover';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,6 +19,9 @@ app.use(express.json());
 
 // 路由：电影相关接口
 app.use('/api', movieRoutes);
+
+// 路由：电影筛选探索
+app.use('/api', discoverRoutes);
 
 // 健康检查
 app.get('/api/health', (_req, res) => {

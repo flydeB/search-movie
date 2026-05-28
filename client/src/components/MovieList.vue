@@ -43,42 +43,19 @@
 
     <!-- 电影卡片网格 -->
     <div v-else class="movie-grid">
-      <div
+      <MovieCard
         v-for="movie in movies"
         :key="movie.id"
-        class="movie-card"
-        @click="emit('select', movie)"
-      >
-        <div class="card-poster">
-          <a-image
-            :src="movie.poster || ''"
-            :fallback="'/default-poster.png'"
-            :preview="false"
-            class="card-poster-img"
-          />
-          
-          <div class="card-year-badge" v-if="movie.year">
-            {{ movie.year }}
-          </div>
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">{{ movie.title }}</h4>
-          <div class="card-meta">
-            <span v-if="movie.rating > 0" class="card-rating">
-              <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
-                <path d="M8 1l1.76 3.56 3.94.57-2.85 2.78.67 3.93L8 10.25l-3.52 1.59.67-3.93-2.85-2.78 3.94-.57z"/>
-              </svg>
-              {{ movie.rating.toFixed(1) }}
-            </span>
-          </div>
-        </div>
-      </div>
+        :movie="movie"
+        @select="emit('select', movie)"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { MovieListItem } from '../types/movie'
+import MovieCard from './MovieCard.vue'
 
 defineProps<{
   movies: MovieListItem[]
