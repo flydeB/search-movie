@@ -1,8 +1,20 @@
 <template>
   <div class="search-bar">
-    <div class="search-inner">
-      <div class="search-input-wrap" :class="{ focused: false }">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- 模式切换 -->
+    <div class="mode-toggle">
+      <button
+        :class="['mode-tab', { active: !aiMode }]"
+        @click="setMode(false)"
+      >联网搜索</button>
+      <button
+        :class="['mode-tab', { active: aiMode }]"
+        @click="setMode(true)"
+      >AI 智能搜索</button>
+    </div>
+    <!-- 搜索框 -->
+    <div class="search-row">
+      <div class="search-input-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="11" cy="11" r="8" />
           <path d="m21 21-4.35-4.35" />
         </svg>
@@ -10,8 +22,8 @@
           v-model="inputValue"
           type="text"
           class="search-input"
-          :placeholder="aiMode ? 'AI 智能搜索，输入自然语言描述...' : '搜索电影，支持中英文：Inception、星际穿越、千与千寻...'"
-          @input="handleInput(inputValue)"
+          :placeholder="aiMode ? 'AI 智能搜索，输入自然语言描述后按回车...' : '搜索电影，支持中英文：Inception、星际穿越...'"
+          @input="handleInput"
           @keydown="handleKeydown"
         />
         <button v-if="inputValue" class="clear-btn" @click="handleClear">
@@ -25,25 +37,20 @@
           </svg>
         </div>
       </div>
-      <!-- AI 搜索切换按钮（输入框右侧独立） -->
-      <button
-        class="ai-toggle-btn"
-        :class="{ active: aiMode }"
-        @click="toggleAiMode"
-      >
-        <svg class="ai-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-          <path d="M12 2a4 4 0 014 4c0 2-2 3-2 5h-4c0-2-2-3-2-5a4 4 0 014-4z"/>
-          <path d="M9 18h6M10 22h4"/>
+      <button class="search-btn" :class="{ 'ai-active': aiMode }" @click="doSearch">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18">
+          <circle cx="9" cy="9" r="6" />
+          <path d="m14.5 14.5 4 4" />
         </svg>
-        <span>{{ aiMode ? '联网搜索' : 'AI搜索' }}</span>
+        <span v-if="!aiMode">搜索</span>
+        <span v-else>AI 搜索</span>
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from 'vue'
-import { debounce } from 'lodash-es'
+import { ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
   modelValue?: string
@@ -67,55 +74,80 @@ watch(() => props.modelValue, (val) => {
   inputValue.value = val
 })
 
-// 600ms 防抖搜索（避免每输入一个字都发请求）
-const debouncedSearch = debounce((keyword: string) => {
-  emit('search', keyword)
-}, 600)
+function handleInput() {
+  emit('update:modelValue', inputValue.value)
+}
 
-function handleInput(value: string) {
-  inputValue.value = value
-  emit('update:modelValue', value)
-  // AI 模式下不自动搜索，等回车触发
-  if (!aiMode.value) {
-    debouncedSearch(value)
+function doSearch() {
+  if (!inputValue.value.trim()) return
+  if (aiMode.value) {
+    emit('ai-search', inputValue.value.trim())
+  } else {
+    emit('search', inputValue.value.trim())
+  }
+}
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Enter') {
+    doSearch()
   }
 }
 
 function handleClear() {
   inputValue.value = ''
   emit('update:modelValue', '')
-  debouncedSearch('')
 }
 
-function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter') {
-    debouncedSearch.cancel()
-    if (aiMode.value) {
-      emit('ai-search', inputValue.value)
-    } else {
-      emit('search', inputValue.value)
-    }
-  }
-}
-
-function toggleAiMode() {
-  aiMode.value = !aiMode.value
+function setMode(mode: boolean) {
+  if (aiMode.value === mode) return
+  aiMode.value = mode
   // 切换模式时清空输入框
   inputValue.value = ''
   emit('update:modelValue', '')
-  debouncedSearch.cancel()
 }
-
-onUnmounted(() => {
-  debouncedSearch.cancel()
-})
 </script>
 
 <style scoped>
 .search-bar {
   width: 100%;
-  max-width: 860px;
+  max-width: 700px;
   margin: 0 auto;
+}
+
+/* 模式切换 */
+.mode-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.mode-tab {
+  padding: 6px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.mode-tab:hover {
+  color: var(--text-body);
+}
+
+.mode-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* 搜索行 */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .search-input-wrap {
@@ -124,11 +156,11 @@ onUnmounted(() => {
   gap: 12px;
   flex: 1;
   min-width: 0;
-  height: 56px;
-  padding: 0 20px;
+  height: 52px;
+  padding: 0 18px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 14px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
@@ -140,8 +172,8 @@ onUnmounted(() => {
 }
 
 .search-icon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   color: var(--text-secondary);
   flex-shrink: 0;
   transition: color 0.3s;
@@ -157,7 +189,7 @@ onUnmounted(() => {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--text-primary);
   letter-spacing: 0.3px;
@@ -166,6 +198,7 @@ onUnmounted(() => {
 
 .search-input::placeholder {
   color: var(--text-body);
+  font-size: 14px;
   opacity: 1;
 }
 
@@ -192,8 +225,8 @@ onUnmounted(() => {
 }
 
 .loading-spinner svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: var(--primary);
   animation: spin 1s linear infinite;
 }
@@ -203,64 +236,72 @@ onUnmounted(() => {
   to { transform: rotate(360deg); }
 }
 
-/* search-inner 横向布局：输入框 + 按钮 */
-.search-inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* AI 搜索切换按钮（输入框右侧独立） */
-.ai-toggle-btn {
+/* 搜索按钮 */
+.search-btn {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 56px;
-  padding: 0 18px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  color: var(--text-body);
-  cursor: pointer;
-  flex-shrink: 0;
+  height: 52px;
+  padding: 0 22px;
+  background: linear-gradient(135deg, rgba(232, 183, 74, 0.15), rgba(232, 183, 74, 0.05));
+  border: 1px solid rgba(232, 183, 74, 0.3);
+  border-radius: 14px;
+  color: var(--primary);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  cursor: pointer;
   font-family: inherit;
   letter-spacing: 0.5px;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-}
-
-.ai-toggle-btn:hover {
-  background: rgba(232, 183, 74, 0.08);
-  border-color: rgba(232, 183, 74, 0.3);
-  color: var(--primary);
-}
-
-.ai-toggle-btn.active {
-  background: rgba(232, 183, 74, 0.12);
-  border-color: var(--primary);
-  color: var(--primary);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 16px rgba(232, 183, 74, 0.15);
-}
-
-.ai-toggle-icon {
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
   flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.search-btn:hover {
+  background: linear-gradient(135deg, rgba(232, 183, 74, 0.25), rgba(232, 183, 74, 0.1));
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(232, 183, 74, 0.2);
+  transform: translateY(-1px);
+}
+
+.search-btn:active {
+  transform: translateY(0);
+}
+
+.search-btn.ai-active {
+  background: linear-gradient(135deg, rgba(0, 200, 150, 0.12), rgba(0, 200, 150, 0.04));
+  border-color: rgba(0, 200, 150, 0.35);
+  color: #00c896;
+}
+
+.search-btn.ai-active:hover {
+  background: linear-gradient(135deg, rgba(0, 200, 150, 0.2), rgba(0, 200, 150, 0.08));
+  border-color: rgba(0, 200, 150, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 200, 150, 0.2);
 }
 
 @media (max-width: 768px) {
+  .search-row { gap: 8px; }
+
   .search-input-wrap {
-    height: 50px;
+    height: 46px;
+    padding: 0 14px;
   }
 
   .search-input {
-    font-size: 15px;
+    font-size: 14px;
   }
 
-  .ai-toggle-btn {
-    height: 50px;
-    padding: 0 14px;
+  .search-btn {
+    height: 46px;
+    padding: 0 16px;
     font-size: 13px;
+  }
+
+  .mode-tab {
+    padding: 4px 14px;
+    font-size: 12px;
   }
 }
 </style>

@@ -1,83 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-import { discoverMovies, getMovieDetail } from '../api/movie'
-import DiscoverFilter from '../components/DiscoverFilter.vue'
-import MovieCard from '../components/MovieCard.vue'
-import MovieDetail from '../components/MovieDetail.vue'
-import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem, DiscoverParams } from '../types/movie'
-
-const movies = ref<MovieListItem[]>([])
-const loading = ref(false)
-const currentPage = ref(1)
-const totalPages = ref(0)
-const totalResults = ref(0)
-
-// 详情弹窗
-const detailVisible = ref(false)
-const currentMovie = ref<MovieDetailType | null>(null)
-const detailLoading = ref(false)
-
-async function handleQuery(params: { genre?: string; region?: string; sortBy?: string }) {
-  currentPage.value = 1
-  await fetchMovies(params)
-}
-
-async function fetchMovies(params: DiscoverParams, page?: number) {
-  loading.value = true
-  try {
-    const p = page || currentPage.value
-    const result = await discoverMovies({ ...params, page: p })
-    movies.value = result.movies
-    totalPages.value = result.totalPages
-    totalResults.value = result.totalResults
-  } catch (e: any) {
-    console.error('Discover 请求失败:', e)
-    movies.value = []
-  } finally {
-    loading.value = false
-  }
-}
-
-async function handlePageChange(page: number) {
-  currentPage.value = page
-  await fetchMovies({ page })
-  // 滚动到顶部
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-async function handleSelect(movie: MovieListItem) {
-  detailLoading.value = true
-  detailVisible.value = true
-  currentMovie.value = null
-  try {
-    currentMovie.value = await getMovieDetail(movie.id)
-  } catch (e: any) {
-    console.error('获取详情失败:', e)
-    currentMovie.value = null
-  } finally {
-    detailLoading.value = false
-  }
-}
-
-function handleCloseDetail() {
-  detailVisible.value = false
-  currentMovie.value = null
-}
-
-async function handleSelectSimilar(movie: SimilarMovieItem) {
-  detailLoading.value = true
-  currentMovie.value = null
-  try {
-    currentMovie.value = await getMovieDetail(movie.id)
-  } catch (e: any) {
-    console.error('获取类似电影详情失败:', e)
-    currentMovie.value = null
-  } finally {
-    detailLoading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="discover-page">
     <!-- 筛选条件 -->
@@ -149,6 +69,85 @@ async function handleSelectSimilar(movie: SimilarMovieItem) {
     />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { discoverMovies, getMovieDetail } from '../api/movie'
+import DiscoverFilter from '../components/DiscoverFilter.vue'
+import MovieCard from '../components/MovieCard.vue'
+import MovieDetail from '../components/MovieDetail.vue'
+import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem, DiscoverParams } from '../types/movie'
+
+const movies = ref<MovieListItem[]>([])
+const loading = ref(false)
+const currentPage = ref(1)
+const totalPages = ref(0)
+const totalResults = ref(0)
+
+// 详情弹窗
+const detailVisible = ref(false)
+const currentMovie = ref<MovieDetailType | null>(null)
+const detailLoading = ref(false)
+
+async function handleQuery(params: { genre?: string; region?: string; sortBy?: string }) {
+  currentPage.value = 1
+  await fetchMovies(params)
+}
+
+async function fetchMovies(params: DiscoverParams, page?: number) {
+  loading.value = true
+  try {
+    const p = page || currentPage.value
+    const result = await discoverMovies({ ...params, page: p })
+    movies.value = result.movies
+    totalPages.value = result.totalPages
+    totalResults.value = result.totalResults
+  } catch (e: any) {
+    console.error('Discover 请求失败:', e)
+    movies.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+async function handlePageChange(page: number) {
+  currentPage.value = page
+  await fetchMovies({ page })
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+async function handleSelect(movie: MovieListItem) {
+  detailLoading.value = true
+  detailVisible.value = true
+  currentMovie.value = null
+  try {
+    currentMovie.value = await getMovieDetail(movie.id)
+  } catch (e: any) {
+    console.error('获取详情失败:', e)
+    currentMovie.value = null
+  } finally {
+    detailLoading.value = false
+  }
+}
+
+function handleCloseDetail() {
+  detailVisible.value = false
+  currentMovie.value = null
+}
+
+async function handleSelectSimilar(movie: SimilarMovieItem) {
+  detailLoading.value = true
+  currentMovie.value = null
+  try {
+    currentMovie.value = await getMovieDetail(movie.id)
+  } catch (e: any) {
+    console.error('获取类似电影详情失败:', e)
+    currentMovie.value = null
+  } finally {
+    detailLoading.value = false
+  }
+}
+</script>
 
 <style scoped>
 .discover-page {

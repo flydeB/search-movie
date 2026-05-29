@@ -1,3 +1,67 @@
+<template>
+  <div class="app-container">
+    <header class="hero">
+      <div class="hero-bg">
+        <div class="hero-gradient"></div>
+        <div class="hero-grain"></div>
+      </div>
+      <div class="hero-content">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 40 40" fill="none">
+              <rect x="4" y="7" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 14h32" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+              <circle cx="16" cy="22" r="5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M22 19l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4 26l8-6 5 4 7-5 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1 class="brand-title">CineSearch</h1>
+          <p class="brand-subtitle">探索全球电影 · 中英双语搜索</p>
+        </div>
+        <div class="search-wrapper">
+          <SearchBar v-model="keyword" :loading="loading" @search="handleSearch" @ai-search="handleAiSearch" />
+        </div>
+        <div class="quick-tags">
+          <button class="quick-tag" @click="handleHintClick('星际穿越')">星际穿越</button>
+          <button class="quick-tag" @click="handleHintClick('Inception')">Inception</button>
+          <button class="quick-tag" @click="handleHintClick('千与千寻')">千与千寻</button>
+          <button class="quick-tag" @click="handleHintClick('The Dark Knight')">The Dark Knight</button>
+          <button class="quick-tag" @click="handleHintClick('流浪地球')">流浪地球</button>
+        </div>
+      </div>
+    </header>
+
+    <div v-if="error" class="error-bar">
+      <div class="error-inner">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span>{{ error }}</span>
+        <button class="error-close" @click="error = ''">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <main class="app-main">
+      <MovieList :movies="movies" :keyword="keyword" :loading="loading" :source="source" @select="handleSelect" />
+    </main>
+
+    <AppFooter />
+
+    <MovieDetail
+      :visible="detailVisible"
+      :movie="currentMovie"
+      :loading="detailLoading"
+      @update:visible="handleCloseDetail"
+      @select-movie="handleSelectSimilar"
+    />
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref } from 'vue'
 import SearchBar from '../components/SearchBar.vue'
@@ -87,70 +151,6 @@ function handleHintClick(kw: string) {
   handleSearch(kw)
 }
 </script>
-
-<template>
-  <div class="app-container">
-    <header class="hero">
-      <div class="hero-bg">
-        <div class="hero-gradient"></div>
-        <div class="hero-grain"></div>
-      </div>
-      <div class="hero-content">
-        <div class="brand">
-          <div class="brand-icon">
-            <svg viewBox="0 0 40 40" fill="none">
-              <rect x="4" y="7" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/>
-              <path d="M4 14h32" stroke="currentColor" stroke-width="1" opacity="0.3"/>
-              <circle cx="16" cy="22" r="5" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M22 19l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M4 26l8-6 5 4 7-5 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h1 class="brand-title">CineSearch</h1>
-          <p class="brand-subtitle">探索全球电影 · 中英双语搜索</p>
-        </div>
-        <div class="search-wrapper">
-          <SearchBar v-model="keyword" :loading="loading" @search="handleSearch" @ai-search="handleAiSearch" />
-        </div>
-        <div class="quick-tags">
-          <button class="quick-tag" @click="handleHintClick('星际穿越')">星际穿越</button>
-          <button class="quick-tag" @click="handleHintClick('Inception')">Inception</button>
-          <button class="quick-tag" @click="handleHintClick('千与千寻')">千与千寻</button>
-          <button class="quick-tag" @click="handleHintClick('The Dark Knight')">The Dark Knight</button>
-          <button class="quick-tag" @click="handleHintClick('流浪地球')">流浪地球</button>
-        </div>
-      </div>
-    </header>
-
-    <div v-if="error" class="error-bar">
-      <div class="error-inner">
-        <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-        </svg>
-        <span>{{ error }}</span>
-        <button class="error-close" @click="error = ''">
-          <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
-            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <main class="app-main">
-      <MovieList :movies="movies" :keyword="keyword" :loading="loading" :source="source" @select="handleSelect" />
-    </main>
-
-    <AppFooter />
-
-    <MovieDetail
-      :visible="detailVisible"
-      :movie="currentMovie"
-      :loading="detailLoading"
-      @update:visible="handleCloseDetail"
-      @select-movie="handleSelectSimilar"
-    />
-  </div>
-</template>
 
 <style scoped>
 .app-container {

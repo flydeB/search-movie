@@ -1,5 +1,95 @@
+<template>
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <!-- 类型 -->
+      <div class="filter-section">
+        <div class="section-header">
+          <VideoCameraOutlined class="section-icon" />
+          <span class="section-title">类型</span>
+        </div>
+        <div class="tag-grid">
+          <button
+            v-for="g in GENRES"
+            :key="g.value"
+            :class="['tag', { active: activeGenre === g.value }]"
+            @click="selectGenre(g.value)"
+          >
+            {{ g.label }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 分割线 -->
+      <div class="section-divider"></div>
+
+      <!-- 地区 -->
+      <div class="filter-section">
+        <div class="section-header">
+          <GlobalOutlined class="section-icon" />
+          <span class="section-title">地区</span>
+        </div>
+        <div class="tag-grid region-grid">
+          <button
+            v-for="r in REGIONS"
+            :key="r.value"
+            :class="['tag', { active: activeRegion === r.value }]"
+            @click="selectRegion(r.value)"
+          >
+            {{ r.label }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 分割线 -->
+      <div class="section-divider"></div>
+
+      <!-- 排序 + 查询按钮 -->
+      <div class="filter-section">
+        <div class="section-header">
+          <FilterOutlined class="section-icon" />
+          <span class="section-title">排序</span>
+        </div>
+        <div class="sort-row">
+          <div class="sort-options">
+            <div
+              v-for="item in SORT_ITEMS"
+              :key="item.key"
+              :class="['sort-item', {
+                'sort-active': activeSort.key === item.key,
+                'sort-desc': activeSort.key === item.key && activeSort.order === 'desc',
+                'sort-asc': activeSort.key === item.key && activeSort.order === 'asc',
+              }]"
+              @click="toggleSort(item.key)"
+            >
+              <span class="sort-label">{{ item.label }}</span>
+              <svg
+                v-if="activeSort.key === item.key && activeSort.order"
+                class="sort-arrow"
+                :class="{ down: activeSort.order === 'desc', up: activeSort.order === 'asc' }"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
+                <path v-if="activeSort.order === 'desc'" d="M8 3L2 11h12L8 3z" />
+                <path v-else d="M8 13L2 5h12l-6 8z" />
+              </svg>
+            </div>
+          </div>
+          <button class="query-btn" @click="handleQuery">
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="9" cy="9" r="6" />
+              <path d="m14.5 14.5 4 4" />
+            </svg>
+            <span>筛选电影</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { VideoCameraOutlined, GlobalOutlined, FilterOutlined } from '@ant-design/icons-vue'
 
 const emit = defineEmits<{
   (e: 'query', params: { genre?: string; region?: string; sortBy?: string }): void
@@ -91,101 +181,6 @@ const currentSortBy = computed(() => {
 })
 </script>
 
-<template>
-  <div class="filter-bar">
-    <div class="filter-inner">
-      <!-- 类型 -->
-      <div class="filter-section">
-        <div class="section-header">
-          <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V4a1 1 0 011-1h6a1 1 0 011 1v3" />
-          </svg>
-          <span class="section-title">类型</span>
-        </div>
-        <div class="tag-grid">
-          <button
-            v-for="g in GENRES"
-            :key="g.value"
-            :class="['tag', { active: activeGenre === g.value }]"
-            @click="selectGenre(g.value)"
-          >
-            {{ g.label }}
-          </button>
-        </div>
-      </div>
-
-      <!-- 分割线 -->
-      <div class="section-divider"></div>
-
-      <!-- 地区 -->
-      <div class="filter-section">
-        <div class="section-header">
-          <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" /><ellipse cx="12" cy="12" rx="4" ry="10" /><path d="M2 12h20" />
-          </svg>
-          <span class="section-title">地区</span>
-        </div>
-        <div class="tag-grid region-grid">
-          <button
-            v-for="r in REGIONS"
-            :key="r.value"
-            :class="['tag', { active: activeRegion === r.value }]"
-            @click="selectRegion(r.value)"
-          >
-            {{ r.label }}
-          </button>
-        </div>
-      </div>
-
-      <!-- 分割线 -->
-      <div class="section-divider"></div>
-
-      <!-- 排序 + 查询按钮 -->
-      <div class="filter-section">
-        <div class="section-header">
-          <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l4-4 4 4" /><path d="M7 5v14" /><path d="M21 15l-4 4-4-4" />
-          </svg>
-          <span class="section-title">排序</span>
-        </div>
-        <div class="sort-row">
-          <div class="sort-options">
-            <div
-              v-for="item in SORT_ITEMS"
-              :key="item.key"
-              :class="['sort-item', {
-                'sort-active': activeSort.key === item.key,
-                'sort-desc': activeSort.key === item.key && activeSort.order === 'desc',
-                'sort-asc': activeSort.key === item.key && activeSort.order === 'asc',
-              }]"
-              @click="toggleSort(item.key)"
-            >
-              <span class="sort-label">{{ item.label }}</span>
-              <svg
-                v-if="activeSort.key === item.key && activeSort.order"
-                class="sort-arrow"
-                :class="{ down: activeSort.order === 'desc', up: activeSort.order === 'asc' }"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-              >
-                <path v-if="activeSort.order === 'desc'" d="M8 3L2 11h12L8 3z" />
-                <path v-else d="M8 13L2 5h12l-6 8z" />
-              </svg>
-            </div>
-          </div>
-          <button class="query-btn" @click="handleQuery">
-            <svg class="btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <circle cx="9" cy="9" r="6" />
-              <path d="m14.5 14.5 4 4" />
-            </svg>
-            <span>筛选电影</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .filter-bar {
   width: 90%;
@@ -215,8 +210,7 @@ const currentSortBy = computed(() => {
 }
 
 .section-icon {
-  width: 18px;
-  height: 18px;
+  font-size: 18px;
   color: var(--primary);
   flex-shrink: 0;
 }
@@ -240,10 +234,6 @@ const currentSortBy = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.region-grid {
-  /* 地区标签少，自动适配 */
 }
 
 .tag {

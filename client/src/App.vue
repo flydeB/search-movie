@@ -1,18 +1,29 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <div class="app-shell">
     <nav class="top-nav">
       <router-link to="/" class="nav-brand">CineSearch</router-link>
       <div class="nav-links">
-        <router-link to="/" class="nav-link">首页</router-link>
-        <router-link to="/ranking" class="nav-link nav-link-accent">全部电影</router-link>
+        <router-link
+          to="/"
+          class="nav-link"
+          :class="{ 'nav-active': route.path === '/' }"
+        >首页</router-link>
+        <router-link
+          to="/ranking"
+          class="nav-link"
+          :class="{ 'nav-active': route.path === '/ranking' }"
+        >全部电影</router-link>
       </div>
     </nav>
     <router-view />
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+</script>
 
 <style scoped>
 .app-shell {
@@ -63,17 +74,9 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
-.nav-link.router-link-active {
-  color: var(--primary);
-}
-
-.nav-link-accent {
+.nav-link.nav-active {
   background: var(--primary-dim);
   color: var(--primary);
-}
-
-.nav-link-accent:hover {
-  background: rgba(232, 183, 74, 0.2);
 }
 
 @media (max-width: 768px) {
