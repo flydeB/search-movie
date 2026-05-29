@@ -9,8 +9,11 @@
 - 🔍 **中英文混合搜索** — 输入「Inception」或「盗梦空间」都能找到同一部电影，中文关键词自动翻译兜底
 - 🤖 **AI 智能搜索** — 基于 DeepSeek 的自然语言理解，输入「一部关于篮球的电影」自动提取关键词搜索
 - 📊 **电影排行榜** — 按类型、地区、评分/日期/票房排序，分页浏览，一键筛选
-- 🎬 电影详情：海报、评分、演员阵容、预告片（YouTube 跳转）、剧照画廊
-- 🎞️ 类似电影推荐、用户评论
+- 🎬 **正在热映** — 当前影院正在上映的电影，实时同步 TMDB 数据，自动过滤已下映影片
+- 📅 **即将上映** — 近期即将上映的电影预告，只展示未上映的未来档期
+- ⭐ **每日推荐** — 10 部影史经典每日轮换推送，附推荐理由和幕后冷知识
+- 💡 **电影冷知识** — 30 条银幕背后的有趣故事，每天一条新发现
+- 🎞️ 电影详情：海报、评分、演员阵容、预告片（YouTube 跳转）、剧照画廊、类似电影推荐、用户评论
 
 ## 截图
 
@@ -79,34 +82,55 @@ npm run dev:server
 npm run dev:client
 ```
 
+## 页面导航
+
+顶部导航栏提供 **6 个标签**，覆盖搜索和发现两种使用场景：
+
+| 标签 | 路由 | 数据来源 | 说明 |
+|------|------|----------|------|
+| 首页 | `/` | TMDB / OMDb / 豆瓣 | 普通搜索 + AI 智能搜索 |
+| 热映 | `/now-playing` | TMDB `/movie/now_playing` | 当前影院热映电影（自动过滤 6 个月前下映影片） |
+| 即将上映 | `/upcoming` | TMDB `/movie/upcoming` | 近期未上映电影（自动排除已上映） |
+| 每日推荐 | `/daily` | 静态数据 | 10 部影史经典每日轮换，点击切换 |
+| 电影冷知识 | `/trivia` | 静态数据 | 30 条电影幕后趣闻 |
+| 全部电影 | `/ranking` | TMDB `/discover/movie` | 按类型/地区/排序筛选探索 |
+
 ## 项目结构
 
 ```
 mov/
 ├── client/                     # 前端 (Vue3 + Vite + TS + Vue Router)
 │   └── src/
-│       ├── router/index.ts     # Vue Router（/ → 首页, /ranking → 排行）
+│       ├── router/index.ts     # Vue Router（6 条懒加载路由）
 │       ├── api/movie.ts        # Axios 请求封装
+│       ├── data/
+│       │   └── movieTrivia.ts  # 静态数据：30条冷知识 + 10部每日推荐
 │       ├── components/
 │       │   ├── SearchBar.vue   # 搜索栏（普通/AI 双模式）
 │       │   ├── MovieList.vue   # 搜索结果网格
-│       │   ├── MovieCard.vue   # 电影卡片（海报+名称+评分，被首页和排行页复用）
-│       │   ├── MovieDetail.vue # 详情弹窗（评论 + 类似电影）
+│       │   ├── MovieCard.vue   # 电影卡片（海报+名称+评分，首页/排行/热映/即将上映复用）
+│       │   ├── MovieDetail.vue # 详情弹窗（评论 + 类似电影 + 预告片）
 │       │   ├── DiscoverFilter.vue # 排行页筛选组件
 │       │   └── AppFooter.vue   # 页脚
 │       ├── views/
-│       │   ├── HomePage.vue    # 首页
-│       │   └── DiscoverPage.vue# 电影排行/探索页
+│       │   ├── HomePage.vue    # 首页（搜索入口）
+│       │   ├── DiscoverPage.vue# 全部电影（筛选+分页）
+│       │   ├── NowPlayingPage.vue # 正在热映（TMDB，分页+详情弹窗）
+│       │   ├── UpcomingPage.vue   # 即将上映（TMDB，分页+详情弹窗）
+│       │   ├── DailyPage.vue      # 每日推荐（静态数据，点击切换）
+│       │   └── TriviaPage.vue     # 电影冷知识（静态数据，30条编号列表）
 │       ├── types/movie.ts      # TypeScript 类型定义
-│       ├── App.vue             # 布局壳（导航栏 + router-view）
+│       ├── App.vue             # 布局壳（6标签导航栏 + router-view）
 │       └── main.ts             # 入口
 ├── server/                     # 后端 (Express + TS)
 │   └── src/
 │       ├── routes/
 │       │   ├── movie.ts        # 搜索/详情/AI搜索/图片代理路由
-│       │   └── discover.ts     # 电影发现/筛选路由（TMDB discover）
+│       │   ├── discover.ts     # 电影筛选探索路由
+│       │   ├── now-playing.ts  # 正在热映路由
+│       │   └── upcoming.ts     # 即将上映路由
 │       ├── services/
-│       │   ├── tmdb.ts         # 数据源服务层（搜索/详情/discover）
+│       │   ├── tmdb.ts         # 数据源服务层（搜索/详情/discover/now_playing/upcoming）
 │       │   └── deepseek.ts     # DeepSeek AI 服务（自然语言→关键词）
 │       ├── types/movie.ts      # 类型定义
 │       └── index.ts            # Express 入口
@@ -123,8 +147,25 @@ mov/
 | `GET /api/ai-search?keyword=xxx` | AI 智能搜索（DeepSeek 理解自然语言） |
 | `GET /api/discover?genre=xx&region=xx&sortBy=xx&page=1` | 电影筛选探索（按类型/地区/排序分页） |
 | `GET /api/movie/:id` | 获取电影详情（id 格式：`tmdb_xxx` / `ttxxx` / `douban_xxx`） |
+| `GET /api/now-playing?page=1` | 正在热映（自动过滤 6 个月前上映的电影） |
+| `GET /api/upcoming?page=1` | 即将上映（自动过滤已上映电影） |
 | `GET /api/image-proxy?url=xxx` | 图片代理（解决豆瓣防盗链） |
 | `GET /api/health` | 健康检查 |
+
+## 正在热映 & 即将上映
+
+基于 TMDB 免费 API，实时获取影院热映和即将上映的电影数据：
+
+- **正在热映** (`/now-playing`)：拉取 TMDB `/movie/now_playing`，后端自动过滤 `release_date` 在最近 6 个月内的电影，排除已下映过期数据
+- **即将上映** (`/upcoming`)：拉取 TMDB `/movie/upcoming`，后端自动过滤只保留 `release_date >= 今天` 的电影，确保数据准确性
+- 两个页面均支持分页浏览（每页 20 条）和点击查看电影详情弹窗
+
+## 每日推荐 & 电影冷知识
+
+纯前端静态数据，无需后端 API，加载极快：
+
+- **每日推荐** (`/daily`)：10 部影史经典（肖申克的救赎、千与千寻、星际穿越、霸王别姬等），根据一年中的第几天自动轮换推送今日推荐。点击下方列表可切换顶部卡片，选中的电影高亮显示
+- **电影冷知识** (`/trivia`)：30 条银幕幕后趣闻（侏罗纪公园、阿甘正传、蝙蝠侠：黑暗骑士等），同样按日期轮换，每次访问看到不同的冷知识
 
 ## 电影排行 / Discover
 
