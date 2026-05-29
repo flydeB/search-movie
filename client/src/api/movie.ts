@@ -58,3 +58,21 @@ export async function discoverMovies(params: DiscoverParams): Promise<DiscoverRe
   const res = await http.get<ApiResponse<DiscoverResponse>>('/discover', { params })
   return res.data.data
 }
+
+/**
+ * 获取正在热映电影
+ * @param page 页码
+ */
+export async function getNowPlaying(page: number = 1): Promise<DiscoverResponse> {
+  const res = await http.get<ApiResponse<DiscoverResponse>>('/now-playing', { params: { page } })
+  return res.data.data
+}
+
+/**
+ * 获取即将上映电影
+ * @param page 页码
+ */
+export async function getUpcoming(page: number = 1): Promise<DiscoverResponse> {
+  const res = await http.get<ApiResponse<DiscoverResponse>>('/upcoming', { params: { page } })
+  return res.data.data
+}

@@ -649,6 +649,80 @@ export async function discoverByTMDB(params: DiscoverParams): Promise<DiscoverRe
 }
 
 // ============================================================
+// TMDB 正在热映 & 即将上映
+// ============================================================
+
+/**
+ * 获取正在热映电影
+ * 后端过滤：只保留上映日期在最近6个月内的电影，排除过期数据
+ */
+export async function getNowPlaying(page: number = 1): Promise<DiscoverResult> {
+  const res = await tmdbApi.get('/movie/now_playing', {
+    params: { page, region: 'CN', language: 'zh-CN' },
+  });
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  // 先过滤 TMDB 原始数据，再映射为 MovieListItem
+  const rawResults = (res.data.results || []).filter((item: any) => {
+    if (!item.release_date) return true; // 无日期保留（兜底）
+    return new Date(item.release_date) >= sixMonthsAgo;
+  });
+
+  const movies: MovieListItem[] = rawResults.map((item: any) => ({
+    id: `tmdb_${item.id}`,
+    title: item.title,
+    poster: tmdbImageUrl(item.poster_path),
+    year: item.release_date ? item.release_date.substring(0, 4) : '',
+    rating: item.vote_average || 0,
+    overview: item.overview || '',
+  }));
+
+  return {
+    movies,
+    page: res.data.page || 1,
+    totalPages: Math.min(res.data.total_pages || 0, 500),
+    totalResults: Math.min(res.data.total_results || 0, 10000),
+  };
+}
+
+/**
+ * 获取即将上映电影
+ * 后端过滤：只保留上映日期 >= 今天的电影
+ */
+export async function getUpcoming(page: number = 1): Promise<DiscoverResult> {
+  const res = await tmdbApi.get('/movie/upcoming', {
+    params: { page, region: 'CN', language: 'zh-CN' },
+  });
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 先过滤 TMDB 原始数据：只保留未上映的
+  const rawResults = (res.data.results || []).filter((item: any) => {
+    if (!item.release_date) return false; // 无日期排除
+    return new Date(item.release_date) >= today;
+  });
+
+  const movies: MovieListItem[] = rawResults.map((item: any) => ({
+    id: `tmdb_${item.id}`,
+    title: item.title,
+    poster: tmdbImageUrl(item.poster_path),
+    year: item.release_date ? item.release_date.substring(0, 4) : '',
+    rating: item.vote_average || 0,
+    overview: item.overview || '',
+  }));
+
+  return {
+    movies,
+    page: res.data.page || 1,
+    totalPages: Math.min(res.data.total_pages || 0, 500),
+    totalResults: Math.min(res.data.total_results || 0, 10000),
+  };
+}
+
+// ============================================================
 // 公开接口：搜索 & 详情（TMDB 优先 → OMDb 兜底 → 豆瓣三级兜底）
 // ============================================================
 

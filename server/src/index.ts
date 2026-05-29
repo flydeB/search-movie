@@ -4,6 +4,8 @@ import express from 'express';
 import cors from 'cors';
 import movieRoutes from './routes/movie';
 import discoverRoutes from './routes/discover';
+import nowPlayingRoutes from './routes/now-playing';
+import upcomingRoutes from './routes/upcoming';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -22,6 +24,12 @@ app.use('/api', movieRoutes);
 
 // 路由：电影筛选探索
 app.use('/api', discoverRoutes);
+
+// 路由：正在热映
+app.use('/api', nowPlayingRoutes);
+
+// 路由：即将上映
+app.use('/api', upcomingRoutes);
 
 // 健康检查
 app.get('/api/health', (_req, res) => {

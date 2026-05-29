@@ -3,16 +3,12 @@
     <nav class="top-nav">
       <router-link to="/" class="nav-brand">CineSearch</router-link>
       <div class="nav-links">
-        <router-link
-          to="/"
-          class="nav-link"
-          :class="{ 'nav-active': route.path === '/' }"
-        >首页</router-link>
-        <router-link
-          to="/ranking"
-          class="nav-link"
-          :class="{ 'nav-active': route.path === '/ranking' }"
-        >全部电影</router-link>
+        <router-link to="/" class="nav-link" :class="{ 'nav-active': route.path === '/' }">首页</router-link>
+        <router-link to="/now-playing" class="nav-link" :class="{ 'nav-active': route.path === '/now-playing' }">热映</router-link>
+        <router-link to="/upcoming" class="nav-link" :class="{ 'nav-active': route.path === '/upcoming' }">即将上映</router-link>
+        <router-link to="/daily" class="nav-link" :class="{ 'nav-active': route.path === '/daily' }">每日推荐</router-link>
+        <router-link to="/trivia" class="nav-link" :class="{ 'nav-active': route.path === '/trivia' }">电影冷知识</router-link>
+        <router-link to="/ranking" class="nav-link" :class="{ 'nav-active': route.path === '/ranking' }">全部电影</router-link>
       </div>
     </nav>
     <router-view />
