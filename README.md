@@ -100,6 +100,7 @@ npm run dev:client
 ```
 mov/
 ├── client/                     # 前端 (Vue3 + Vite + TS + Vue Router)
+│   ├── .env.production         # 生产环境变量
 │   └── src/
 │       ├── router/index.ts     # Vue Router（6 条懒加载路由）
 │       ├── api/movie.ts        # Axios 请求封装
@@ -123,6 +124,10 @@ mov/
 │       ├── App.vue             # 布局壳（6标签导航栏 + router-view）
 │       └── main.ts             # 入口
 ├── server/                     # 后端 (Express + TS)
+│   ├── Dockerfile              # CloudRun 容器构建（Node 20-alpine）
+│   ├── entrypoint.sh           # 容器启动脚本
+│   ├── .dockerignore           # Docker 构建忽略规则
+│   ├── cloudbaserc.json        # CloudRun 配置
 │   └── src/
 │       ├── routes/
 │       │   ├── movie.ts        # 搜索/详情/AI搜索/图片代理路由
@@ -132,8 +137,10 @@ mov/
 │       ├── services/
 │       │   ├── tmdb.ts         # 数据源服务层（搜索/详情/discover/now_playing/upcoming）
 │       │   └── deepseek.ts     # DeepSeek AI 服务（自然语言→关键词）
-│       ├── types/movie.ts      # 类型定义
-│       └── index.ts            # Express 入口
+│       ├── types/movie.ts      # 类型定义（含 TMDBCollection/TMDBReleaseDate 等）
+│       └── index.ts            # Express 入口（CORS + 端口 3000）
+├── docs/
+│   └── DEPLOY-20260605.md      # 部署文档（发版流程 + 踩坑记录）
 ├── screenshots/                # 项目截图
 ├── package.json                # 一键启动脚本
 └── README.md
@@ -241,12 +248,48 @@ mov/
 ### 架构
 
 ```
-GitHub 仓库
-├── 前端 (Vue3 + Vite) → CloudBase 静态托管 → CDN 加速
-└── 后端 (Express + TS) → CloudRun 容器模式 → Serverless 运行
-    └── 环境变量注入: TMDB_API_KEY / OMDB_API_KEY / DEEPSEEK_API_KEY
+GitHub 仓库 (dev 分支)
+├── 前端 (Vue3 + Vite) → npm run build → CloudBase 静态托管 → CDN 加速
+└── 后端 (Express + TS) → Dockerfile 构建 → CloudRun 容器模式 → Serverless 运行
+    └── 环境变量注入: NODE_ENV / PORT / TMDB_API_KEY / OMDB_API_KEY / DEEPSEEK_API_KEY
         ↑ Key 存储在腾讯云控制台，不进入代码仓库
 ```
+
+### 部署步骤
+
+#### 1. 前端部署（静态托管）
+
+```bash
+cd client
+npm run build
+# 将 dist/ 目录上传到 CloudBase 静态托管根路径
+```
+
+#### 2. 后端部署（CloudRun）
+
+**方式一：本地代码部署（推荐，稳定）**
+
+通过 CloudRun 工具从本地 `server/` 目录打包上传并部署。
+
+**方式二：Git 模板部署（自动触发）**
+
+绑定 GitHub 仓库后，push 代码自动构建部署。需在控制台配置：
+- **构建命令**: `npm install && npm run build`
+- **启动命令**: `node dist/index.js`
+- **端口**: `3000`
+
+### Docker 配置
+
+| 文件 | 说明 |
+|------|------|
+| `Dockerfile` | Node 20-alpine 镜像 + HEALTHCHECK 健康检查 |
+| `.dockerignore` | 排除 node_modules/.env/dist 等 |
+| `entrypoint.sh` | 启动脚本（输出调试日志） |
+
+**关键配置项**:
+- `InitialDelaySeconds: 15` — 探针延迟 15 秒（Node 启动需要时间）
+- `PORT=3000` — 显式设置端口
+- `NODE_ENV=production` — 生产模式
 
 ### 部署平台
 
