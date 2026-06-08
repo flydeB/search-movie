@@ -2,7 +2,8 @@ import axios from 'axios'
 import type { ApiResponse, MovieListItem, MovieDetail, DiscoverParams, DiscoverResponse } from '../types/movie'
 
 const http = axios.create({
-  baseURL: '/api', // 通过 Vite proxy 代理到后端
+  // 生产环境使用 CloudRun 后端地址，开发环境通过 Vite proxy
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 30000,
   headers: {
     'Cache-Control': 'no-cache',

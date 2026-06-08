@@ -226,3 +226,58 @@ mov/
 | 适用场景 | 知道片名精准查找 | 模糊需求、按类型/情绪探索 |
 
 > 仅供学习参考
+
+---
+
+## 部署
+
+### 在线访问
+
+| 服务 | 地址 |
+|------|------|
+| **前端（静态托管）** | [https://movie-search-d0g1nye13469cff80-1440395009.tcloudbaseapp.com](https://movie-search-d0g1nye13469cff80-1440395009.tcloudbaseapp.com) |
+| **后端 API（CloudRun）** | `https://movie-api-266664-8-1440395009.sh.run.tcloudbase.com` |
+
+### 架构
+
+```
+GitHub 仓库
+├── 前端 (Vue3 + Vite) → CloudBase 静态托管 → CDN 加速
+└── 后端 (Express + TS) → CloudRun 容器模式 → Serverless 运行
+    └── 环境变量注入: TMDB_API_KEY / OMDB_API_KEY / DEEPSEEK_API_KEY
+        ↑ Key 存储在腾讯云控制台，不进入代码仓库
+```
+
+### 部署平台
+
+| 资源 | 平台 | 套餐 | 费用 |
+|------|------|------|------|
+| 云环境 | 腾讯云 CloudBase | 免费体验版 | 免费（8个月） |
+| 后端服务 | CloudRun 容器模式 | 按量付费 | 有免费额度，Demo 够用 |
+| 前端托管 | CloudBase 静态网站托管 | 含在 CloudBase 中 | 免费 |
+| 数据库 | CloudBase 文档数据库 | 含在体验版中 | 免费 |
+
+### ⚠️ 重要：配置 API Key
+
+部署后需要在 **CloudRun 控制台** 配置环境变量，否则后端无法调用外部 API：
+
+1. 进入 **CloudBase 控制台 → 云函数/托管理/主机 → 服务管理**
+2. 点击 `movie-api` 服务
+3. 找到 **「版本管理」→「环境变量」**
+4. 添加以下 3 个变量：
+
+| 变量名 | 值来源 | 说明 |
+|--------|--------|------|
+| `TMDB_API_KEY` | 你本地 `server/.env` 中的值 | TMDB 电影数据源 |
+| `OMDB_API_KEY` | 你本地 `server/.env` 中的值 | OMDb IMDb 数据源 |
+| `DEEPSEEK_API_KEY` | 你本地 `server/.env` 中的值 | AI 搜索（可选） |
+
+5. 保存后重新部署或等待自动生效
+
+### 本地开发
+
+```bash
+# 一键启动前后端
+npm run dev
+# 前端 http://localhost:5173 | 后端 http://localhost:3001
+```

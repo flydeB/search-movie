@@ -152,6 +152,28 @@ export interface TMDBVideo {
   published_at: string;
 }
 
+/** TMDB 系列合集 */
+export interface TMDBCollection {
+  id: number;
+  name: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+}
+
+/** TMDB 发行日期项 */
+export interface TMDBReleaseDateItem {
+  certification: string;
+  iso_639_1: string | null;
+  release_date: string;
+  type: number;
+}
+
+/** TMDB 发行日期（按国家） */
+export interface TMDBReleaseCountry {
+  iso_3166_1: string;
+  release_dates: TMDBReleaseDateItem[];
+}
+
 /** TMDB 电影详情 API 响应 */
 export interface TMDBMovieDetail {
   id: number;
@@ -172,6 +194,8 @@ export interface TMDBMovieDetail {
   spoken_languages: { iso_639_1: string; name: string; english_name: string }[];
   production_countries: { iso_3166_1: string; name: string }[];
   production_companies: { id: number; name: string; logo_path: string | null; origin_country: string }[];
+  belongs_to_collection?: TMDBCollection | null;
+  release_dates?: { results: TMDBReleaseCountry[] };
   credits: {
     cast: TMDBCastMember[];
     crew: TMDBCrewMember[];

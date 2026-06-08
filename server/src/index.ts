@@ -1,4 +1,5 @@
-import 'dotenv/config'; // 必须在最顶部通过副作用import加载环境变量
+// 加载环境变量（仅本地开发有 .env 文件，生产环境由 CloudRun 注入）
+import 'dotenv/config';
 
 import express from 'express';
 import cors from 'cors';
@@ -8,7 +9,8 @@ import nowPlayingRoutes from './routes/now-playing';
 import upcomingRoutes from './routes/upcoming';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+// CloudRun 通过环境变量注入端口，本地开发默认 3001
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // 中间件：跨域
 app.use(cors({
