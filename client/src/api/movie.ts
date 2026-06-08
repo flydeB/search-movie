@@ -1,23 +1,33 @@
 import axios from 'axios'
 import type { ApiResponse, MovieListItem, MovieDetail, DiscoverParams, DiscoverResponse } from '../types/movie'
+import { searchByTMDB, getTMDBDetail, discoverByTMDB, getNowPlaying, getUpcoming } from '../services/tmdb'
 
-const http = axios.create({
-  // 生产环境使用 CloudRun 后端地址，开发环境通过 Vite proxy
+/**
+ * 后端 API（云函数 / 本地 Express）
+ * - 开发环境：Vite proxy 转发到 localhost:3001
+ * - 生产环境：CloudBase 云函数 HTTP 访问地址
+ */
+const backendHttp = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 30000,
-  headers: {
-    'Cache-Control': 'no-cache',
-  },
 })
 
 /**
- * 搜索电影
- * @param keyword 搜索关键词
- * @param signal 用于取消前一次请求的 AbortSignal
- * @returns 电影列表
+ * 搜索电影（TMDB 直连 → 云函数兜底）
  */
 export async function searchMovies(keyword: string, signal?: AbortSignal): Promise<{ movies: MovieListItem[]; source: string }> {
-  const res = await http.get<ApiResponse<MovieListItem[]>>('/search', {
+  // 1. 先尝试 TMDB 直连
+  try {
+    const result = await searchByTMDB(keyword)
+    if (result.movies.length > 0) {
+      return { movies: result.movies, source: 'TMDB' }
+    }
+  } catch (e: any) {
+    console.warn('TMDB 搜索失败，走兜底:', e.message)
+  }
+
+  // 2. TMDB 无结果或失败 → 走云函数（OMDb + 豆瓣兜底）
+  const res = await backendHttp.get<ApiResponse<MovieListItem[]>>('/search', {
     params: { keyword },
     signal,
   })
@@ -25,22 +35,24 @@ export async function searchMovies(keyword: string, signal?: AbortSignal): Promi
 }
 
 /**
- * 获取电影详情
- * @param id 电影 ID（tmdb_xxx / ttxxx / douban_xxx）
- * @returns 电影详情
+ * 获取电影详情（TMDB 直连 / 云函数兜底）
  */
 export async function getMovieDetail(id: string): Promise<MovieDetail> {
-  const res = await http.get<ApiResponse<MovieDetail>>(`/movie/${id}`)
+  // TMDB 电影 → 前端直连
+  if (id.startsWith('tmdb_')) {
+    return getTMDBDetail(id.replace('tmdb_', ''))
+  }
+
+  // 豆瓣 / OMDb 电影 → 走云函数
+  const res = await backendHttp.get<ApiResponse<MovieDetail>>(`/movie/${id}`)
   return res.data.data
 }
 
 /**
- * AI 智能搜索（自然语言理解）
- * @param keyword 自然语言查询
- * @returns 电影列表 + 搜索说明
+ * AI 智能搜索 → 云函数（保护 DeepSeek Key）
  */
 export async function aiSearchMovies(keyword: string): Promise<{ movies: MovieListItem[]; source: string; message: string }> {
-  const res = await http.get<ApiResponse<MovieListItem[]>>('/ai-search', {
+  const res = await backendHttp.get<ApiResponse<MovieListItem[]>>('/ai-search', {
     params: { keyword },
   })
   return {
@@ -51,29 +63,18 @@ export async function aiSearchMovies(keyword: string): Promise<{ movies: MovieLi
 }
 
 /**
- * Discover 发现电影（筛选 + 分页）
- * @param params 筛选参数
- * @returns 电影列表 + 分页信息
+ * 电影筛选探索 → TMDB 直连
  */
 export async function discoverMovies(params: DiscoverParams): Promise<DiscoverResponse> {
-  const res = await http.get<ApiResponse<DiscoverResponse>>('/discover', { params })
-  return res.data.data
+  return discoverByTMDB(params)
 }
 
 /**
- * 获取正在热映电影
- * @param page 页码
+ * 获取正在热映 → TMDB 直连
  */
-export async function getNowPlaying(page: number = 1): Promise<DiscoverResponse> {
-  const res = await http.get<ApiResponse<DiscoverResponse>>('/now-playing', { params: { page } })
-  return res.data.data
-}
+export { getNowPlaying }
 
 /**
- * 获取即将上映电影
- * @param page 页码
+ * 获取即将上映 → TMDB 直连
  */
-export async function getUpcoming(page: number = 1): Promise<DiscoverResponse> {
-  const res = await http.get<ApiResponse<DiscoverResponse>>('/upcoming', { params: { page } })
-  return res.data.data
-}
+export { getUpcoming }
