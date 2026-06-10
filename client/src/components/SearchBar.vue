@@ -64,6 +64,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
   (e: 'search', keyword: string): void
   (e: 'ai-search', keyword: string): void
+  (e: 'mode-change', isAiMode: boolean): void
 }>()
 
 const inputValue = ref(props.modelValue)
@@ -104,6 +105,7 @@ function setMode(mode: boolean) {
   // 切换模式时清空输入框
   inputValue.value = ''
   emit('update:modelValue', '')
+  emit('mode-change', mode)
 }
 </script>
 

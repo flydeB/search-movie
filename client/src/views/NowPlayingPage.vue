@@ -6,6 +6,23 @@
       <p class="page-subtitle">当前正在影院上映的电影</p>
     </div>
 
+    <!-- 地区筛选 -->
+    <div class="region-bar">
+      <div class="region-inner">
+        <span class="region-label">
+          <GlobalOutlined /> 地区
+        </span>
+        <div class="region-tags">
+          <button
+            v-for="r in REGIONS"
+            :key="r.value"
+            :class="['region-tag', { active: activeRegion === r.value }]"
+            @click="handleRegionChange(r.value)"
+          >{{ r.label }}</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 结果统计 -->
     <div v-if="totalResults > 0" class="result-bar">
       <div class="result-info">
@@ -59,29 +76,72 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * 正在热映页
+ * 展示当前正在影院上映的电影，数据来源 TMDB
+ * 支持分页浏览和电影详情查看
+ */
 import { ref, onMounted } from 'vue'
 import { getNowPlaying, getMovieDetail } from '../api/movie'
 import MovieCard from '../components/MovieCard.vue'
 import MovieDetail from '../components/MovieDetail.vue'
+import { GlobalOutlined } from '@ant-design/icons-vue'
 import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem } from '../types/movie'
 
+// ==================== 列表状态 ====================
+
+/** 地区选项（与 DiscoverFilter 一致） */
+const REGIONS = [
+  { value: 'CN', label: '中国' },
+  { value: 'US', label: '美国' },
+  { value: 'JP', label: '日本' },
+  { value: 'KR', label: '韩国' },
+  { value: 'IN', label: '印度' },
+  { value: 'TH', label: '泰国' },
+  { value: 'GB', label: '英国' },
+  { value: 'FR', label: '法国' },
+  { value: 'HK', label: '香港' },
+  { value: 'TW', label: '台湾' },
+]
+
+/** 当前选中的地区 */
+const activeRegion = ref('CN')
+/** 热映电影列表 */
 const movies = ref<MovieListItem[]>([])
+/** 列表加载状态 */
 const loading = ref(false)
+/** 当前页码 */
 const currentPage = ref(1)
+/** 总页数 */
 const totalPages = ref(0)
+/** 总结果数 */
 const totalResults = ref(0)
 
+// ==================== 详情弹窗状态 ====================
+
+/** 详情弹窗是否可见 */
 const detailVisible = ref(false)
+/** 当前选中的电影详情数据 */
 const currentMovie = ref<MovieDetailType | null>(null)
+/** 详情加载状态 */
 const detailLoading = ref(false)
 
+// ==================== 生命周期 ====================
+
+/** 页面挂载时自动加载第一页热映数据 */
 onMounted(() => { fetchMovies() })
 
+// ==================== 方法 ====================
+
+/**
+ * 请求热映电影列表
+ * @param page - 可选页码，默认使用当前页码
+ */
 async function fetchMovies(page?: number) {
   loading.value = true
   try {
     const p = page || currentPage.value
-    const result = await getNowPlaying(p)
+    const result = await getNowPlaying(p, activeRegion.value)
     movies.value = result.movies
     totalPages.value = result.totalPages
     totalResults.value = result.totalResults
@@ -93,12 +153,33 @@ async function fetchMovies(page?: number) {
   }
 }
 
+/**
+ * 地区切换回调
+ * 重置到第一页后重新请求数据
+ * @param region - 地区代码（ISO 3166-1）
+ */
+function handleRegionChange(region: string) {
+  if (activeRegion.value === region) return
+  activeRegion.value = region
+  currentPage.value = 1
+  fetchMovies(1)
+}
+
+/**
+ * 分页切换回调
+ * 切换页码后重新请求数据并滚动到顶部
+ * @param page - 目标页码
+ */
 async function handlePageChange(page: number) {
   currentPage.value = page
   await fetchMovies(page)
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+/**
+ * 处理电影卡片点击，打开详情弹窗
+ * @param movie - 用户点击的电影列表项
+ */
 async function handleSelect(movie: MovieListItem) {
   detailLoading.value = true
   detailVisible.value = true
@@ -108,11 +189,16 @@ async function handleSelect(movie: MovieListItem) {
   finally { detailLoading.value = false }
 }
 
+/** 关闭详情弹窗，重置当前选中电影 */
 function handleCloseDetail() {
   detailVisible.value = false
   currentMovie.value = null
 }
 
+/**
+ * 处理详情弹窗中「类似电影」点击事件
+ * @param movie - 用户点击的类似电影项
+ */
 async function handleSelectSimilar(movie: SimilarMovieItem) {
   detailLoading.value = true
   currentMovie.value = null
@@ -139,6 +225,41 @@ async function handleSelectSimilar(movie: SimilarMovieItem) {
 .page-subtitle {
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+/* 地区筛选 */
+.region-bar { max-width: 1400px; margin: 20px auto 0; padding: 0 24px; }
+
+.region-inner {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px;
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.region-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.region-label .anticon { color: var(--primary); font-size: 14px; }
+
+.region-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.region-tag {
+  padding: 5px 14px; background: var(--bg-elevated);
+  border: 1px solid transparent; border-radius: 20px;
+  font-size: 13px; font-weight: 500; color: var(--text-body);
+  cursor: pointer; transition: all 0.25s ease; font-family: inherit;
+}
+
+.region-tag:hover {
+  border-color: rgba(232, 183, 74, 0.25); color: var(--text-primary);
+}
+
+.region-tag.active {
+  background: var(--primary); border-color: var(--primary); color: #000; font-weight: 700;
 }
 
 .result-bar { max-width: 1400px; margin: 24px auto 0; padding: 0 24px; }

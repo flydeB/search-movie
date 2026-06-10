@@ -71,6 +71,11 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * 电影排名/Discover 页
+ * 通过类型、地区、排序条件筛选电影，数据来源 TMDB Discover API
+ * 支持分页浏览和电影详情查看
+ */
 import { ref } from 'vue'
 import { discoverMovies, getMovieDetail } from '../api/movie'
 import DiscoverFilter from '../components/DiscoverFilter.vue'
@@ -78,22 +83,45 @@ import MovieCard from '../components/MovieCard.vue'
 import MovieDetail from '../components/MovieDetail.vue'
 import type { MovieListItem, MovieDetail as MovieDetailType, SimilarMovieItem, DiscoverParams } from '../types/movie'
 
+// ==================== 列表状态 ====================
+
+/** 筛选后的电影列表 */
 const movies = ref<MovieListItem[]>([])
+/** 列表加载状态 */
 const loading = ref(false)
+/** 当前页码 */
 const currentPage = ref(1)
+/** 总页数 */
 const totalPages = ref(0)
+/** 总结果数 */
 const totalResults = ref(0)
 
-// 详情弹窗
+// ==================== 详情弹窗状态 ====================
+
+/** 详情弹窗是否可见 */
 const detailVisible = ref(false)
+/** 当前选中的电影详情数据 */
 const currentMovie = ref<MovieDetailType | null>(null)
+/** 详情加载状态 */
 const detailLoading = ref(false)
 
+// ==================== 方法 ====================
+
+/**
+ * 处理筛选查询（由 DiscoverFilter 组件触发）
+ * 重置到第一页后重新请求
+ * @param params - 筛选参数（类型 genre / 地区 region / 排序 sortBy）
+ */
 async function handleQuery(params: { genre?: string; region?: string; sortBy?: string }) {
   currentPage.value = 1
   await fetchMovies(params)
 }
 
+/**
+ * 请求筛选后的电影列表
+ * @param params - 筛选参数（含分页信息）
+ * @param page - 可选页码，覆盖 params 中的 page
+ */
 async function fetchMovies(params: DiscoverParams, page?: number) {
   loading.value = true
   try {
@@ -110,12 +138,21 @@ async function fetchMovies(params: DiscoverParams, page?: number) {
   }
 }
 
+/**
+ * 分页切换回调
+ * 使用当前筛选条件重新请求数据并滚动到顶部
+ * @param page - 目标页码
+ */
 async function handlePageChange(page: number) {
   currentPage.value = page
   await fetchMovies({ page })
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+/**
+ * 处理电影卡片点击，打开详情弹窗
+ * @param movie - 用户点击的电影列表项
+ */
 async function handleSelect(movie: MovieListItem) {
   detailLoading.value = true
   detailVisible.value = true
@@ -130,11 +167,16 @@ async function handleSelect(movie: MovieListItem) {
   }
 }
 
+/** 关闭详情弹窗，重置当前选中电影 */
 function handleCloseDetail() {
   detailVisible.value = false
   currentMovie.value = null
 }
 
+/**
+ * 处理详情弹窗中「类似电影」点击事件
+ * @param movie - 用户点击的类似电影项
+ */
 async function handleSelectSimilar(movie: SimilarMovieItem) {
   detailLoading.value = true
   currentMovie.value = null

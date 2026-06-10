@@ -73,20 +73,39 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * 每日推荐页
+ * 基于一年中的第几天轮换展示经典电影推荐
+ * 数据来自静态文件 movieTrivia.ts，无需后端请求
+ */
 import { ref, computed } from 'vue'
 import { StarFilled, BulbOutlined } from '@ant-design/icons-vue'
 import { getTodayMovie, DAILY_MOVIES } from '../data/movieTrivia'
 import type { DailyMovie } from '../data/movieTrivia'
 
+// ==================== 状态 ====================
+
+/** 当前展示的推荐电影（默认取今日推荐） */
 const movie = ref<DailyMovie>(getTodayMovie())
+/** 全部 10 部推荐电影列表 */
 const allMovies = DAILY_MOVIES
+/** 当前选中的列表项索引（-1 表示未手动选择） */
 const selectedIndex = ref(-1)
 
+// ==================== 计算属性 ====================
+
+/** 格式化的今日日期字符串（年/月/日） */
 const todayStr = computed(() => {
   const d = new Date()
   return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
 })
 
+// ==================== 方法 ====================
+
+/**
+ * 点击列表项切换主卡片显示的电影
+ * @param index - 被点击的列表项索引
+ */
 function selectMovie(index: number) {
   selectedIndex.value = index
   movie.value = allMovies[index]

@@ -41,9 +41,18 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * 电影冷知识页
+ * 展示 30 条电影幕后冷知识，基于一年中的第几天轮换「今日冷知识」
+ * 数据来自静态文件 movieTrivia.ts，无需后端请求
+ */
 import { getTodayFact, MOVIE_FACTS } from '../data/movieTrivia'
 
+// ==================== 状态 ====================
+
+/** 今日冷知识（根据当天日期自动选取） */
 const fact = getTodayFact()
+/** 全部 30 条冷知识列表 */
 const allFacts = MOVIE_FACTS
 </script>
 

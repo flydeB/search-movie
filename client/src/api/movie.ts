@@ -70,11 +70,15 @@ export async function discoverMovies(params: DiscoverParams): Promise<DiscoverRe
 }
 
 /**
- * 获取正在热映 → TMDB 直连
+ * 获取正在热映 → TMDB 直连（复用 services/tmdb.ts，含日期过滤）
+ * @param page - 页码
+ * @param region - 地区代码（如 CN/US/JP），默认 CN
  */
 export { getNowPlaying }
 
 /**
- * 获取即将上映 → TMDB 直连
+ * 获取即将上映 → TMDB 直连（复用 services/tmdb.ts，含日期过滤）
+ * @param page - 页码
+ * @param region - 地区代码（如 CN/US/JP），默认 CN
  */
 export { getUpcoming }

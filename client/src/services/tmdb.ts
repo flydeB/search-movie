@@ -241,9 +241,15 @@ export async function discoverByTMDB(params: DiscoverParams): Promise<DiscoverRe
   }
 }
 
-export async function getNowPlaying(page: number = 1): Promise<DiscoverResult> {
+/**
+ * 获取正在热映
+ * 后端过滤：只保留上映日期在最近6个月内的电影
+ * @param page - 页码
+ * @param region - 地区代码（ISO 3166-1，如 CN/US/JP），默认 CN
+ */
+export async function getNowPlaying(page: number = 1, region: string = 'CN'): Promise<DiscoverResult> {
   const res = await tmdbApi.get('/movie/now_playing', {
-    params: { page, region: 'CN', language: 'zh-CN' },
+    params: { page, region },
   })
 
   const sixMonthsAgo = new Date()
@@ -271,9 +277,15 @@ export async function getNowPlaying(page: number = 1): Promise<DiscoverResult> {
   }
 }
 
-export async function getUpcoming(page: number = 1): Promise<DiscoverResult> {
+/**
+ * 获取即将上映
+ * 后端过滤：只保留上映日期 >= 今天的电影
+ * @param page - 页码
+ * @param region - 地区代码（ISO 3166-1，如 CN/US/JP），默认 CN
+ */
+export async function getUpcoming(page: number = 1, region: string = 'CN'): Promise<DiscoverResult> {
   const res = await tmdbApi.get('/movie/upcoming', {
-    params: { page, region: 'CN', language: 'zh-CN' },
+    params: { page, region },
   })
 
   const today = new Date()

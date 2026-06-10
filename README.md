@@ -89,8 +89,8 @@ npm run dev:client
 | 标签 | 路由 | 数据来源 | 说明 |
 |------|------|----------|------|
 | 首页 | `/` | TMDB / OMDb / 豆瓣 | 普通搜索 + AI 智能搜索 |
-| 热映 | `/now-playing` | TMDB `/movie/now_playing` | 当前影院热映电影（自动过滤 6 个月前下映影片） |
-| 即将上映 | `/upcoming` | TMDB `/movie/upcoming` | 近期未上映电影（自动排除已上映） |
+| 热映 | `/now-playing` | TMDB `/movie/now_playing` | 当前影院热映电影，支持按地区切换（中国/美国/日本等 10 个地区），自动过滤 6 个月前下映影片 |
+| 即将上映 | `/upcoming` | TMDB `/movie/upcoming` | 近期未上映电影，支持按地区切换（中国/美国/日本等 10 个地区），自动排除已上映 |
 | 每日推荐 | `/daily` | 静态数据 | 10 部影史经典每日轮换，点击切换 |
 | 电影冷知识 | `/trivia` | 静态数据 | 30 条电影幕后趣闻 |
 | 全部电影 | `/ranking` | TMDB `/discover/movie` | 按类型/地区/排序筛选探索 |
@@ -154,8 +154,8 @@ mov/
 | `GET /api/ai-search?keyword=xxx` | AI 智能搜索（DeepSeek 理解自然语言） |
 | `GET /api/discover?genre=xx&region=xx&sortBy=xx&page=1` | 电影筛选探索（按类型/地区/排序分页） |
 | `GET /api/movie/:id` | 获取电影详情（id 格式：`tmdb_xxx` / `ttxxx` / `douban_xxx`） |
-| `GET /api/now-playing?page=1` | 正在热映（自动过滤 6 个月前上映的电影） |
-| `GET /api/upcoming?page=1` | 即将上映（自动过滤已上映电影） |
+| `GET /api/now-playing?page=1&region=CN` | 正在热映（自动过滤 6 个月前上映的电影，支持地区切换） |
+| `GET /api/upcoming?page=1&region=CN` | 即将上映（自动过滤已上映电影，支持地区切换） |
 | `GET /api/image-proxy?url=xxx` | 图片代理（解决豆瓣防盗链） |
 | `GET /api/health` | 健康检查 |
 
@@ -240,19 +240,24 @@ mov/
 
 ### 在线访问
 
-| 服务 | 地址 |
-|------|------|
-| **前端（静态托管）** | [https://movie-search-d0g1nye13469cff80-1440395009.tcloudbaseapp.com](https://movie-search-d0g1nye13469cff80-1440395009.tcloudbaseapp.com) |
-| **后端 API（CloudRun）** | `https://movie-api-266664-8-1440395009.sh.run.tcloudbase.com` |
+| 服务 | 地址 | 状态 |
+|------|------|------|
+| **前端（静态托管）** | [https://movie-search-d0g1nye13469cff80-1440395009.tcloudbaseapp.com](https://movie-search-d0g1nye13469cff80-1440395009.tcloudbaseapp.com) | ✅ 正常 |
+| **后端 API（云函数 + HTTP 访问服务）** | `https://movie-search-d0g1nye13469cff80-1440395009.ap-shanghai.app.tcloudbase.com` | ⚠️ 普通搜索正常 / AI 搜索受限 |
 
-### 架构
+> **2026-06-09 更新**：
+> - CloudRun 服务已删除，后端改用**云函数（movie-fallback）+ HTTP 访问服务**
+> - AI 搜索因测试域名访问限制暂时不可用（443），普通搜索、热映、排名等功能正常
+
+### 架构（2026-06-09 更新）
 
 ```
 GitHub 仓库 (dev 分支)
 ├── 前端 (Vue3 + Vite) → npm run build → CloudBase 静态托管 → CDN 加速
-└── 后端 (Express + TS) → Dockerfile 构建 → CloudRun 容器模式 → Serverless 运行
-    └── 环境变量注入: NODE_ENV / PORT / TMDB_API_KEY / OMDB_API_KEY / DEEPSEEK_API_KEY
-        ↑ Key 存储在腾讯云控制台，不进入代码仓库
+└── 后端 (云函数) → movie-fallback (Nodejs20.19, HTTP 函数)
+    └── HTTP 访问服务路由: /api → movie-fallback
+        └── 环境变量注入: DEEPSEEK_API_KEY / TMDB_API_KEY / OMDB_API_KEY
+            ↑ Key 存储在腾讯云控制台云函数环境变量中
 ```
 
 ### 部署步骤
@@ -263,51 +268,29 @@ GitHub 仓库 (dev 分支)
 cd client
 npm run build
 # 将 dist/ 目录上传到 CloudBase 静态托管根路径
+tcb hosting deploy ./dist -e movie-search-d0g1nye13469cff80
 ```
 
-#### 2. 后端部署（CloudRun）
+#### 2. 后端部署（云函数）
 
-**方式一：本地代码部署（推荐，稳定）**
+```bash
+# 通过 CLI 部署云函数（含 HTTP 访问触发器）
+tcb fn deploy movie-fallback \
+  --env-id movie-search-d0g1nye13469cff80 \
+  --dir cloudfunctions/movie-fallback \
+  --runtime Nodejs20.19 \
+  --httpFn \
+  --force
+```
 
-通过 CloudRun 工具从本地 `server/` 目录打包上传并部署。
-
-**方式二：Git 模板部署（自动触发）**
-
-绑定 GitHub 仓库后，push 代码自动构建部署。需在控制台配置：
-- **构建命令**: `npm install && npm run build`
-- **启动命令**: `node dist/index.js`
-- **端口**: `3000`
-
-### Docker 配置
-
-| 文件 | 说明 |
-|------|------|
-| `Dockerfile` | Node 20-alpine 镜像 + HEALTHCHECK 健康检查 |
-| `.dockerignore` | 排除 node_modules/.env/dist 等 |
-| `entrypoint.sh` | 启动脚本（输出调试日志） |
-
-**关键配置项**:
-- `InitialDelaySeconds: 15` — 探针延迟 15 秒（Node 启动需要时间）
-- `PORT=3000` — 显式设置端口
-- `NODE_ENV=production` — 生产模式
-
-### 部署平台
-
-| 资源 | 平台 | 套餐 | 费用 |
-|------|------|------|------|
-| 云环境 | 腾讯云 CloudBase | 免费体验版 | 免费（8个月） |
-| 后端服务 | CloudRun 容器模式 | 按量付费 | 有免费额度，Demo 够用 |
-| 前端托管 | CloudBase 静态网站托管 | 含在 CloudBase 中 | 免费 |
-| 数据库 | CloudBase 文档数据库 | 含在体验版中 | 免费 |
+> **注意**：
+> - `--httpFn` 参数启用 HTTP 访问服务
+> - 首次部署需在控制台「HTTP 访问服务」确认路由 `/api → movie-fallback` 已开启
+> - 环境变量在云函数「函数配置」页面设置
 
 ### ⚠️ 重要：配置 API Key
 
-部署后需要在 **CloudRun 控制台** 配置环境变量，否则后端无法调用外部 API：
-
-1. 进入 **CloudBase 控制台 → 云函数/托管理/主机 → 服务管理**
-2. 点击 `movie-api` 服务
-3. 找到 **「版本管理」→「环境变量」**
-4. 添加以下 3 个变量：
+在 **CloudBase 控制台 → 云函数 → movie-fallback → 函数配置** 中添加环境变量：
 
 | 变量名 | 值来源 | 说明 |
 |--------|--------|------|
@@ -315,7 +298,24 @@ npm run build
 | `OMDB_API_KEY` | 你本地 `server/.env` 中的值 | OMDb IMDb 数据源 |
 | `DEEPSEEK_API_KEY` | 你本地 `server/.env` 中的值 | AI 搜索（可选） |
 
-5. 保存后重新部署或等待自动生效
+### 部署平台
+
+| 资源 | 平台 | 套餐 | 费用 |
+|------|------|------|------|
+| 云环境 | 腾讯云 CloudBase | 标准版（2026-06-09 升级） | ¥199/月（首月 ¥3） |
+| 后端服务 | **云函数 movie-fallback** (HTTP 函数) | 含在标准版中 | 按资源点计费 |
+| HTTP 访问服务 | 腾讯云 HTTP 访问服务 | 含在标准版中 | 按请求计费 |
+| 前端托管 | CloudBase 静态网站托管 | 含在 CloudBase 中 | 免费 |
+
+### ⚠️ AI 搜索限制（已知问题）
+
+**测试域名（`ap-shanghai.app.tcloudbase.com`）存在访问量限制**，AI 搜索接口可能返回 443 错误。
+
+| 问题 | 现象 | 解决方案 |
+|------|------|----------|
+| 测试域名限流 | 访问 `/api/ai-search` 返回 443 / 「访问量达上限」 | 绑定自定义已备案域名 |
+
+**普通搜索不受影响**（前端直连 TMDB API，不经过云函数）。
 
 ### 本地开发
 

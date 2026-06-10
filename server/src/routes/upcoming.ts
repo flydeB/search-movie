@@ -5,14 +5,15 @@ import type { ApiResponse } from '../types/movie';
 const router = Router();
 
 /**
- * GET /api/upcoming?page=1
+ * GET /api/upcoming?page=1&region=CN
  * 即将上映电影（TMDB /movie/upcoming）
  */
 router.get('/upcoming', async (req: Request, res: Response) => {
   res.set('Cache-Control', 'no-store');
   try {
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const result = await getUpcoming(page);
+    const region = (req.query.region as string) || 'CN';
+    const result = await getUpcoming(page, region);
 
     const response: ApiResponse<typeof result> = {
       code: 200,
